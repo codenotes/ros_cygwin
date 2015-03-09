@@ -1,0 +1,23 @@
+Only in src/stage: config.h
+diff -ur src.orig/stage/libstage/CMakeLists.txt src/stage/libstage/CMakeLists.txt
+--- src.orig/stage/libstage/CMakeLists.txt	2014-05-07 18:19:05.000000000 -0700
++++ src/stage/libstage/CMakeLists.txt	2015-03-01 17:28:55.713124400 -0800
+@@ -96,11 +96,17 @@
+   target_link_libraries( stagebinary stage pthread )
+ ENDIF(PROJECT_OS_LINUX)
+ 
+-INSTALL(TARGETS stagebinary stage
++INSTALL(TARGETS stagebinary
+ 	RUNTIME DESTINATION bin
+ 	LIBRARY DESTINATION ${PROJECT_LIB_DIR}
+ )
+ 
++INSTALL(TARGETS stage
++	RUNTIME DESTINATION lib
++	LIBRARY DESTINATION lib
++	ARCHIVE DESTINATION lib
++)
++
+ INSTALL(FILES stage.hh 
+         DESTINATION include/${PROJECT_NAME}-${APIVERSION})
+ 

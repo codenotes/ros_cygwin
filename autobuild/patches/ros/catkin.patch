@@ -1,0 +1,30 @@
+diff -ur src.orig/catkin/cmake/all.cmake src/catkin/cmake/all.cmake
+--- src.orig/catkin/cmake/all.cmake	2014-12-29 10:18:13.000000000 -0800
++++ src/catkin/cmake/all.cmake	2015-02-28 12:42:29.167118900 -0800
+@@ -202,5 +202,10 @@
+   catkin_add_env_hooks(05.catkin-test-results SHELLS bat DIRECTORY ${catkin_EXTRAS_DIR}/env-hooks ${catkin_skip_install_env_hooks})
+ endif()
+ 
++if(CYGWIN)
++  include_directories(/usr/local/include)
++  link_directories(/usr/local/lib)
++endif()
++
+ # requires stamp and environment files
+ include(${catkin_EXTRAS_DIR}/catkin_python_setup.cmake)
+diff -ur src.orig/catkin/cmake/catkin_destinations.cmake src/catkin/cmake/catkin_destinations.cmake
+--- src.orig/catkin/cmake/catkin_destinations.cmake	2014-12-29 10:18:13.000000000 -0800
++++ src/catkin/cmake/catkin_destinations.cmake	2015-03-01 17:58:03.651055600 -0800
+@@ -43,7 +43,11 @@
+     set(_${PROJECT_NAME}_CATKIN_DESTINATIONS TRUE)
+ 
+     # set project specific install destinations
+-    set(CATKIN_PACKAGE_BIN_DESTINATION ${CATKIN_GLOBAL_LIBEXEC_DESTINATION}/${PROJECT_NAME})
++    if (CYGWIN)
++	  set(CATKIN_PACKAGE_BIN_DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})	#DLLs get copied here by default. Put them together to avoid putting every directory in PATH
++	else()
++	  set(CATKIN_PACKAGE_BIN_DESTINATION ${CATKIN_GLOBAL_LIBEXEC_DESTINATION}/${PROJECT_NAME})
++	endif()
+     set(CATKIN_PACKAGE_ETC_DESTINATION ${CATKIN_GLOBAL_ETC_DESTINATION}/${PROJECT_NAME})
+     set(CATKIN_PACKAGE_INCLUDE_DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION}/${PROJECT_NAME})
+     set(CATKIN_PACKAGE_LIB_DESTINATION ${CATKIN_GLOBAL_LIB_DESTINATION})

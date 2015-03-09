@@ -1,0 +1,113 @@
+diff -ur PySide-1.1.1-orig/setup.py PySide-1.1.1/setup.py
+--- PySide-1.1.1-orig/setup.py	2012-06-06 23:52:57.000000000 -0700
++++ PySide-1.1.1/setup.py	2015-03-01 10:07:25.885951100 -0800
+@@ -218,6 +218,9 @@
+         if sys.platform == "win32":
+             py_library = os.path.join(py_libdir, "python%s%s.lib" % \
+                 (py_version.replace(".", ""), dbgPostfix))
++        elif sys.platform == "cygwin":
++            py_library = os.path.join("/usr/bin", "libpython%s%s.dll" % \
++                (py_version, dbgPostfix))
+         else:
+             py_library = os.path.join(py_libdir, "libpython%s%s.so" % \
+                 (py_version, dbgPostfix))
+@@ -412,14 +415,14 @@
+         os.chdir(self.script_dir)
+         if sys.platform == "win32":
+             return self.prepare_packages_win32(vars)
+-        return self.prepare_packages_linux(vars)
++        return self.prepare_packages_cygwin(vars)
+ 
+-    def prepare_packages_linux(self, vars):
++    def prepare_packages_cygwin(self, vars):
+         # patchelf -> PySide/patchelf
+-        copyfile(
+-            "${setup_dir}/patchelf",
+-            "${setup_dir}/PySide/patchelf",
+-            logger=log, vars=vars)
++#        copyfile(
++#            "${setup_dir}/patchelf",
++#            "${setup_dir}/PySide/patchelf",
++#            logger=log, vars=vars)
+         # <install>/lib/site-packages/PySide/* -> <setup>/PySide
+         copydir(
+             "${install_dir}/lib/python${py_version}/site-packages/PySide",
+@@ -445,16 +448,17 @@
+             filter=[
+                 "pyside-lupdate",
+                 "pyside-rcc",
+-                "shiboken",
++                "shiboken.exe",
++				"cyg*.dll",
+             ],
+             recursive=False, logger=log, vars=vars)
+         # <install>/lib/lib* -> PySide/
+         copydir(
+-            "${install_dir}/lib/",
++            "${install_dir}/lib",
+             "${setup_dir}/PySide",
+             filter=[
+-                "libpyside*.so.*",
+-                "libshiboken*.so.*",
++                "cygpyside*.dll*",
++                "cygshiboken*dll*",
+             ],
+             recursive=False, logger=log, vars=vars)
+         # <install>/share/PySide/typesystems/* -> <setup>/PySide/typesystems
+@@ -487,13 +491,13 @@
+             # <qt>/lib/* -> <setup>/PySide
+             copydir("${qt_lib_dir}", "${setup_dir}/PySide",
+                 filter=[
+-                    "libQt*.so.?",
+-                    "libphonon.so.?",
++                    "libQt*.dll*",
++                    "libphonon.dll*",
+                 ],
+                 recursive=False, logger=log, vars=vars)
+             # <qt>/plugins/* -> <setup>/PySide/plugins
+             copydir("${qt_plugins_dir}", "${setup_dir}/PySide/plugins",
+-                filter=["*.so"],
++                filter=["*.dll"],
+                 logger=log, vars=vars)
+             # <qt>/imports/* -> <setup>/PySide/imports
+             if float(vars["qt_version"][:3]) > 4.6:
+diff -ur PySide-1.1.1-orig/sources/pyside/PySide/QtCore/typesystem_core_common.xml PySide-1.1.1/sources/pyside/PySide/QtCore/typesystem_core_common.xml
+--- PySide-1.1.1-orig/sources/pyside/PySide/QtCore/typesystem_core_common.xml	2012-06-06 23:56:43.000000000 -0700
++++ PySide-1.1.1/sources/pyside/PySide/QtCore/typesystem_core_common.xml	2015-03-01 09:31:18.660447100 -0800
+@@ -206,7 +206,7 @@
+             // cast as Py_UNICODE can be a different type
+             %out = QString::fromUcs4((const uint*)unicode);
+             #else
+-            %out = QString::fromUtf16(unicode, PyUnicode_GET_SIZE(%in));
++            %out = QString::fromUtf16((const ushort*)unicode, PyUnicode_GET_SIZE(%in));
+             #endif
+             </add-conversion>
+             <add-conversion type="PyString" check="py2kStrCheck(%in)">
+@@ -3109,7 +3109,7 @@
+         <inject-code>
+             long result;
+             #ifdef WIN32
+-                _PROCESS_INFORMATION* procInfo = %CPPSELF.%FUNCTION_NAME();
++                _PROCESS_INFORMATION* procInfo = (_PROCESS_INFORMATION*)%CPPSELF.%FUNCTION_NAME();
+                 result = procInfo ? procInfo->dwProcessId : 0;
+             #else
+                 result = %CPPSELF.%FUNCTION_NAME();
+diff -ur PySide-1.1.1-orig/sources/pyside/PySide/QtGui/CMakeLists.txt PySide-1.1.1/sources/pyside/PySide/QtGui/CMakeLists.txt
+--- PySide-1.1.1-orig/sources/pyside/PySide/QtGui/CMakeLists.txt	2012-06-06 23:53:52.000000000 -0700
++++ PySide-1.1.1/sources/pyside/PySide/QtGui/CMakeLists.txt	2015-03-01 08:45:01.669612100 -0800
+@@ -98,7 +98,6 @@
+ ${CMAKE_CURRENT_BINARY_DIR}/PySide/QtGui/qabstracttextdocumentlayout_paintcontext_wrapper.cpp
+ ${CMAKE_CURRENT_BINARY_DIR}/PySide/QtGui/qabstracttextdocumentlayout_selection_wrapper.cpp
+ ${CMAKE_CURRENT_BINARY_DIR}/PySide/QtGui/qabstracttextdocumentlayout_wrapper.cpp
+-${CMAKE_CURRENT_BINARY_DIR}/PySide/QtGui/qaccessibleevent_wrapper.cpp
+ ${CMAKE_CURRENT_BINARY_DIR}/PySide/QtGui/qactionevent_wrapper.cpp
+ ${CMAKE_CURRENT_BINARY_DIR}/PySide/QtGui/qactiongroup_wrapper.cpp
+ ${CMAKE_CURRENT_BINARY_DIR}/PySide/QtGui/qaction_wrapper.cpp
+@@ -332,7 +331,6 @@
+ ${CMAKE_CURRENT_BINARY_DIR}/PySide/QtGui/qstyle_wrapper.cpp
+ ${CMAKE_CURRENT_BINARY_DIR}/PySide/QtGui/qsyntaxhighlighter_wrapper.cpp
+ ${CMAKE_CURRENT_BINARY_DIR}/PySide/QtGui/qtabbar_wrapper.cpp
+-${CMAKE_CURRENT_BINARY_DIR}/PySide/QtGui/qtabletevent_wrapper.cpp
+ ${CMAKE_CURRENT_BINARY_DIR}/PySide/QtGui/qtableview_wrapper.cpp
+ ${CMAKE_CURRENT_BINARY_DIR}/PySide/QtGui/qtablewidgetitem_wrapper.cpp
+ ${CMAKE_CURRENT_BINARY_DIR}/PySide/QtGui/qtablewidgetselectionrange_wrapper.cpp

@@ -1,0 +1,12 @@
+diff -ur orig/tinyxml.h new/tinyxml.h
+--- orig/tinyxml.h	2011-05-14 19:24:57.000000000 -0700
++++ new/tinyxml.h	2015-02-24 16:43:59.157514200 -0800
+@@ -32,6 +32,8 @@
+ #pragma warning( disable : 4786 )
+ #endif
+ 
++#define TIXML_USE_STL
++
+ #include <ctype.h>
+ #include <stdio.h>
+ #include <stdlib.h>

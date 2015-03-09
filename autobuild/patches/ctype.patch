@@ -1,0 +1,28 @@
+--- ctype.old	2014-11-13 06:45:52.000000000 -0800
++++ ctype.h	2015-02-24 16:05:14.931693100 -0800
+@@ -30,14 +30,17 @@
+ #define _toupper(__c) ((unsigned char)(__c) - 'a' + 'A')
+ #endif
+ 
+-#define	_U	01
+-#define	_L	02
+-#define	_N	04
+-#define	_S	010
+-#define _P	020
+-#define _C	040
+-#define _X	0100
+-#define	_B	0200
++enum
++{
++	_U = 01,
++	_L = 02,
++	_N = 04,
++	_S = 010,
++	_P = 020,
++	_C = 040,
++	_X = 0100,
++	_B = 0200
++};
+ 
+ #ifndef _MB_CAPABLE
+ _CONST

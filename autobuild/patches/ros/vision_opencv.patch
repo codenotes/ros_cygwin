@@ -1,0 +1,12 @@
+diff -ur src.orig/vision_opencv/image_geometry/CMakeLists.txt src/vision_opencv/image_geometry/CMakeLists.txt
+--- src.orig/vision_opencv/image_geometry/CMakeLists.txt	2014-12-14 11:57:33.000000000 -0800
++++ src/vision_opencv/image_geometry/CMakeLists.txt	2015-02-26 16:14:24.211209200 -0800
+@@ -30,7 +30,7 @@
+ )
+ 
+ install(TARGETS ${PROJECT_NAME}
+-        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
++        RUNTIME DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+ )

@@ -1,0 +1,12 @@
+diff -ur urdfdom.orig/urdf_parser/include/urdf_parser/exportdecl.h urdfdom/urdf_parser/include/urdf_parser/exportdecl.h
+--- urdfdom.orig/urdf_parser/include/urdf_parser/exportdecl.h	2015-02-25 19:40:45.687626900 -0800
++++ urdfdom/urdf_parser/include/urdf_parser/exportdecl.h	2015-02-25 19:50:14.056626900 -0800
+@@ -74,7 +74,7 @@
+ # else
+ // Depending on whether one is building or using the
+ // library define DLLAPI to import or export.
+-#  ifdef console_bridge_EXPORTS
++#  if defined(urdfdom_model_EXPORTS) || defined(urdfdom_world_EXPORTS)
+ #   define URDFDOM_DLLAPI URDFDOM_DLLEXPORT
+ #  else
+ #   define URDFDOM_DLLAPI URDFDOM_DLLIMPORT

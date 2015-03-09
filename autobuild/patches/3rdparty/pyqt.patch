@@ -1,0 +1,248 @@
+diff -ur PyQt-win-gpl-4.11.1-orig/configure.py PyQt-win-gpl-4.11.1/configure.py
+--- PyQt-win-gpl-4.11.1-orig/configure.py	2014-07-03 16:03:00.000000000 -0700
++++ PyQt-win-gpl-4.11.1/configure.py	2015-03-01 17:00:20.176385000 -0800
+@@ -1445,6 +1445,8 @@
+     # Handle the platform tag.
+     if sys.platform == 'win32':
+         plattag = "WS_WIN"
++    elif sys.platform == "cygwin":
++        plattag = "WS_WIN"
+     elif sys.platform == "darwin":
+         if "__USE_WS_X11__" in sipcfg.build_macros()["DEFINES"]:
+             plattag = "WS_X11"
+@@ -2269,7 +2271,7 @@
+     check_license()
+ 
+     # Check which modules to build.
+-    pyqt.check_modules()
++    #pyqt.check_modules()
+ 
+     # Check for the VendorID package.
+     check_vendorid()
+@@ -2281,27 +2283,27 @@
+     inform_user()
+ 
+     # Embed the sip flags.
+-    sipconfig.inform("Embedding sip flags...")
+-    in_f = open(os.path.join(src_dir, "qpy", "QtCore", "qpycore_post_init.cpp.in"))
+-    out_f = open(os.path.join(src_dir, "qpy", "QtCore", "qpycore_post_init.cpp"), "wt")
+-
+-    for line in in_f:
+-        line = line.replace("@@PYQT_SIP_FLAGS@@", sip_flags)
+-        out_f.write(line)
++    #sipconfig.inform("Embedding sip flags...")
++    #in_f = open(os.path.join(src_dir, "qpy", "QtCore", "qpycore_post_init.cpp.in"))
++    #out_f = open(os.path.join(src_dir, "qpy", "QtCore", "qpycore_post_init.cpp"), "wt")
++
++    #for line in in_f:
++    #    line = line.replace("@@PYQT_SIP_FLAGS@@", sip_flags)
++    #    out_f.write(line)
+ 
+-    in_f.close()
+-    out_f.close()
++    #in_f.close()
++    #out_f.close()
+ 
+     # Generate the code.
+-    pyqt.code()
++    #pyqt.code()
+ 
+     # Create the additional Makefiles.
+-    sipconfig.inform("Creating top level Makefile...")
++    #sipconfig.inform("Creating top level Makefile...")
+ 
+-    installs=[(pyqt.module_installs(), pyqt_modroot)]
++    #installs=[(pyqt.module_installs(), pyqt_modroot)]
+ 
+-    if opts.api:
+-        installs.append(("PyQt4.api", os.path.join(opts.qscidir, "api", "python")))
++    #if opts.api:
++    #    installs.append(("PyQt4.api", os.path.join(opts.qscidir, "api", "python")))
+ 
+     xtra_modules = ["Qt"]
+ 
+@@ -2314,11 +2316,11 @@
+         if opts.mwg_qwt_dir:
+             xtra_modules.append("Qwt5")
+ 
+-    sipconfig.ParentMakefile(
+-        configuration=sipcfg,
+-        subdirs=pyqt.qpy_libs() + pyqt_modules + xtra_modules + pyqt.tools(),
+-        installs=installs
+-    ).generate()
++    #sipconfig.ParentMakefile(
++    #    configuration=sipcfg,
++    #    subdirs=pyqt.qpy_libs() + pyqt_modules + xtra_modules + pyqt.tools(),
++    #    installs=installs
++    #).generate()
+ 
+     # Install the configuration module.
+     create_config("pyqtconfig.py", os.path.join(src_dir, "pyqtconfig.py.in"),
+diff -ur PyQt-win-gpl-4.11.1-orig/configure-ng.py PyQt-win-gpl-4.11.1/configure-ng.py
+--- PyQt-win-gpl-4.11.1-orig/configure-ng.py	2014-07-03 16:03:00.000000000 -0700
++++ PyQt-win-gpl-4.11.1/configure-ng.py	2015-02-26 12:57:27.111359700 -0800
+@@ -2091,7 +2091,7 @@
+         sip_flags.append('PyQt_Deprecated_5_0')
+ 
+     # Handle the platform tag.
+-    if target_config.py_platform == 'win32':
++    if target_config.py_platform == 'cygwin':
+         plattag = 'WS_WIN'
+     elif target_config.py_platform == 'darwin':
+         plattag = 'WS_MACX'
+@@ -2283,10 +2283,11 @@
+         link = get_win32_python_library(target_config)
+ 
+         shared = '''
+-win32 {
++win32|cygwin-win32 {
+     PY_MODULE = %s%s.pyd
+     target.files = %s%s.pyd
+     LIBS += %s
++	QMAKE_CXXFLAGS += -fpermissive
+ } else {
+     PY_MODULE = %s.so
+     target.files = %s.so
+@@ -2634,7 +2635,7 @@
+     py_major, py_minor = get_py_major_minor(target_config)
+     debug_suffix = get_win32_debug_suffix(target_config.debug)
+ 
+-    return '%s -lpython%d%d%s' % (lib_dir, py_major, py_minor, debug_suffix)
++    return '%s -lpython%d.%d%s' % (lib_dir, py_major, py_minor, debug_suffix)
+ 
+ 
+ def get_win32_debug_suffix(debug):
+diff -ur PyQt-win-gpl-4.11.1-orig/pylupdate/translator.cpp PyQt-win-gpl-4.11.1/pylupdate/translator.cpp
+--- PyQt-win-gpl-4.11.1-orig/pylupdate/translator.cpp	2014-07-03 16:03:22.000000000 -0700
++++ PyQt-win-gpl-4.11.1/pylupdate/translator.cpp	2015-02-26 12:43:03.709118300 -0800
+@@ -326,7 +326,7 @@
+     QString prefix;
+ 
+     if (filename[0] == QLatin1Char('/')
+-#ifdef Q_WS_WIN
++#ifdef Q_OS_WIN
+          || (filename[0].isLetter() && filename[1] == QLatin1Char(':')) || filename[0] == QLatin1Char('\\')
+ #endif
+         )
+
+diff -ur PyQt-win-gpl-4.11.1-orig/qpy/QtCore/qpycore_qabstracteventdispatcher.cpp PyQt-win-gpl-4.11.1/qpy/QtCore/qpycore_qabstracteventdispatcher.cpp
+--- PyQt-win-gpl-4.11.1-orig/qpy/QtCore/qpycore_qabstracteventdispatcher.cpp	2014-07-03 16:03:22.000000000 -0700
++++ PyQt-win-gpl-4.11.1/qpy/QtCore/qpycore_qabstracteventdispatcher.cpp	2015-02-26 12:43:03.714123300 -0800
+@@ -97,7 +97,7 @@
+ 
+     SIP_BLOCK_THREADS
+ 
+-#if defined(Q_WS_WIN)
++#if defined(Q_OS_WIN)
+     PyObject *msg_obj = sipConvertFromType(reinterpret_cast<MSG *>(message),
+             sipType_MSG, 0);
+ #else
+diff -ur PyQt-win-gpl-4.11.1-orig/sip/QtGui/qevent.sip PyQt-win-gpl-4.11.1/sip/QtGui/qevent.sip
+--- PyQt-win-gpl-4.11.1-orig/sip/QtGui/qevent.sip	2014-07-03 16:03:20.000000000 -0700
++++ PyQt-win-gpl-4.11.1/sip/QtGui/qevent.sip	2015-02-26 13:06:10.408085400 -0800
+@@ -138,16 +138,6 @@
+         sipType = sipType_QStatusTipEvent;
+         break;
+     
+-    case QEvent::TabletMove:
+-    case QEvent::TabletPress:
+-    case QEvent::TabletRelease:
+-    #if QT_VERSION >= 0x040200
+-    case QEvent::TabletEnterProximity:
+-    case QEvent::TabletLeaveProximity:
+-    #endif
+-        sipType = sipType_QTabletEvent;
+-        break;
+-    
+     case QEvent::ToolTip:
+     case QEvent::WhatsThis:
+         sipType = sipType_QHelpEvent;
+@@ -401,77 +391,6 @@
+ %If (Qt_5_0_0 -)
+     const QPointF &posF() const;
+ %End
+-%If (Qt_5_0_0 -)
+-    const QPointF &globalPosF() const;
+-%End
+-};
+-
+-class QTabletEvent : QInputEvent
+-{
+-%TypeHeaderCode
+-#include <qevent.h>
+-%End
+-
+-public:
+-    enum TabletDevice
+-    {
+-        NoDevice,
+-        Puck,
+-        Stylus,
+-        Airbrush,
+-        FourDMouse,
+-        XFreeEraser,
+-        RotationStylus,
+-    };
+-
+-    enum PointerType
+-    {
+-        UnknownPointer,
+-        Pen,
+-        Cursor,
+-        Eraser,
+-    };
+-
+-%If (Qt_5_0_0 -)
+-    QTabletEvent(QEvent::Type t, const QPointF &pos, const QPointF &globalPos, int device, int pointerType, qreal pressure, int xTilt, int yTilt, qreal tangentialPressure, qreal rotation, int z, Qt::KeyboardModifiers keyState, qint64 uniqueID);
+-%End
+-%If (- Qt_5_0_0)
+-    QTabletEvent(QEvent::Type t, const QPoint &pos, const QPoint &globalPos, const QPointF &hiResGlobalPos, int device, int pointerType, qreal pressure, int xTilt, int yTilt, qreal tangentialPressure, qreal rotation, int z, Qt::KeyboardModifiers keyState, qint64 uniqueID);
+-%End
+-    virtual ~QTabletEvent();
+-%If (Qt_5_0_0 -)
+-    QPoint pos() const;
+-%End
+-%If (- Qt_5_0_0)
+-    const QPoint &pos() const;
+-%End
+-%If (Qt_5_0_0 -)
+-    QPoint globalPos() const;
+-%End
+-%If (- Qt_5_0_0)
+-    const QPoint &globalPos() const;
+-%End
+-%If (PyQt_Deprecated_5_0)
+-    const QPointF &hiResGlobalPos() const;
+-%End
+-    int x() const;
+-    int y() const;
+-    int globalX() const;
+-    int globalY() const;
+-    qreal hiResGlobalX() const;
+-    qreal hiResGlobalY() const;
+-    QTabletEvent::TabletDevice device() const;
+-    QTabletEvent::PointerType pointerType() const;
+-    qint64 uniqueId() const;
+-    qreal pressure() const;
+-    int z() const;
+-    qreal tangentialPressure() const;
+-    qreal rotation() const;
+-    int xTilt() const;
+-    int yTilt() const;
+-%If (Qt_5_0_0 -)
+-    const QPointF &posF() const;
+-%End
+ %If (Qt_5_0_0 -)
+     const QPointF &globalPosF() const;
+ %End
+diff -ur PyQt-win-gpl-4.11.1-orig/sip/QtGui/qwidget.sip PyQt-win-gpl-4.11.1/sip/QtGui/qwidget.sip
+--- PyQt-win-gpl-4.11.1-orig/sip/QtGui/qwidget.sip	2014-07-03 16:03:22.000000000 -0700
++++ PyQt-win-gpl-4.11.1/sip/QtGui/qwidget.sip	2015-02-26 12:49:27.538407200 -0800
+@@ -356,7 +356,6 @@
+     virtual void resizeEvent(QResizeEvent *);
+     virtual void closeEvent(QCloseEvent *);
+     virtual void contextMenuEvent(QContextMenuEvent *);
+-    virtual void tabletEvent(QTabletEvent *);
+     virtual void actionEvent(QActionEvent *);
+     virtual void dragEnterEvent(QDragEnterEvent *);
+     virtual void dragMoveEvent(QDragMoveEvent *);

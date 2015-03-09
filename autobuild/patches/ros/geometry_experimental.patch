@@ -1,0 +1,54 @@
+Only in src/geometry_experimental: geometry_experimental.patch
+diff -ur src.orig/geometry_experimental/tf2/CMakeLists.txt src/geometry_experimental/tf2/CMakeLists.txt
+--- src.orig/geometry_experimental/tf2/CMakeLists.txt	2014-12-23 21:09:17.000000000 -0800
++++ src/geometry_experimental/tf2/CMakeLists.txt	2015-02-26 16:12:35.467688000 -0800
+@@ -24,9 +24,10 @@
+ install(TARGETS tf2
+   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
++  RUNTIME DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+ )
+ 
++
+ install(DIRECTORY include/${PROJECT_NAME}/
+   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+ )
+diff -ur src.orig/geometry_experimental/tf2_py/CMakeLists.txt src/geometry_experimental/tf2_py/CMakeLists.txt
+--- src.orig/geometry_experimental/tf2_py/CMakeLists.txt	2014-12-23 21:09:11.000000000 -0800
++++ src/geometry_experimental/tf2_py/CMakeLists.txt	2015-02-25 19:32:35.879529800 -0800
+@@ -94,11 +94,12 @@
+ target_link_libraries(tf2_py ${catkin_LIBRARIES})
+ add_dependencies(tf2_py tf2_msgs_gencpp)
+ 
+-set_target_properties(tf2_py PROPERTIES OUTPUT_NAME tf2 PREFIX "_" SUFFIX ".so")
++set_target_properties(tf2_py PROPERTIES OUTPUT_NAME _tf2 PREFIX "")
+ set_target_properties(tf2_py PROPERTIES COMPILE_FLAGS "-g -Wno-missing-field-initializers")
+ set_target_properties(tf2_py PROPERTIES
+   ARCHIVE_OUTPUT_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_PYTHON_DESTINATION}
+   LIBRARY_OUTPUT_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_PYTHON_DESTINATION}
++  RUNTIME_OUTPUT_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_PYTHON_DESTINATION}
+ )
+ #!! rosbuild_add_compile_flags(tf2_py ${SSE_FLAGS}) #conditionally adds sse flags if available
+ 
+@@ -138,7 +139,7 @@
+ #   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+ # )
+ 
+-install(FILES ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_PYTHON_DESTINATION}/_tf2.so
++install(FILES ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_PYTHON_DESTINATION}/_tf2.dll
+   DESTINATION ${CATKIN_PACKAGE_PYTHON_DESTINATION}
+ )
+ 
+diff -ur src.orig/geometry_experimental/tf2_ros/CMakeLists.txt src/geometry_experimental/tf2_ros/CMakeLists.txt
+--- src.orig/geometry_experimental/tf2_ros/CMakeLists.txt	2014-12-23 21:09:14.000000000 -0800
++++ src/geometry_experimental/tf2_ros/CMakeLists.txt	2015-02-26 16:13:04.241688000 -0800
+@@ -81,7 +81,7 @@
+   ${PROJECT_NAME}_static_transform_publisher
+   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
++  RUNTIME DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+ )
+ 
+ install(DIRECTORY include/${PROJECT_NAME}/

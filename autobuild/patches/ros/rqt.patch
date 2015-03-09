@@ -1,0 +1,20 @@
+diff -ur src.orig/rqt/rqt_gui_cpp/CMakeLists.txt src/rqt/rqt_gui_cpp/CMakeLists.txt
+--- src.orig/rqt/rqt_gui_cpp/CMakeLists.txt	2014-05-21 10:25:58.000000000 -0700
++++ src/rqt/rqt_gui_cpp/CMakeLists.txt	2015-03-02 14:39:56.698016600 -0800
+@@ -38,6 +38,7 @@
+ install(TARGETS ${PROJECT_NAME}
+   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
++  RUNTIME DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+ )
+ 
+ install(DIRECTORY include/${PROJECT_NAME}/
+diff -ur src.orig/rqt/rqt_gui_cpp/plugin.xml src/rqt/rqt_gui_cpp/plugin.xml
+--- src.orig/rqt/rqt_gui_cpp/plugin.xml	2014-05-21 10:25:58.000000000 -0700
++++ src/rqt/rqt_gui_cpp/plugin.xml	2015-03-02 14:39:47.153062200 -0800
+@@ -1,4 +1,4 @@
+-<library path="lib/librqt_gui_cpp">
++<library path="lib/cygrqt_gui_cpp">
+   <class name="rqt_gui_cpp/RosCppPluginProvider" type="rqt_gui_cpp::RosCppPluginProvider" base_class_type="qt_gui_cpp::PluginProvider">
+     <description>
+       A C++ plugin provider for the ROS GUI integrating plugins using roscpp client library.

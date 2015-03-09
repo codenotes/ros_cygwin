@@ -1,0 +1,118 @@
+diff -ur assimp--2.0.863-sdk/code/CMakeLists.txt assimp--2.0.fixed/code/CMakeLists.txt
+--- assimp--2.0.863-sdk/code/CMakeLists.txt	2010-11-21 13:40:41.715911000 -0800
++++ assimp--2.0.fixed/code/CMakeLists.txt	2014-08-08 18:31:56.976187100 -0700
+@@ -85,7 +85,7 @@
+ 	BaseImporter.h
+ 	BaseProcess.cpp
+ 	BaseProcess.h
+-	ByteSwap.h
++	ByteSwap2.h
+ 	ProcessHelper.h
+ 	DefaultProgressHandler.h
+ 	DefaultIOStream.cpp
+@@ -475,7 +475,7 @@
+ 	BaseImporter.h
+ 	BaseProcess.cpp
+ 	BaseProcess.h
+-	ByteSwap.h
++	ByteSwap2.h
+ 	CalcTangentsProcess.cpp
+ 	CalcTangentsProcess.h
+ 	ColladaHelper.h
+diff -ur assimp--2.0.863-sdk/code/IFF.h assimp--2.0.fixed/code/IFF.h
+--- assimp--2.0.863-sdk/code/IFF.h	2010-11-21 13:40:41.715911000 -0800
++++ assimp--2.0.fixed/code/IFF.h	2014-08-08 18:31:57.083208500 -0700
+@@ -7,7 +7,7 @@
+ #ifndef AI_IFF_H_INCLUDED
+ #define AI_IFF_H_INCLUDED
+ 
+-#include "ByteSwap.h"
++#include "ByteSwap2.h"
+ 
+ namespace Assimp	{
+ namespace IFF		{
+diff -ur assimp--2.0.863-sdk/code/LWOLoader.cpp assimp--2.0.fixed/code/LWOLoader.cpp
+--- assimp--2.0.863-sdk/code/LWOLoader.cpp	2010-11-21 13:40:41.715911000 -0800
++++ assimp--2.0.fixed/code/LWOLoader.cpp	2014-08-08 18:31:57.916875200 -0700
+@@ -51,7 +51,7 @@
+ #include "MaterialSystem.h"
+ #include "StringComparison.h"
+ #include "SGSpatialSort.h"
+-#include "ByteSwap.h"
++#include "ByteSwap2.h"
+ #include "ProcessHelper.h"
+ #include "ConvertToLHProcess.h"
+ 
+diff -ur assimp--2.0.863-sdk/code/LWOMaterial.cpp assimp--2.0.fixed/code/LWOMaterial.cpp
+--- assimp--2.0.863-sdk/code/LWOMaterial.cpp	2010-11-21 13:40:41.715911000 -0800
++++ assimp--2.0.fixed/code/LWOMaterial.cpp	2014-08-08 18:31:57.924876800 -0700
+@@ -48,7 +48,7 @@
+ // internal headers
+ #include "LWOLoader.h"
+ #include "MaterialSystem.h"
+-#include "ByteSwap.h"
++#include "ByteSwap2.h"
+ 
+ using namespace Assimp;
+ 
+Only in assimp--2.0.863-sdk/code: makefile
+Only in assimp--2.0.fixed/code: Makefile
+diff -ur assimp--2.0.863-sdk/code/MD2Loader.cpp assimp--2.0.fixed/code/MD2Loader.cpp
+--- assimp--2.0.863-sdk/code/MD2Loader.cpp	2010-11-21 13:40:41.715911000 -0800
++++ assimp--2.0.fixed/code/MD2Loader.cpp	2014-08-08 18:31:57.954882800 -0700
+@@ -45,7 +45,7 @@
+ /** @file Implementation of the MD2 importer class */
+ #include "MD2Loader.h"
+ #include "MaterialSystem.h"
+-#include "ByteSwap.h"
++#include "ByteSwap2.h"
+ #include "MD2NormalTable.h" // shouldn't be included by other units
+ 
+ using namespace Assimp;
+diff -ur assimp--2.0.863-sdk/code/MD3Loader.cpp assimp--2.0.fixed/code/MD3Loader.cpp
+--- assimp--2.0.863-sdk/code/MD3Loader.cpp	2010-11-21 13:40:41.715911000 -0800
++++ assimp--2.0.fixed/code/MD3Loader.cpp	2014-08-08 18:31:57.967885400 -0700
+@@ -52,7 +52,7 @@
+ #ifndef ASSIMP_BUILD_NO_MD3_IMPORTER
+ 
+ #include "MD3Loader.h"
+-#include "ByteSwap.h"
++#include "ByteSwap2.h"
+ #include "SceneCombiner.h"
+ #include "GenericProperty.h"
+ #include "RemoveComments.h"
+diff -ur assimp--2.0.863-sdk/code/MD3Loader.h assimp--2.0.fixed/code/MD3Loader.h
+--- assimp--2.0.863-sdk/code/MD3Loader.h	2010-11-21 13:40:41.715911000 -0800
++++ assimp--2.0.fixed/code/MD3Loader.h	2014-08-08 18:31:57.972886400 -0700
+@@ -45,7 +45,7 @@
+ #define AI_MD3LOADER_H_INCLUDED
+ 
+ #include "BaseImporter.h"
+-#include "ByteSwap.h"
++#include "ByteSwap2.h"
+ 
+ #include "../include/aiTypes.h"
+ 
+diff -ur assimp--2.0.863-sdk/code/MDCLoader.h assimp--2.0.fixed/code/MDCLoader.h
+--- assimp--2.0.863-sdk/code/MDCLoader.h	2010-11-21 13:40:41.715911000 -0800
++++ assimp--2.0.fixed/code/MDCLoader.h	2014-08-08 18:31:57.997891400 -0700
+@@ -48,7 +48,7 @@
+ 
+ #include "BaseImporter.h"
+ #include "MDCFileData.h"
+-#include "ByteSwap.h"
++#include "ByteSwap2.h"
+ 
+ namespace Assimp	{
+ using namespace MDC;
+diff -ur assimp--2.0.863-sdk/code/StreamReader.h assimp--2.0.fixed/code/StreamReader.h
+--- assimp--2.0.863-sdk/code/StreamReader.h	2010-11-21 13:40:41.715911000 -0800
++++ assimp--2.0.fixed/code/StreamReader.h	2014-08-08 18:31:58.285448900 -0700
+@@ -45,7 +45,7 @@
+ #ifndef AI_STREAMREADER_H_INCLUDED
+ #define AI_STREAMREADER_H_INCLUDED
+ 
+-#include "ByteSwap.h"
++#include "ByteSwap2.h"
+ namespace Assimp	{
+ 	namespace Intern {

@@ -1,0 +1,9 @@
+diff -ur src.orig/qt_gui_core/qt_gui_cpp/src/qt_gui_cpp/CMakeLists.txt src/qt_gui_core/qt_gui_cpp/src/qt_gui_cpp/CMakeLists.txt
+--- src.orig/qt_gui_core/qt_gui_cpp/src/qt_gui_cpp/CMakeLists.txt	2014-08-18 12:00:51.000000000 -0700
++++ src/qt_gui_core/qt_gui_cpp/src/qt_gui_cpp/CMakeLists.txt	2015-03-02 14:48:14.765867200 -0800
+@@ -39,4 +39,5 @@
+ 
+ install(TARGETS ${PROJECT_NAME}
+   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
++  RUNTIME DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION})

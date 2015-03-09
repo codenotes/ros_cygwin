@@ -1,0 +1,44 @@
+Only in src/geometry: geometry.patch
+diff -ur src.orig/geometry/tf/CMakeLists.txt src/geometry/tf/CMakeLists.txt
+--- src.orig/geometry/tf/CMakeLists.txt	2014-12-23 21:17:52.000000000 -0800
++++ src/geometry/tf/CMakeLists.txt	2015-02-26 15:48:28.421085800 -0800
+@@ -127,7 +127,7 @@
+ add_dependencies(pytf_py ${PROJECT_NAME}_gencpp)
+ 
+ find_package(PythonLibs REQUIRED)
+-set_target_properties(pytf_py PROPERTIES OUTPUT_NAME tf PREFIX "_" SUFFIX ".so"
++set_target_properties(pytf_py PROPERTIES OUTPUT_NAME _tf PREFIX ""
+   LIBRARY_OUTPUT_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${PYTHON_INSTALL_DIR}/tf)
+ 
+ # target_link_libraries(pytf_py ${PROJECT_NAME})
+@@ -154,9 +154,15 @@
+ 
+ if(NOT ANDROID)
+ install(TARGETS pytf_py
+-  LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYTHON_INSTALL_DIR}/tf)
++  LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYTHON_INSTALL_DIR}/tf
++  RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYTHON_INSTALL_DIR}/tf)
+ endif()
+ 
++if(CYGWIN)
++install(TARGETS ${PROJECT_NAME}
++  RUNTIME DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION})
++endif(CYGWIN)
++
+ # Install rosrun-able scripts
+ install(PROGRAMS 
+   scripts/bullet_migration_sed.py
+diff -ur src.orig/geometry/tf/include/tf/tf.h src/geometry/tf/include/tf/tf.h
+--- src.orig/geometry/tf/include/tf/tf.h	2014-12-23 21:17:52.000000000 -0800
++++ src/geometry/tf/include/tf/tf.h	2015-02-26 11:12:55.320929400 -0800
+@@ -47,6 +47,10 @@
+ 
+ #include <tf2_ros/buffer.h>
+ 
++#ifdef NO_ERROR
++#undef NO_ERROR
++#endif
++
+ namespace tf
+ {
+ /** \brief resolve tf names */

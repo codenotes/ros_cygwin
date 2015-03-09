@@ -1,0 +1,152 @@
+diff -ur PySide-1.2.2-orig/pyside_postinstall.py PySide-1.2.2/pyside_postinstall.py
+--- PySide-1.2.2-orig/pyside_postinstall.py	2014-04-24 01:38:38.000000000 -0700
++++ PySide-1.2.2/pyside_postinstall.py	2015-02-28 19:42:03.711242700 -0800
+@@ -194,18 +194,18 @@
+     pyside_path = os.path.abspath(os.path.dirname(PySide.__file__))
+     print("PySide package found in %s..." % pyside_path)
+ 
+-    executables = ['shiboken']
+-    if sys.platform.startswith('linux'):
+-        executables.append('patchelf')
+-        patchelf_path = os.path.join(pyside_path, "patchelf")
++    executables = ['shiboken.exe']
++    if sys.platform.startswith('cygwin'):
++        #executables.append('patchelf')
++        #patchelf_path = os.path.join(pyside_path, "patchelf")
+         from distutils.spawn import spawn
+ 
+-        def rpath_cmd(pyside_path, srcpath):
+-            cmd = [patchelf_path, '--set-rpath', pyside_path, srcpath]
+-            spawn(cmd, search_path=False, verbose=1)
++        #def rpath_cmd(pyside_path, srcpath):
++            #cmd = [patchelf_path, '--set-rpath', pyside_path, srcpath]
++            #spawn(cmd, search_path=False, verbose=1)
+ 
+         pyside_libs = [lib for lib in os.listdir(pyside_path) if filter_match(
+-                       lib, ["Qt*.so", "phonon.so", "shiboken"])]
++                       lib, ["Qt*.dll", "phonon.dll", "shiboken.exe"])]
+     elif sys.platform == 'darwin':
+         pyside_libs = [lib for lib in os.listdir(pyside_path) if filter_match(
+                        lib, ["*.so", "*.dylib", "shiboken"])]
+@@ -227,8 +227,8 @@
+         if os.path.isdir(srcname):
+             continue
+         srcpath = os.path.join(pyside_path, srcname)
+-        rpath_cmd(pyside_path, srcpath)
+-        print("Patched rpath in %s to %s." % (srcpath, pyside_path))
++        #rpath_cmd(pyside_path, srcpath)
++        #print("Patched rpath in %s to %s." % (srcpath, pyside_path))
+ 
+     # Check PySide installation status
+     try:
+Only in PySide-1.2.2: qtinfo.pyc
+diff -ur PySide-1.2.2-orig/setup.py PySide-1.2.2/setup.py
+--- PySide-1.2.2-orig/setup.py	2014-04-24 01:38:38.000000000 -0700
++++ PySide-1.2.2/setup.py	2015-02-28 19:43:48.157686300 -0800
+@@ -383,7 +383,7 @@
+                 py_library = os.path.join(py_libdir, "python%s%s.lib" % \
+                     (py_version.replace(".", ""), dbgPostfix))
+         else:
+-            lib_exts = ['.so']
++            lib_exts = ['.dll']
+             if sys.platform == 'darwin':
+                 lib_exts.append('.dylib')
+             if sys.version_info[0] > 2:
+@@ -392,6 +392,7 @@
+                 lib_suff = ''
+             lib_exts.append('.so.1')
+             lib_exts.append('.a') # static library as last gasp
++            lib_exts.append('.dll.a') # static library as last gasp
+ 
+             if sys.version_info[0] == 2 and dbgPostfix:
+                 # For Python2 add a duplicate set of extensions combined with
+@@ -647,6 +648,8 @@
+         return self.prepare_packages_posix(vars)
+ 
+     def prepare_packages_posix(self, vars):
++        so_ext = '.dll'
++        so_star = '.dll'
+         if sys.platform.startswith('linux'):
+             # patchelf -> PySide/patchelf
+             copyfile(
+@@ -670,8 +673,8 @@
+             vars=vars)
+         # <install>/lib/site-packages/shiboken.so -> <setup>/PySide/shiboken.so
+         copyfile(
+-            "{site_packages_dir}/shiboken.so",
+-            "{dist_dir}/PySide/shiboken.so",
++            "{site_packages_dir}/shiboken.dll",
++            "{dist_dir}/PySide/shiboken.dll",
+             vars=vars)
+         # <install>/lib/site-packages/pysideuic/* -> <setup>/pysideuic
+         copydir(
+@@ -697,7 +700,9 @@
+             filter=[
+                 "pyside-lupdate",
+                 "pyside-rcc",
+-                "shiboken",
++                "shiboken.exe",
++                "cygpyside*" + so_star,
++                "cygshiboken*" + so_star,
+             ],
+             recursive=False, vars=vars)
+         # <install>/lib/lib* -> PySide/
+@@ -755,12 +760,12 @@
+                 recursive=False, vars=vars)
+             # <qt>/plugins/* -> <setup>/PySide/plugins
+             copydir("{qt_plugins_dir}", "{dist_dir}/PySide/plugins",
+-                filter=["*.so"],
++                filter=["*.dll"],
+                 vars=vars)
+             # <qt>/imports/* -> <setup>/PySide/imports
+             if float(vars["qt_version"][:3]) > 4.6:
+                 copydir("{qt_imports_dir}", "{dist_dir}/PySide/imports",
+-                    filter=["qmldir", "*.so"],
++                    filter=["qmldir", "*.dll"],
+                     force=False, vars=vars)
+             # <qt>/translations/* -> <setup>/PySide/translations
+             copydir("{qt_translations_dir}", "{dist_dir}/PySide/translations",
+diff -ur PySide-1.2.2-orig/sources/pyside/PySide/QtCore/typesystem_core_common.xml PySide-1.2.2/sources/pyside/PySide/QtCore/typesystem_core_common.xml
+--- PySide-1.2.2-orig/sources/pyside/PySide/QtCore/typesystem_core_common.xml	2014-04-24 04:46:53.000000000 -0700
++++ PySide-1.2.2/sources/pyside/PySide/QtCore/typesystem_core_common.xml	2015-02-28 19:11:59.528897700 -0800
+@@ -3123,7 +3123,7 @@
+         <inject-code>
+             long result;
+             #ifdef WIN32
+-                _PROCESS_INFORMATION* procInfo = %CPPSELF.%FUNCTION_NAME();
++                _PROCESS_INFORMATION* procInfo = (_PROCESS_INFORMATION *)%CPPSELF.%FUNCTION_NAME();
+                 result = procInfo ? procInfo->dwProcessId : 0;
+             #else
+                 result = %CPPSELF.%FUNCTION_NAME();
+diff -ur PySide-1.2.2-orig/sources/pyside/PySide/QtGui/CMakeLists.txt PySide-1.2.2/sources/pyside/PySide/QtGui/CMakeLists.txt
+--- PySide-1.2.2-orig/sources/pyside/PySide/QtGui/CMakeLists.txt	2014-04-24 04:47:14.000000000 -0700
++++ PySide-1.2.2/sources/pyside/PySide/QtGui/CMakeLists.txt	2015-02-28 19:11:59.652897700 -0800
+@@ -98,7 +98,6 @@
+ ${CMAKE_CURRENT_BINARY_DIR}/PySide/QtGui/qabstracttextdocumentlayout_paintcontext_wrapper.cpp
+ ${CMAKE_CURRENT_BINARY_DIR}/PySide/QtGui/qabstracttextdocumentlayout_selection_wrapper.cpp
+ ${CMAKE_CURRENT_BINARY_DIR}/PySide/QtGui/qabstracttextdocumentlayout_wrapper.cpp
+-${CMAKE_CURRENT_BINARY_DIR}/PySide/QtGui/qaccessibleevent_wrapper.cpp
+ ${CMAKE_CURRENT_BINARY_DIR}/PySide/QtGui/qactionevent_wrapper.cpp
+ ${CMAKE_CURRENT_BINARY_DIR}/PySide/QtGui/qactiongroup_wrapper.cpp
+ ${CMAKE_CURRENT_BINARY_DIR}/PySide/QtGui/qaction_wrapper.cpp
+@@ -332,7 +331,6 @@
+ ${CMAKE_CURRENT_BINARY_DIR}/PySide/QtGui/qstyle_wrapper.cpp
+ ${CMAKE_CURRENT_BINARY_DIR}/PySide/QtGui/qsyntaxhighlighter_wrapper.cpp
+ ${CMAKE_CURRENT_BINARY_DIR}/PySide/QtGui/qtabbar_wrapper.cpp
+-${CMAKE_CURRENT_BINARY_DIR}/PySide/QtGui/qtabletevent_wrapper.cpp
+ ${CMAKE_CURRENT_BINARY_DIR}/PySide/QtGui/qtableview_wrapper.cpp
+ ${CMAKE_CURRENT_BINARY_DIR}/PySide/QtGui/qtablewidgetitem_wrapper.cpp
+ ${CMAKE_CURRENT_BINARY_DIR}/PySide/QtGui/qtablewidgetselectionrange_wrapper.cpp
+diff -ur PySide-1.2.2-orig/sources/shiboken/ApiExtractor/abstractmetabuilder.cpp PySide-1.2.2/sources/shiboken/ApiExtractor/abstractmetabuilder.cpp
+--- PySide-1.2.2-orig/sources/shiboken/ApiExtractor/abstractmetabuilder.cpp	2014-04-24 04:47:20.000000000 -0700
++++ PySide-1.2.2/sources/shiboken/ApiExtractor/abstractmetabuilder.cpp	2015-03-01 10:45:54.240657900 -0800
+@@ -219,6 +219,9 @@
+     AbstractMetaClass* baseoperandClass;
+     bool firstArgumentIsSelf = true;
+     bool unaryOperator = false;
++	
++	if (arguments.size() == 0)
++		return;
+ 
+     baseoperandClass = argumentToClass(arguments.at(0));
+ 

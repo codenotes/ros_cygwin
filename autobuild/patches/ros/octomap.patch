@@ -1,0 +1,47 @@
+Only in src/octomap/octomap: bin
+diff -ur src.orig/octomap/octomap/CMakeLists.txt src/octomap/octomap/CMakeLists.txt
+--- src.orig/octomap/octomap/CMakeLists.txt	2014-09-06 03:17:53.000000000 -0700
++++ src/octomap/octomap/CMakeLists.txt	2015-02-28 16:29:29.193702200 -0800
+@@ -34,7 +34,7 @@
+ SET( BASE_DIR ${CMAKE_SOURCE_DIR} )
+ SET( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${BASE_DIR}/lib )
+ SET( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${BASE_DIR}/lib )
+-SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BASE_DIR}/bin )
++SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BASE_DIR}/lib )
+ 
+ set(INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
+ INCLUDE_DIRECTORIES(${INCLUDE_DIRS})
+@@ -44,7 +44,7 @@
+ # Installation
+ 
+ set(INSTALL_TARGETS_DEFAULT_ARGS
+-	RUNTIME DESTINATION bin
++	RUNTIME DESTINATION lib
+ 	LIBRARY DESTINATION lib
+ 	ARCHIVE DESTINATION lib
+ )
+Only in src/octomap/octomap: lib
+diff -ur src.orig/octomap/octomap/octomap-config.cmake.in src/octomap/octomap/octomap-config.cmake.in
+--- src.orig/octomap/octomap/octomap-config.cmake.in	2014-09-06 03:17:53.000000000 -0700
++++ src/octomap/octomap/octomap-config.cmake.in	2015-02-28 16:34:18.001702200 -0800
+@@ -26,9 +26,16 @@
+ set(OCTOMAP_INCLUDE_DIRS "@OCTOMAP_INCLUDE_DIRS@")
+ set(OCTOMAP_LIBRARY_DIRS "@OCTOMAP_LIB_DIR@")
+  
+-
+ # Set library names as absolute paths:
++
++if(CYGWIN)
++set(OCTOMAP_LIBRARIES
++  "@OCTOMAP_LIB_DIR@/cygoctomap-@OCTOMAP_SOVERSION@@CMAKE_SHARED_LIBRARY_SUFFIX@"
++  "@OCTOMAP_LIB_DIR@/cygoctomath-@OCTOMAP_SOVERSION@@CMAKE_SHARED_LIBRARY_SUFFIX@"
++)
++else()
+ set(OCTOMAP_LIBRARIES
+   "@OCTOMAP_LIB_DIR@/liboctomap@CMAKE_SHARED_LIBRARY_SUFFIX@"
+   "@OCTOMAP_LIB_DIR@/liboctomath@CMAKE_SHARED_LIBRARY_SUFFIX@"
+-)
+\ No newline at end of file
++)
++endif()
+\ No newline at end of file

@@ -1,0 +1,14 @@
+--- pcl-pcl-1.7.1-orig/CMakeLists.txt	2013-10-07 06:09:35.000000000 -0700
++++ pcl-pcl-1.7.1/CMakeLists.txt	2015-02-27 20:08:16.060334500 -0800
+@@ -91,9 +91,9 @@
+     endif ()
+   endif()
+ 
+-  if(NOT ANDROID)
++  if(NOT ANDROID AND NOT CYGWIN)
+     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+-  endif(NOT ANDROID)
++  endif(NOT ANDROID AND NOT CYGWIN)
+ 
+   if(WIN32)
+     if(PCL_SHARED_LIBS)

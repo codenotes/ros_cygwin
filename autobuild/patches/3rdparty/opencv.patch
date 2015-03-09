@@ -1,0 +1,25 @@
+filter.cpp opencv-2.4.9.fixed/modules/legacy/src/calibfilter.cpp
+--- opencv-2.4.9/modules/legacy/src/calibfilter.cpp	2014-04-11 03:15:26.000000000 -0700
++++ opencv-2.4.9.fixed/modules/legacy/src/calibfilter.cpp	2015-02-25 15:10:23.852749500 -0800
+@@ -42,7 +42,9 @@
+ #include "precomp.hpp"
+ #include <stdio.h>
+ 
++#ifndef __CYGWIN__
+ #undef quad
++#endif
+ 
+ CvCalibFilter::CvCalibFilter()
+ {
+diff -ur opencv-2.4.9/modules/legacy/src/epilines.cpp opencv-2.4.9.fixed/modules/legacy/src/epilines.cpp
+--- opencv-2.4.9/modules/legacy/src/epilines.cpp	2014-04-11 03:15:26.000000000 -0700
++++ opencv-2.4.9.fixed/modules/legacy/src/epilines.cpp	2015-02-25 15:10:43.990749500 -0800
+@@ -46,7 +46,9 @@
+ 
+ /* Valery Mosyagin */
+ 
++#ifndef __CYGWIN__
+ #undef quad
++#endif
+ 
+ #define EPS64D 1e-9

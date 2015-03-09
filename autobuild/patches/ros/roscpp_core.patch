@@ -1,0 +1,12 @@
+diff -ur src.orig/roscpp_core/cpp_common/include/ros/types.h src/roscpp_core/cpp_common/include/ros/types.h
+--- src.orig/roscpp_core/cpp_common/include/ros/types.h	2014-12-22 18:31:24.000000000 -0800
++++ src/roscpp_core/cpp_common/include/ros/types.h	2015-02-26 11:26:38.189884000 -0800
+@@ -44,5 +44,8 @@
+   #include <stdint.h>
+ #endif
+ 
++#ifdef DELETE
++#undef DELETE
++#endif
+ 
+ #endif // ROSCPP_TYPES_H

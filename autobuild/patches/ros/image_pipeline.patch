@@ -1,0 +1,41 @@
+Only in src/image_pipeline: image_pipeline.patch
+diff -ur src.orig/image_pipeline/image_view/CMakeLists.txt src/image_pipeline/image_view/CMakeLists.txt
+--- src.orig/image_pipeline/image_view/CMakeLists.txt	2014-12-30 15:16:39.000000000 -0800
++++ src/image_pipeline/image_view/CMakeLists.txt	2015-02-28 09:52:00.654449200 -0800
+@@ -19,13 +19,16 @@
+ )
+ add_definitions(-DHAVE_GTK)
+ 
++if(CYGWIN)
++include_directories(/usr/include/gtk-2.0)
++endif()
++
+ 
+ # Nodelet library
+ add_library(image_view src/nodelets/image_nodelet.cpp src/nodelets/disparity_nodelet.cpp src/nodelets/window_thread.cpp)
+ target_link_libraries(image_view ${catkin_LIBRARIES}
+                                  ${GTK_LIBRARIES}
+                                  ${GTK2_LIBRARIES}
+-                                 ${OpenCV_LIBRARIES}
+                                  ${Boost_LIBRARIES}
+ )
+ install(TARGETS image_view
+@@ -49,7 +52,6 @@
+                                   ${catkin_LIBRARIES}
+                                   ${GTK_LIBRARIES}
+                                   ${GTK2_LIBRARIES}
+-                                  ${OpenCV_LIBRARIES}
+ )
+ 
+ 
+diff -ur src.orig/image_pipeline/stereo_image_proc/CMakeLists.txt src/image_pipeline/stereo_image_proc/CMakeLists.txt
+--- src.orig/image_pipeline/stereo_image_proc/CMakeLists.txt	2014-12-30 15:16:46.000000000 -0800
++++ src/image_pipeline/stereo_image_proc/CMakeLists.txt	2015-02-28 10:15:23.869159600 -0800
+@@ -26,7 +26,6 @@
+ # Nodelet library
+ add_library(${PROJECT_NAME} src/libstereo_image_proc/processor.cpp src/nodelets/disparity.cpp src/nodelets/point_cloud2.cpp)
+ target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES}
+-                                      ${OpenCV_LIBRARIES}
+ )
+ add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_gencfg)
+ install(TARGETS ${PROJECT_NAME}

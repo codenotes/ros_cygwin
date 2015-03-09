@@ -1,0 +1,11 @@
+diff -ur src.orig/rosconsole_bridge/CMakeLists.txt src/rosconsole_bridge/CMakeLists.txt
+--- src.orig/rosconsole_bridge/CMakeLists.txt	2014-07-18 12:08:23.000000000 -0700
++++ src/rosconsole_bridge/CMakeLists.txt	2015-02-26 14:39:33.305996900 -0800
+@@ -22,6 +22,7 @@
+   TARGETS ${PROJECT_NAME}
+   ARCHIVE DESTINATION lib
+   LIBRARY DESTINATION lib
++  RUNTIME DESTINATION lib
+ )
+ 
+ install(

@@ -1,0 +1,22 @@
+diff -ur src.orig/image_common/camera_calibration_parsers/CMakeLists.txt src/image_common/camera_calibration_parsers/CMakeLists.txt
+--- src.orig/image_common/camera_calibration_parsers/CMakeLists.txt	2014-09-21 03:04:42.000000000 -0700
++++ src/image_common/camera_calibration_parsers/CMakeLists.txt	2015-02-27 13:19:57.885405800 -0800
+@@ -11,11 +11,18 @@
+   CATKIN_DEPENDS sensor_msgs
+ )
+ 
++if (CYGWIN)
++  link_directories(/usr/local/lib)
++else()
+ find_package(PkgConfig)
+ pkg_check_modules(YAML_CPP yaml-cpp)
++
+ if(${YAML_CPP_VERSION} VERSION_GREATER 0.5)
+   add_definitions(-DHAVE_NEW_YAMLCPP)
+ endif()
++
++endif()
++
+ include_directories(${YAML_CPP_INCLUDE_DIRS})
+ link_directories(${YAML_CPP_LIBRARY_DIRS})
+ 

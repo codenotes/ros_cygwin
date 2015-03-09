@@ -1,0 +1,397 @@
+diff -urN ogre_src_v1-8-1/CMake/ConfigureBuild.cmake ogre_src_v1-8-1.fixed/CMake/ConfigureBuild.cmake
+--- ogre_src_v1-8-1/CMake/ConfigureBuild.cmake	2012-09-01 22:27:14.000000000 -0700
++++ ogre_src_v1-8-1.fixed/CMake/ConfigureBuild.cmake	2015-02-25 12:47:04.345349100 -0800
+@@ -33,7 +33,7 @@
+ # configure threading options
+ set(OGRE_THREAD_PROVIDER 0)
+ if (OGRE_CONFIG_THREADS)
+-	if (UNIX)
++	if (UNIX AND NOT CYGWIN)
+ 		add_definitions(-pthread)
+ 	endif ()
+ 
+diff -urN ogre_src_v1-8-1/CMake/Dependencies.cmake ogre_src_v1-8-1.fixed/CMake/Dependencies.cmake
+--- ogre_src_v1-8-1/CMake/Dependencies.cmake	2012-09-01 22:27:14.000000000 -0700
++++ ogre_src_v1-8-1.fixed/CMake/Dependencies.cmake	2015-02-25 12:43:17.465663400 -0800
+@@ -72,7 +72,7 @@
+ macro_log_feature(FREETYPE_FOUND "freetype" "Portable font engine" "http://www.freetype.org" TRUE "" "")
+ 
+ # Find X11
+-if (UNIX AND NOT APPLE)
++if (UNIX AND NOT APPLE AND NOT CYGWIN)
+   find_package(X11)
+   macro_log_feature(X11_FOUND "X11" "X Window system" "http://www.x.org" TRUE "" "")
+   macro_log_feature(X11_Xt_FOUND "Xt" "X Toolkit" "http://www.x.org" TRUE "" "")
+diff -urN ogre_src_v1-8-1/CMake/Packages/FindFreetype.cmake ogre_src_v1-8-1.fixed/CMake/Packages/FindFreetype.cmake
+--- ogre_src_v1-8-1/CMake/Packages/FindFreetype.cmake	2012-09-01 22:27:14.000000000 -0700
++++ ogre_src_v1-8-1.fixed/CMake/Packages/FindFreetype.cmake	2015-02-25 12:43:17.470663900 -0800
+@@ -43,8 +43,10 @@
+ findpkg_framework(FREETYPE)
+ message(STATUS "CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
+ 
+-find_path(FREETYPE_INCLUDE_DIR NAMES freetype/freetype.h HINTS ${FREETYPE_INC_SEARCH_PATH} ${FREETYPE_PKGC_INCLUDE_DIRS} PATH_SUFFIXES freetype2)
+-find_path(FREETYPE_FT2BUILD_INCLUDE_DIR NAMES ft2build.h HINTS ${FREETYPE_INC_SEARCH_PATH} ${FREETYPE_PKGC_INCLUDE_DIRS})
++find_path(FREETYPE_INCLUDE_DIR NAMES freetype2/freetype.h HINTS ${FREETYPE_INC_SEARCH_PATH} ${FREETYPE_PKGC_INCLUDE_DIRS} PATH_SUFFIXES freetype2)
++find_path(FREETYPE_FT2BUILD_INCLUDE_DIR NAMES ft2build.h HINTS ${FREETYPE_INC_SEARCH_PATH} ${FREETYPE_PKGC_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIR}/freetype2)
++message(STATUS "FREETYPE_INCLUDE_DIR: ${FREETYPE_INCLUDE_DIR}")
++message(STATUS "FREETYPE_FT2BUILD_INCLUDE_DIR: ${FREETYPE_FT2BUILD_INCLUDE_DIR}")
+ 
+ find_library(FREETYPE_LIBRARY_REL NAMES ${FREETYPE_LIBRARY_NAMES} HINTS ${FREETYPE_LIB_SEARCH_PATH} ${FREETYPE_PKGC_LIBRARY_DIRS} PATH_SUFFIXES "" release relwithdebinfo minsizerel)
+ find_library(FREETYPE_LIBRARY_DBG NAMES ${FREETYPE_LIBRARY_NAMES_DBG} HINTS ${FREETYPE_LIB_SEARCH_PATH} ${FREETYPE_PKGC_LIBRARY_DIRS} PATH_SUFFIXES "" debug)
+diff -urN ogre_src_v1-8-1/CMakeLists.txt ogre_src_v1-8-1.fixed/CMakeLists.txt
+--- ogre_src_v1-8-1/CMakeLists.txt	2012-09-01 22:27:14.000000000 -0700
++++ ogre_src_v1-8-1.fixed/CMakeLists.txt	2015-02-25 12:53:28.038401800 -0800
+@@ -123,11 +123,13 @@
+     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
+   endif ()
+ endif ()
+-if (MINGW)
++if (MINGW OR CYGWIN)
+   add_definitions(-D_WIN32_WINNT=0x0500)
+   # set architecture to i686, since otherwise some versions of MinGW can't link 
+   # the atomic primitives
+-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=i686")
++  if (${CMAKE_SIZEOF_VOID_P} MATCHES 4)
++	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=i686")
++  endif()
+   # disable this optimisation because it breaks release builds (reason unknown)
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-tree-slp-vectorize")
+ endif ()
+diff -urN ogre_src_v1-8-1/OgreMain/CMakeLists.txt ogre_src_v1-8-1.fixed/OgreMain/CMakeLists.txt
+--- ogre_src_v1-8-1/OgreMain/CMakeLists.txt	2012-09-01 22:27:15.000000000 -0700
++++ ogre_src_v1-8-1.fixed/OgreMain/CMakeLists.txt	2015-02-25 12:43:17.483665200 -0800
+@@ -481,7 +481,7 @@
+   )
+   set(PLATFORM_LIBS nosys)
+   set(PLATFORM_HEADER_INSTALL "NaCl")
+-elseif (WIN32)
++elseif (WIN32 OR CYGWIN)
+   include_directories("include/WIN32")
+   set(PLATFORM_HEADER_FILES
+     include/WIN32/OgreConfigDialogImp.h
+@@ -495,6 +495,7 @@
+     src/WIN32/OgreTimer.cpp
+     src/WIN32/resource.h
+     src/WIN32/winres.h
++    src/OgreSearchOps.cpp
+   )  
+   set(RESOURCE_FILES
+     src/WIN32/resource.h
+@@ -504,7 +505,7 @@
+   source_group(Resources FILES ${RESOURCE_FILES})
+   set(PLATFORM_HEADER_INSTALL "WIN32")
+  
+-  if (MINGW) 
++  if (MINGW OR CYGWIN) 
+     # Older CMake versions do not know how to deal with resource files on MinGW.
+ 	# Newer ones do, but pass along invalid command options to windres.
+     # This is a manual fix for the moment.
+@@ -729,7 +730,7 @@
+   # Framework is called 'Ogre'
+   set_target_properties(OgreMain PROPERTIES	OUTPUT_NAME Ogre)
+ endif ()
+-target_link_libraries(OgreMain ${LIBRARIES})
++target_link_libraries(OgreMain ${LIBRARIES} -lz)
+ if (MINGW)
+   # may need winsock htons functions for FreeImage
+   target_link_libraries(OgreMain ws2_32)
+diff -urN ogre_src_v1-8-1/OgreMain/include/OgreConfigDialog.h ogre_src_v1-8-1.fixed/OgreMain/include/OgreConfigDialog.h
+--- ogre_src_v1-8-1/OgreMain/include/OgreConfigDialog.h	2012-09-01 22:27:15.000000000 -0700
++++ ogre_src_v1-8-1.fixed/OgreMain/include/OgreConfigDialog.h	2015-02-25 12:43:17.489665800 -0800
+@@ -32,7 +32,9 @@
+ #include "OgrePlatform.h"
+ 
+ // Bring in the specific platform's header file: first allow forced override
+-#if defined OGRE_GUI_WIN32
++#ifdef __CYGWIN__
++# include "WIN32/OgreConfigDialogImp.h"
++#elif defined OGRE_GUI_WIN32
+ # include "WIN32/OgreConfigDialogImp.h"
+ #elif defined OGRE_GUI_gtk
+ # include "gtk/OgreConfigDialogImp.h"
+diff -urN ogre_src_v1-8-1/OgreMain/include/OgreErrorDialog.h ogre_src_v1-8-1.fixed/OgreMain/include/OgreErrorDialog.h
+--- ogre_src_v1-8-1/OgreMain/include/OgreErrorDialog.h	2012-09-01 22:27:15.000000000 -0700
++++ ogre_src_v1-8-1.fixed/OgreMain/include/OgreErrorDialog.h	2015-02-25 12:43:17.494666300 -0800
+@@ -32,7 +32,9 @@
+ #include "OgrePlatform.h"
+ 
+ // Bring in the specific platform's header file
+-#if defined OGRE_GUI_WIN32
++#ifdef __CYGWIN__
++# include "WIN32/OgreErrorDialogImp.h"
++#elif defined OGRE_GUI_WIN32
+ # include "WIN32/OgreErrorDialogImp.h"
+ #elif defined OGRE_GUI_gtk
+ # include "gtk/OgreErrorDialogImp.h"
+diff -urN ogre_src_v1-8-1/OgreMain/include/OgreTimer.h ogre_src_v1-8-1.fixed/OgreMain/include/OgreTimer.h
+--- ogre_src_v1-8-1/OgreMain/include/OgreTimer.h	2012-09-01 22:27:15.000000000 -0700
++++ ogre_src_v1-8-1.fixed/OgreMain/include/OgreTimer.h	2015-02-25 12:43:17.500666900 -0800
+@@ -32,7 +32,7 @@
+ #include "OgrePlatform.h"
+ 
+ //Bring in the specific platform's header file
+-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
++#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32 || defined(__CYGWIN__)
+ # include "WIN32/OgreTimerImp.h"
+ #elif OGRE_PLATFORM == OGRE_PLATFORM_LINUX
+ # include "GLX/OgreTimerImp.h"
+diff -urN ogre_src_v1-8-1/OgreMain/include/OgreWindowEventUtilities.h ogre_src_v1-8-1.fixed/OgreMain/include/OgreWindowEventUtilities.h
+--- ogre_src_v1-8-1/OgreMain/include/OgreWindowEventUtilities.h	2012-09-01 22:27:15.000000000 -0700
++++ ogre_src_v1-8-1.fixed/OgreMain/include/OgreWindowEventUtilities.h	2015-02-25 12:43:17.506667500 -0800
+@@ -31,7 +31,7 @@
+ #include "OgrePrerequisites.h"
+ #include "OgrePlatform.h"
+ 
+-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
++#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32 || defined(__CYGWIN__)
+ #  if !defined(WIN32_LEAN_AND_MEAN)
+ #   define WIN32_LEAN_AND_MEAN
+ #  endif
+@@ -167,7 +167,7 @@
+ 		*/
+ 		static void _removeRenderWindow(RenderWindow* window);
+ 
+-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
++#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32 || defined(__CYGWIN__)
+ 		//! Internal winProc (RenderWindow's use this when creating the Win32 Window)
+ 		static LRESULT CALLBACK _WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+ #elif OGRE_PLATFORM == OGRE_PLATFORM_APPLE && !defined __OBJC__ && !defined(__LP64__)
+diff -urN ogre_src_v1-8-1/OgreMain/src/OgreWindowEventUtilities.cpp ogre_src_v1-8-1.fixed/OgreMain/src/OgreWindowEventUtilities.cpp
+--- ogre_src_v1-8-1/OgreMain/src/OgreWindowEventUtilities.cpp	2012-09-01 22:27:15.000000000 -0700
++++ ogre_src_v1-8-1.fixed/OgreMain/src/OgreWindowEventUtilities.cpp	2015-02-25 12:43:17.512668100 -0800
+@@ -32,7 +32,7 @@
+ #include "OgreRoot.h"
+ #include "OgreException.h"
+ #include "OgreStringConverter.h"
+-#if OGRE_PLATFORM == OGRE_PLATFORM_LINUX
++#if OGRE_PLATFORM == OGRE_PLATFORM_LINUX && !defined(__CYGWIN__)
+ #include <X11/Xlib.h>
+ void GLXProc( Ogre::RenderWindow *win, const XEvent &event );
+ #endif
+@@ -46,7 +46,7 @@
+ //--------------------------------------------------------------------------------//
+ void WindowEventUtilities::messagePump()
+ {
+-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
++#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32 || defined(__CYGWIN__)
+ 	// Windows Message Loop (NULL means check all HWNDs belonging to this context)
+ 	MSG  msg;
+ 	while( PeekMessage( &msg, NULL, 0U, 0U, PM_REMOVE ) )
+@@ -137,7 +137,7 @@
+ }
+ 
+ }
+-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
++#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32  || defined(__CYGWIN__)
+ //--------------------------------------------------------------------------------//
+ namespace Ogre {
+ LRESULT CALLBACK WindowEventUtilities::_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+diff -urN ogre_src_v1-8-1/OgreMain/src/WIN32/OgreConfigDialog.cpp ogre_src_v1-8-1.fixed/OgreMain/src/WIN32/OgreConfigDialog.cpp
+--- ogre_src_v1-8-1/OgreMain/src/WIN32/OgreConfigDialog.cpp	2012-09-01 22:27:15.000000000 -0700
++++ ogre_src_v1-8-1.fixed/OgreMain/src/WIN32/OgreConfigDialog.cpp	2015-02-25 12:43:17.518668700 -0800
+@@ -46,9 +46,9 @@
+ 		mHInstance = GetModuleHandle( NULL );
+ #else
+ #  if OGRE_DEBUG_MODE == 1
+-        mHInstance = GetModuleHandle("OgreMain_d.dll");
++        mHInstance = GetModuleHandle("cygOgreMain_d.dll");
+ #  else
+-        mHInstance = GetModuleHandle("OgreMain.dll");
++        mHInstance = GetModuleHandle("cygOgreMain.dll");
+ #  endif
+ #endif
+         mSelectedRenderSystem = 0;
+diff -urN ogre_src_v1-8-1/OgreMain/src/WIN32/OgreErrorDialog.cpp ogre_src_v1-8-1.fixed/OgreMain/src/WIN32/OgreErrorDialog.cpp
+--- ogre_src_v1-8-1/OgreMain/src/WIN32/OgreErrorDialog.cpp	2012-09-01 22:27:15.000000000 -0700
++++ ogre_src_v1-8-1.fixed/OgreMain/src/WIN32/OgreErrorDialog.cpp	2015-02-25 12:43:17.524669300 -0800
+@@ -41,9 +41,9 @@
+ 		mHInstance = GetModuleHandle( NULL );
+ #else
+ #  if OGRE_DEBUG_MODE == 1
+-        mHInstance = GetModuleHandle("OgreMain_d.dll");
++        mHInstance = GetModuleHandle("cygOgreMain_d.dll");
+ #  else
+-        mHInstance = GetModuleHandle("OgreMain.dll");
++        mHInstance = GetModuleHandle("cygOgreMain.dll");
+ #  endif
+ #endif
+     }
+diff -urN ogre_src_v1-8-1/RenderSystems/GL/include/GL/glew.h ogre_src_v1-8-1.fixed/RenderSystems/GL/include/GL/glew.h
+--- ogre_src_v1-8-1/RenderSystems/GL/include/GL/glew.h	2012-09-01 22:27:15.000000000 -0700
++++ ogre_src_v1-8-1.fixed/RenderSystems/GL/include/GL/glew.h	2015-02-25 12:43:17.546671500 -0800
+@@ -102,7 +102,7 @@
+ #define GLEW_STATIC
+ // SJS
+ 
+-#if defined(_WIN32)
++#if defined(_WIN32) || defined(__CYGWIN__)
+ 
+ /*
+  * GLEW does not include <windows.h> to avoid name space pollution.
+@@ -13382,7 +13382,7 @@
+ 
+ /* ------------------------------------------------------------------------- */
+ 
+-#if defined(GLEW_MX) && defined(_WIN32)
++#if defined(GLEW_MX) && (defined(_WIN32) || defined(__CYGWIN__))
+ #define GLEW_FUN_EXPORT
+ #else
+ #define GLEW_FUN_EXPORT GLEWAPI
+@@ -13394,7 +13394,7 @@
+ #define GLEW_VAR_EXPORT GLEWAPI
+ #endif /* GLEW_MX */
+ 
+-#if defined(GLEW_MX) && defined(_WIN32)
++#if defined(GLEW_MX) && (defined(_WIN32) || defined(__CYGWIN__))
+ struct GLEWContextStruct
+ {
+ #endif /* GLEW_MX */
+@@ -15612,7 +15612,7 @@
+ 
+ GLEW_FUN_EXPORT PFNGLADDSWAPHINTRECTWINPROC __glewAddSwapHintRectWIN;
+ 
+-#if defined(GLEW_MX) && !defined(_WIN32)
++#if defined(GLEW_MX) && !defined(_WIN32) && !defined(__CYGWIN__)
+ struct GLEWContextStruct
+ {
+ #endif /* GLEW_MX */
+@@ -16082,7 +16082,7 @@
+ #define glewIsExtensionSupported(x) glewIsSupported(x)
+ 
+ #define GLEW_GET_VAR(x) (*(const GLboolean*)&(glewGetContext()->x))
+-#ifdef _WIN32
++#if defined(_WIN32) || defined(__CYGWIN__)
+ #  define GLEW_GET_FUN(x) glewGetContext()->x
+ #else
+ #  define GLEW_GET_FUN(x) x
+diff -urN ogre_src_v1-8-1/RenderSystems/GL/include/OgreGLPrerequisites.h ogre_src_v1-8-1.fixed/RenderSystems/GL/include/OgreGLPrerequisites.h
+--- ogre_src_v1-8-1/RenderSystems/GL/include/OgreGLPrerequisites.h	2012-09-01 22:27:15.000000000 -0700
++++ ogre_src_v1-8-1.fixed/RenderSystems/GL/include/OgreGLPrerequisites.h	2015-02-25 12:43:17.552672100 -0800
+@@ -49,7 +49,7 @@
+ #	define GLEW_MX
+ #endif
+ 
+-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
++#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32 || defined(__CYGWIN__)
+ #if !defined( __MINGW32__ )
+ #   define WIN32_LEAN_AND_MEAN
+ #  ifndef NOMINMAX
+diff -urN ogre_src_v1-8-1/RenderSystems/GL/src/glew.cpp ogre_src_v1-8-1.fixed/RenderSystems/GL/src/glew.cpp
+--- ogre_src_v1-8-1/RenderSystems/GL/src/glew.cpp	2012-09-01 22:27:15.000000000 -0700
++++ ogre_src_v1-8-1.fixed/RenderSystems/GL/src/glew.cpp	2015-02-25 12:43:17.568673700 -0800
+@@ -34,7 +34,7 @@
+ // SJS
+ 
+ #include <GL/glew.h>
+-#if defined(_WIN32)
++#if defined(_WIN32) || defined(__CYGWIN__)
+ #  include <GL/wglew.h>
+ #elif !defined(__APPLE__) || defined(GLEW_APPLE_GLX)
+ #  include <GL/glxew.h>
+@@ -45,7 +45,7 @@
+  */
+ #ifdef GLEW_MX
+ #  define glewGetContext() ctx
+-#  ifdef _WIN32
++#  if defined(_WIN32)  || defined(__CYGWIN__)
+ #    define GLEW_CONTEXT_ARG_DEF_INIT GLEWContext* ctx
+ #    define GLEW_CONTEXT_ARG_VAR_INIT ctx
+ #    define wglewGetContext() ctx
+@@ -161,7 +161,7 @@
+ /*
+  * Define glewGetProcAddress.
+  */
+-#if defined(_WIN32)
++#if defined(_WIN32)  || defined(__CYGWIN__)
+ #  define glewGetProcAddress(name) wglGetProcAddress((LPCSTR)name)
+ #else
+ #  if defined(__APPLE__)
+@@ -282,7 +282,7 @@
+   return GL_FALSE;
+ }
+ 
+-#if !defined(_WIN32) || !defined(GLEW_MX)
++#if (!defined(_WIN32) && !defined(__CYGWIN__)) || !defined(GLEW_MX)
+ 
+ PFNGLCOPYTEXSUBIMAGE3DPROC __glewCopyTexSubImage3D = NULL;
+ PFNGLDRAWRANGEELEMENTSPROC __glewDrawRangeElements = NULL;
+@@ -9926,7 +9926,7 @@
+ }
+ 
+ 
+-#if defined(_WIN32)
++#if defined(_WIN32)  || defined(__CYGWIN__)
+ 
+ #if !defined(GLEW_MX)
+ 
+@@ -11974,7 +11974,7 @@
+ 
+ #if !defined(GLEW_MX)
+ 
+-#if defined(_WIN32)
++#if defined(_WIN32)  || defined(__CYGWIN__)
+ extern GLenum wglewContextInit (void);
+ #elif !defined(__APPLE__) || defined(GLEW_APPLE_GLX) /* _UNIX */
+ extern GLenum glxewContextInit (void);
+@@ -15126,7 +15126,7 @@
+   return ret;
+ }
+ 
+-#if defined(_WIN32)
++#if defined(_WIN32)  || defined(__CYGWIN__)
+ 
+ #if defined(GLEW_MX)
+ GLboolean wglewContextIsSupported (const WGLEWContext* ctx, const char* name)
+diff -urN ogre_src_v1-8-1/RenderSystems/GL/src/nvparse/_vs1.0_lexer.cpp ogre_src_v1-8-1.fixed/RenderSystems/GL/src/nvparse/_vs1.0_lexer.cpp
+--- ogre_src_v1-8-1/RenderSystems/GL/src/nvparse/_vs1.0_lexer.cpp	2012-09-01 22:27:15.000000000 -0700
++++ ogre_src_v1-8-1.fixed/RenderSystems/GL/src/nvparse/_vs1.0_lexer.cpp	2015-02-25 12:43:17.576674500 -0800
+@@ -1,4 +1,5 @@
+ #include <ctype.h>
++#include <sys/unistd.h>
+ 
+ #define yy_create_buffer vs10__create_buffer
+ #define yy_delete_buffer vs10__delete_buffer
+diff -urN ogre_src_v1-8-1/RenderSystems/GL/src/nvparse/winheaders/unistd.h ogre_src_v1-8-1.fixed/RenderSystems/GL/src/nvparse/winheaders/unistd.h
+--- ogre_src_v1-8-1/RenderSystems/GL/src/nvparse/winheaders/unistd.h	2012-09-01 22:27:15.000000000 -0700
++++ ogre_src_v1-8-1.fixed/RenderSystems/GL/src/nvparse/winheaders/unistd.h	2015-02-25 13:12:28.932997000 -0800
+@@ -1 +1,4 @@
+ // to make flex and vc++ play nice together
++#ifdef __CYGWIN__
++#include <sys/unistd.h>
++#endif
+diff -urN ogre_src_v1-8-1/Samples/Browser/CMakeLists.txt ogre_src_v1-8-1.fixed/Samples/Browser/CMakeLists.txt
+--- ogre_src_v1-8-1/Samples/Browser/CMakeLists.txt	2012-09-01 22:27:15.000000000 -0700
++++ ogre_src_v1-8-1.fixed/Samples/Browser/CMakeLists.txt	2015-02-25 12:43:17.582675100 -0800
+@@ -163,7 +163,7 @@
+         ${OGRE_SOURCE_DIR}/RenderSystems/GL/include/OSX
+         )
+ 
+-	target_link_libraries(SampleBrowser ${OPENGL_LIBRARIES} ${CoreVideo_LIBRARIES})
++	target_link_libraries(SampleBrowser ${OPENGL_LIBRARIES} ${CoreVideo_LIBRARIES} -lole32 -loleaut32 -ldinput8)
+ 
+     # Add the path where the Ogre framework was found, if it has been found somewhere
+     if(NOT ${OGRE_FRAMEWORK_PATH} STREQUAL "" AND OGRE_SDK_BUILD)
+diff -urN ogre_src_v1-8-1/RenderSystems/GL/CMakeLists.txt ogre_src_v1-8-1.fixed/RenderSystems/GL/CMakeLists.txt
+--- ogre_src_v1-8-1.orig/RenderSystems/GL/CMakeLists.txt	2012-09-01 22:27:15.000000000 -0700
++++ ogre_src_v1-8-1/RenderSystems/GL/CMakeLists.txt	2015-02-26 15:19:53.337421300 -0800
+@@ -137,7 +137,7 @@
+ )
+ 
+ # Add system specific settings
+-if (WIN32)
++if (WIN32 OR CYGWIN)
+   set(PLATFORM_HEADERS 
+     include/OgreWin32Context.h
+     include/OgreWin32GLSupport.h
+@@ -222,7 +222,11 @@
+ #Note that in the next row SOURCE_FILES are added last. This is to prevent compilation problems of unity build found on Windows Visual Studio. 
+ #In this situation any file added after the "glew.cpp" file, which belongs to the SOURCE_FILES package, does not compile
+ ogre_add_library(RenderSystem_GL ${OGRE_LIB_TYPE} ${HEADER_FILES} ${GLSL_FILES} ${ATIFS_FILES} ${NVPARSE_FILES} ${PLATFORM_HEADERS} ${PLATFORM_SOURCES} ${SOURCE_FILES})
++if (CYGWIN)
++target_link_libraries(RenderSystem_GL OgreMain  -luser32 -lgdi32 -lopengl32 -lglu32)
++else()
+ target_link_libraries(RenderSystem_GL OgreMain ${OPENGL_LIBRARIES} ${PLATFORM_LIBS})
++endif()
+ 
+ if (NOT OGRE_STATIC)
+   set_target_properties(RenderSystem_GL PROPERTIES

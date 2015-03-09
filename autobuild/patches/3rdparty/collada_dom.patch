@@ -1,0 +1,64 @@
+diff -ur collada-dom-2.4.0-orig/dom/external-libs/minizip-1.1/ioapi.c collada-dom-2.4.0/dom/external-libs/minizip-1.1/ioapi.c
+--- collada-dom-2.4.0-orig/dom/external-libs/minizip-1.1/ioapi.c	2011-02-21 19:54:41.000000000 -0800
++++ collada-dom-2.4.0/dom/external-libs/minizip-1.1/ioapi.c	2015-02-27 15:16:06.262468900 -0800
+@@ -16,6 +16,12 @@
+ 
+ #include "ioapi.h"
+ 
++#if defined(__LP64__) && defined(__CYGWIN__)
++#define _fopen64 fopen
++#define _fseeko64 fseeko
++#define _ftello64 ftello
++#endif
++
+ voidpf call_zopen64 (const zlib_filefunc64_32_def* pfilefunc,const void*filename,int mode)
+ {
+     if (pfilefunc->zfile_func64.zopen64_file != NULL)
+@@ -112,7 +118,7 @@
+         mode_fopen = "wb";
+ 
+     if ((filename!=NULL) && (mode_fopen != NULL))
+-        file = fopen64((const char*)filename, mode_fopen);
++        file = _fopen64((const char*)filename, mode_fopen);
+     return file;
+ }
+ 
+@@ -142,7 +148,7 @@
+ static ZPOS64_T ZCALLBACK ftell64_file_func (voidpf opaque, voidpf stream)
+ {
+     ZPOS64_T ret;
+-    ret = ftello64((FILE *)stream);
++    ret = _ftello64((FILE *)stream);
+     return ret;
+ }
+ 
+@@ -188,7 +194,7 @@
+     }
+     ret = 0;
+ 
+-    if(fseeko64((FILE *)stream, offset, fseek_origin) != 0)
++    if(_fseeko64((FILE *)stream, offset, fseek_origin) != 0)
+                         ret = -1;
+ 
+     return ret;
+diff -ur collada-dom-2.4.0-orig/dom/src/dae/daeUtils.cpp collada-dom-2.4.0/dom/src/dae/daeUtils.cpp
+--- collada-dom-2.4.0-orig/dom/src/dae/daeUtils.cpp	2011-02-26 19:42:47.000000000 -0800
++++ collada-dom-2.4.0/dom/src/dae/daeUtils.cpp	2015-02-27 15:03:11.764645400 -0800
+@@ -159,7 +159,7 @@
+ #elif defined __CELLOS_LV2__
+ #error tmp dir for your system unknown
+ #else
+-#error tmp dir for your system unknown
++    static string tmpDir = "/tmp/";
+ #endif
+     return tmpDir;
+ }
+@@ -178,7 +178,7 @@
+ #elif defined __CELLOS_LV2__
+ #error  usage of tmpnam() for your system unknown
+ #else
+-#error  usage of tmpnam() for your system unknown
++    randomSegment = tmp.substr(tmp.find_last_of('/')+1);
+ #endif
+     return randomSegment;
+ }

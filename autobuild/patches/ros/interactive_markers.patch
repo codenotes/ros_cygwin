@@ -1,0 +1,13 @@
+diff -ur src.orig/interactive_markers/CMakeLists.txt src/interactive_markers/CMakeLists.txt
+--- src.orig/interactive_markers/CMakeLists.txt	2014-12-16 13:21:50.000000000 -0800
++++ src/interactive_markers/CMakeLists.txt	2015-02-26 15:56:20.945437000 -0800
+@@ -31,7 +31,8 @@
+ 
+ install(TARGETS ${PROJECT_NAME}
+   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION})
++  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
++  RUNTIME DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION})
+ install(DIRECTORY include/interactive_markers/
+   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+   FILES_MATCHING PATTERN "*.h")

@@ -1,0 +1,1687 @@
+diff -urN qt-everywhere-opensource-src-4.8.6/demos/demos.pro qt-everywhere-opensource-src-4.8.6.fixed/demos/demos.pro
+--- qt-everywhere-opensource-src-4.8.6/demos/demos.pro	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/demos/demos.pro	2015-02-25 11:27:42.269292900 -0800
+@@ -1,122 +0,0 @@
+-TEMPLATE    = subdirs
+-
+-!contains(QT_CONFIG, no-gui) {
+-SUBDIRS     = \
+-            demos_shared \
+-            demos_deform \
+-            demos_gradients \
+-            demos_pathstroke \
+-            demos_affine \
+-            demos_composition \
+-            demos_books \
+-            demos_interview \
+-            demos_mainwindow \
+-            demos_spreadsheet \
+-            demos_textedit \
+-            demos_chip \
+-            demos_embeddeddialogs \
+-            demos_undo \
+-            demos_sub-attaq
+-
+-symbian: SUBDIRS = \
+-            demos_shared \
+-            demos_deform \
+-            demos_pathstroke
+-
+-
+-wince*:  SUBDIRS = \
+-            demos_shared \
+-            demos_deform \
+-            demos_gradients \
+-            demos_pathstroke \
+-            demos_affine \
+-            demos_composition \
+-            demos_books \
+-            demos_interview \
+-            demos_mainwindow \
+-            demos_spreadsheet \
+-            demos_textedit \
+-            # demos_chip \
+-            demos_embeddeddialogs \
+-            demos_undo \
+-            demos_sub-attaq
+-
+-contains(QT_CONFIG, opengl):!contains(QT_CONFIG, opengles1):!contains(QT_CONFIG, opengles2):{
+-SUBDIRS += demos_boxes
+-}
+-contains(QT_CONFIG, opengl):contains(QT_CONFIG, svg){
+-SUBDIRS += demos_glhypnotizer
+-}
+-
+-mac* && !qpa: SUBDIRS += demos_macmainwindow
+-wince*|symbian|embedded|x11: SUBDIRS += demos_embedded
+-
+-!contains(QT_EDITION, Console):!cross_compile:!embedded:!wince*:SUBDIRS += demos_arthurplugin
+-
+-!cross_compile:{
+-contains(QT_BUILD_PARTS, tools):{
+-!wince*:SUBDIRS += demos_sqlbrowser demos_qtdemo
+-wince*:SUBDIRS += demos_sqlbrowser
+-}
+-}
+-contains(QT_CONFIG, phonon):!static:SUBDIRS += demos_mediaplayer
+-contains(QT_CONFIG, webkit):contains(QT_CONFIG, svg):!symbian:SUBDIRS += demos_browser
+-contains(QT_CONFIG, declarative):SUBDIRS += demos_declarative demos_helper
+-contains(QT_CONFIG, multimedia):!static:SUBDIRS += demos_spectrum
+-
+-# install
+-sources.files = README *.pro
+-sources.path = $$[QT_INSTALL_DEMOS]
+-INSTALLS += sources
+-
+-symbian: include($$QT_SOURCE_TREE/demos/symbianpkgrules.pri)
+-
+-demos_chip.subdir = chip
+-demos_embeddeddialogs.subdir = embeddeddialogs
+-demos_embedded.subdir = embedded
+-# Because of fluidlauncher
+-demos_embedded.depends = demos_deform demos_pathstroke
+-demos_shared.subdir = shared
+-demos_deform.subdir = deform
+-demos_gradients.subdir = gradients
+-demos_pathstroke.subdir = pathstroke
+-demos_affine.subdir = affine
+-demos_composition.subdir = composition
+-demos_books.subdir = books
+-demos_interview.subdir = interview
+-demos_macmainwindow.subdir = macmainwindow
+-demos_mainwindow.subdir = mainwindow
+-demos_spreadsheet.subdir = spreadsheet
+-demos_textedit.subdir = textedit
+-demos_arthurplugin.subdir = arthurplugin
+-demos_sqlbrowser.subdir = sqlbrowser
+-demos_undo.subdir = undo
+-demos_qtdemo.subdir = qtdemo
+-demos_mediaplayer.subdir = qmediaplayer
+-demos_declarative.subdir = declarative
+-demos_declarative.depends = demos_helper
+-demos_helper.subdir = helper
+-
+-#mobile demos. Requires QtMobility sources. Not included in demo build
+-demos_guitartuner.subdir = mobile/guitartuner
+-demos_qcamera.subdir = mobile/qcamera
+-demos_qtbubblelevel.subdir = mobile/qtbubblelevel
+-demos_quickhit.subdir = mobile/quickhit
+-
+-demos_browser.subdir = browser
+-
+-demos_boxes.subdir = boxes
+-demos_sub-attaq.subdir = sub-attaq
+-demos_spectrum.subdir = spectrum
+-demos_glhypnotizer.subdir = glhypnotizer
+-
+-#CONFIG += ordered
+-!ordered {
+-     demos_affine.depends = demos_shared
+-     demos_deform.depends = demos_shared
+-     demos_gradients.depends = demos_shared
+-     demos_composition.depends = demos_shared
+-     demos_arthurplugin.depends = demos_shared
+-     demos_pathstroke.depends = demos_shared
+-}
+-}
+diff -urN qt-everywhere-opensource-src-4.8.6/mkspecs/cygwin-g++/qplatformdefs.h qt-everywhere-opensource-src-4.8.6.fixed/mkspecs/cygwin-g++/qplatformdefs.h
+--- qt-everywhere-opensource-src-4.8.6/mkspecs/cygwin-g++/qplatformdefs.h	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/mkspecs/cygwin-g++/qplatformdefs.h	2015-02-25 11:27:42.336299600 -0800
+@@ -85,6 +85,7 @@
+ #include "../common/posix/qplatformdefs.h"
+ 
+ #undef QT_OPEN_LARGEFILE
++#define QT_OPEN_LARGEFILE 0
+ 
+ #if defined(_XOPEN_SOURCE) && (_XOPEN_SOURCE >= 500)
+ #define QT_SNPRINTF		::snprintf
+diff -urN qt-everywhere-opensource-src-4.8.6/mkspecs/default/qmake.conf qt-everywhere-opensource-src-4.8.6.fixed/mkspecs/default/qmake.conf
+--- qt-everywhere-opensource-src-4.8.6/mkspecs/default/qmake.conf	1969-12-31 16:00:00.000000000 -0800
++++ qt-everywhere-opensource-src-4.8.6.fixed/mkspecs/default/qmake.conf	2015-02-25 11:27:42.654331400 -0800
+@@ -0,0 +1,99 @@
++#
++# qmake configuration for cygwin-g++
++#
++# Written for Qt/Win32 on Windows using Cygwin's POSIX API
++#
++
++MAKEFILE_GENERATOR	= UNIX
++TARGET_PLATFORM		= unix
++TEMPLATE		= app
++CONFIG			+= qt warn_on release incremental link_prl cygwin-win32
++QT			+= core gui
++QMAKE_INCREMENTAL_STYLE  = sublib
++
++QMAKE_CC		= gcc
++QMAKE_LEX		= flex
++QMAKE_LEXFLAGS		= 
++QMAKE_YACC		= byacc
++QMAKE_YACCFLAGS		= -d
++QMAKE_CFLAGS		= -pipe
++QMAKE_CFLAGS_DEPS	= -M
++QMAKE_CFLAGS_WARN_ON	= -Wall -W
++QMAKE_CFLAGS_WARN_OFF	= -w
++QMAKE_CFLAGS_RELEASE	= -O2 -ggdb
++QMAKE_CFLAGS_DEBUG	= -g
++QMAKE_CFLAGS_SHLIB	=
++QMAKE_CFLAGS_YACC	= -Wno-unused -Wno-parentheses
++QMAKE_CFLAGS_THREAD	= -D_REENTRANT
++
++QMAKE_CXX		= g++
++QMAKE_CXXFLAGS		= $$QMAKE_CFLAGS
++QMAKE_CXXFLAGS_DEPS	= $$QMAKE_CFLAGS_DEPS
++QMAKE_CXXFLAGS_WARN_ON	= $$QMAKE_CFLAGS_WARN_ON
++QMAKE_CXXFLAGS_WARN_OFF	= $$QMAKE_CFLAGS_WARN_OFF
++QMAKE_CXXFLAGS_RELEASE	= $$QMAKE_CFLAGS_RELEASE
++QMAKE_CXXFLAGS_DEBUG	= $$QMAKE_CFLAGS_DEBUG
++QMAKE_CXXFLAGS_SHLIB	= $$QMAKE_CFLAGS_SHLIB
++QMAKE_CXXFLAGS_YACC	= $$QMAKE_CFLAGS_YACC
++QMAKE_CXXFLAGS_THREAD	= $$QMAKE_CFLAGS_THREAD
++
++QMAKE_INCDIR		=
++QMAKE_LIBDIR		=
++QMAKE_INCDIR_X11	= /usr/X11R6/include
++QMAKE_LIBDIR_X11	= /usr/X11R6/lib
++QMAKE_INCDIR_QT		= $$[QT_INSTALL_HEADERS]
++QMAKE_LIBDIR_QT		= $$[QT_INSTALL_LIBS]
++QMAKE_INCDIR_OPENGL	= /usr/X11R6/include
++QMAKE_LIBDIR_OPENGL	= /usr/X11R6/lib
++
++QMAKE_LINK		= g++
++QMAKE_LINK_SHLIB	= g++
++QMAKE_LINK_C		= gcc
++QMAKE_LINK_C_SHLIB	= gcc
++QMAKE_LFLAGS		=
++QMAKE_LFLAGS_RELEASE	=
++QMAKE_LFLAGS_DEBUG	=
++QMAKE_LFLAGS_SHLIB	= -shared
++QMAKE_LFLAGS_PLUGIN	= $$QMAKE_LFLAGS_SHLIB
++QMAKE_LFLAGS_SONAME	= -Wl,-soname,
++QMAKE_LFLAGS_THREAD	=
++QMAKE_LFLAGS_RPATH	= -Wl,-rpath,
++QMAKE_CYGWIN_SHLIB	= 1
++QMAKE_CYGWIN_EXE	= 1
++ 
++QMAKE_LIBS		=
++QMAKE_LIBS_DYNLOAD	= -ldl
++QMAKE_LIBS_CORE          = -lws2_32
++QMAKE_LIBS_GUI          = -lgdi32 -lcomdlg32 -loleaut32 -limm32 -lwinmm -lwinspool -lws2_32 -lole32 -luuid -luser32 -ladvapi32 -ldxguid
++QMAKE_LIBS_X11		= -lXext -lX11
++QMAKE_LIBS_X11SM	= -lSM -lICE
++QMAKE_LIBS_OPENGL       = -lglu32 -lopengl32 -lgdi32 -luser32
++QMAKE_LIBS_OPENGL_QT       = -lglu32 -lopengl32 -lgdi32 -luser32
++QMAKE_LIBS_THREAD	= -lpthread
++QMAKE_PREFIX_SHLIB      = lib
++QMAKE_PREFIX_STATICLIB  = lib
++QMAKE_EXTENSION_STATICLIB = a
++
++QMAKE_MOC		= $$[QT_INSTALL_BINS]/moc
++QMAKE_UIC		= $$[QT_INSTALL_BINS]/uic
++
++QMAKE_AR		= ar cqs
++QMAKE_OBJCOPY           = objcopy
++QMAKE_RANLIB		=
++
++QMAKE_TAR		= tar -cf
++QMAKE_GZIP		= gzip -9f
++
++QMAKE_COPY		= cp -f
++QMAKE_MOVE		= mv -f
++QMAKE_DEL_FILE		= rm -f
++QMAKE_DEL_DIR		= rmdir
++QMAKE_CHK_DIR_EXISTS	= test -d
++QMAKE_MKDIR		= mkdir -p
++
++QMAKE_IDL		= midl
++QMAKE_LIB		= $${CROSS_COMPILE}ar -ru
++QMAKE_RC		= $${CROSS_COMPILE}windres
++QMAKE_ZIP		= zip -r -9
++
++load(qt_config)
+diff -urN qt-everywhere-opensource-src-4.8.6/mkspecs/default/qplatformdefs.h qt-everywhere-opensource-src-4.8.6.fixed/mkspecs/default/qplatformdefs.h
+--- qt-everywhere-opensource-src-4.8.6/mkspecs/default/qplatformdefs.h	1969-12-31 16:00:00.000000000 -0800
++++ qt-everywhere-opensource-src-4.8.6.fixed/mkspecs/default/qplatformdefs.h	2015-02-25 11:27:42.657331700 -0800
+@@ -0,0 +1,95 @@
++/****************************************************************************
++**
++** Copyright (C) 2014 Digia Plc and/or its subsidiary(-ies).
++** Contact: http://www.qt-project.org/legal
++**
++** This file is part of the qmake spec of the Qt Toolkit.
++**
++** $QT_BEGIN_LICENSE:LGPL$
++** Commercial License Usage
++** Licensees holding valid commercial Qt licenses may use this file in
++** accordance with the commercial license agreement provided with the
++** Software or, alternatively, in accordance with the terms contained in
++** a written agreement between you and Digia.  For licensing terms and
++** conditions see http://qt.digia.com/licensing.  For further information
++** use the contact form at http://qt.digia.com/contact-us.
++**
++** GNU Lesser General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU Lesser
++** General Public License version 2.1 as published by the Free Software
++** Foundation and appearing in the file LICENSE.LGPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU Lesser General Public License version 2.1 requirements
++** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
++**
++** In addition, as a special exception, Digia gives you certain additional
++** rights.  These rights are described in the Digia Qt LGPL Exception
++** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
++**
++** GNU General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU
++** General Public License version 3.0 as published by the Free Software
++** Foundation and appearing in the file LICENSE.GPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU General Public License version 3.0 requirements will be
++** met: http://www.gnu.org/copyleft/gpl.html.
++**
++**
++** $QT_END_LICENSE$
++**
++****************************************************************************/
++
++#ifndef QPLATFORMDEFS_H
++#define QPLATFORMDEFS_H
++
++// Get Qt defines/settings
++
++#include "qglobal.h"
++
++// Set any POSIX/XOPEN defines at the top of this file to turn on specific APIs
++
++// 1) need to reset default environment if _BSD_SOURCE is defined
++// 2) need to specify POSIX thread interfaces explicitly in glibc 2.0
++// 3) it seems older glibc need this to include the X/Open stuff
++#ifndef _GNU_SOURCE
++#  define _GNU_SOURCE
++#endif
++
++#include <unistd.h>
++
++
++// We are hot - unistd.h should have turned on the specific APIs we requested
++
++
++#include <pthread.h>
++#include <dirent.h>
++#include <fcntl.h>
++#include <grp.h>
++#include <pwd.h>
++#include <signal.h>
++#include <dlfcn.h>
++
++#include <sys/types.h>
++#include <sys/ioctl.h>
++// Cygwin does not provide <sys/ipc.h> and <sys/shm.h> because it
++// doesn't support SysV IPC or shared memory. See for example:
++// 	http://afni.nimh.nih.gov/afni/afniboard/messages/1725.html
++#include <sys/time.h>
++#include <sys/socket.h>
++#include <sys/stat.h>
++#include <sys/wait.h>
++//#include <windows.h>
++#include <netinet/in.h>
++
++#define QT_NO_USE_FSEEKO
++#include "../common/posix/qplatformdefs.h"
++
++#undef QT_OPEN_LARGEFILE
++#define QT_OPEN_LARGEFILE 0
++
++#if defined(_XOPEN_SOURCE) && (_XOPEN_SOURCE >= 500)
++#define QT_SNPRINTF		::snprintf
++#define QT_VSNPRINTF		::vsnprintf
++#endif
++
++#endif // QPLATFORMDEFS_H
+diff -urN qt-everywhere-opensource-src-4.8.6/mkspecs/win32-cygwin-g++/qmake.conf qt-everywhere-opensource-src-4.8.6.fixed/mkspecs/win32-cygwin-g++/qmake.conf
+--- qt-everywhere-opensource-src-4.8.6/mkspecs/win32-cygwin-g++/qmake.conf	1969-12-31 16:00:00.000000000 -0800
++++ qt-everywhere-opensource-src-4.8.6.fixed/mkspecs/win32-cygwin-g++/qmake.conf	2015-02-25 11:27:42.663332300 -0800
+@@ -0,0 +1,99 @@
++#
++# qmake configuration for cygwin-g++
++#
++# Written for Qt/Win32 on Windows using Cygwin's POSIX API
++#
++
++MAKEFILE_GENERATOR	= UNIX
++TARGET_PLATFORM		= unix
++TEMPLATE		= app
++CONFIG			+= qt warn_on release incremental link_prl cygwin-win32
++QT			+= core gui
++QMAKE_INCREMENTAL_STYLE  = sublib
++
++QMAKE_CC		= gcc
++QMAKE_LEX		= flex
++QMAKE_LEXFLAGS		= 
++QMAKE_YACC		= byacc
++QMAKE_YACCFLAGS		= -d
++QMAKE_CFLAGS		= -pipe
++QMAKE_CFLAGS_DEPS	= -M
++QMAKE_CFLAGS_WARN_ON	= -Wall -W
++QMAKE_CFLAGS_WARN_OFF	= -w
++QMAKE_CFLAGS_RELEASE	= -O2 -ggdb
++QMAKE_CFLAGS_DEBUG	= -g
++QMAKE_CFLAGS_SHLIB	=
++QMAKE_CFLAGS_YACC	= -Wno-unused -Wno-parentheses
++QMAKE_CFLAGS_THREAD	= -D_REENTRANT
++
++QMAKE_CXX		= g++
++QMAKE_CXXFLAGS		= $$QMAKE_CFLAGS
++QMAKE_CXXFLAGS_DEPS	= $$QMAKE_CFLAGS_DEPS
++QMAKE_CXXFLAGS_WARN_ON	= $$QMAKE_CFLAGS_WARN_ON
++QMAKE_CXXFLAGS_WARN_OFF	= $$QMAKE_CFLAGS_WARN_OFF
++QMAKE_CXXFLAGS_RELEASE	= $$QMAKE_CFLAGS_RELEASE
++QMAKE_CXXFLAGS_DEBUG	= $$QMAKE_CFLAGS_DEBUG
++QMAKE_CXXFLAGS_SHLIB	= $$QMAKE_CFLAGS_SHLIB
++QMAKE_CXXFLAGS_YACC	= $$QMAKE_CFLAGS_YACC
++QMAKE_CXXFLAGS_THREAD	= $$QMAKE_CFLAGS_THREAD
++
++QMAKE_INCDIR		=
++QMAKE_LIBDIR		=
++QMAKE_INCDIR_X11	= /usr/X11R6/include
++QMAKE_LIBDIR_X11	= /usr/X11R6/lib
++QMAKE_INCDIR_QT		= $$[QT_INSTALL_HEADERS]
++QMAKE_LIBDIR_QT		= $$[QT_INSTALL_LIBS]
++QMAKE_INCDIR_OPENGL	= /usr/X11R6/include
++QMAKE_LIBDIR_OPENGL	= /usr/X11R6/lib
++
++QMAKE_LINK		= g++
++QMAKE_LINK_SHLIB	= g++
++QMAKE_LINK_C		= gcc
++QMAKE_LINK_C_SHLIB	= gcc
++QMAKE_LFLAGS		=
++QMAKE_LFLAGS_RELEASE	=
++QMAKE_LFLAGS_DEBUG	=
++QMAKE_LFLAGS_SHLIB	= -shared
++QMAKE_LFLAGS_PLUGIN	= $$QMAKE_LFLAGS_SHLIB
++QMAKE_LFLAGS_SONAME	= -Wl,-soname,
++QMAKE_LFLAGS_THREAD	=
++QMAKE_LFLAGS_RPATH	= -Wl,-rpath,
++QMAKE_CYGWIN_SHLIB	= 1
++QMAKE_CYGWIN_EXE	= 1
++ 
++QMAKE_LIBS		=
++QMAKE_LIBS_DYNLOAD	= -ldl
++QMAKE_LIBS_CORE          = -lws2_32
++QMAKE_LIBS_GUI          = -lgdi32 -lcomdlg32 -loleaut32 -limm32 -lwinmm -lwinspool -lws2_32 -lole32 -luuid -luser32 -ladvapi32 -ldxguid
++QMAKE_LIBS_X11		= -lXext -lX11
++QMAKE_LIBS_X11SM	= -lSM -lICE
++QMAKE_LIBS_OPENGL       = -lglu32 -lopengl32 -lgdi32 -luser32
++QMAKE_LIBS_OPENGL_QT       = -lglu32 -lopengl32 -lgdi32 -luser32
++QMAKE_LIBS_THREAD	= -lpthread
++QMAKE_PREFIX_SHLIB      = lib
++QMAKE_PREFIX_STATICLIB  = lib
++QMAKE_EXTENSION_STATICLIB = a
++
++QMAKE_MOC		= $$[QT_INSTALL_BINS]/moc
++QMAKE_UIC		= $$[QT_INSTALL_BINS]/uic
++
++QMAKE_AR		= ar cqs
++QMAKE_OBJCOPY           = objcopy
++QMAKE_RANLIB		=
++
++QMAKE_TAR		= tar -cf
++QMAKE_GZIP		= gzip -9f
++
++QMAKE_COPY		= cp -f
++QMAKE_MOVE		= mv -f
++QMAKE_DEL_FILE		= rm -f
++QMAKE_DEL_DIR		= rmdir
++QMAKE_CHK_DIR_EXISTS	= test -d
++QMAKE_MKDIR		= mkdir -p
++
++QMAKE_IDL		= midl
++QMAKE_LIB		= $${CROSS_COMPILE}ar -ru
++QMAKE_RC		= $${CROSS_COMPILE}windres
++QMAKE_ZIP		= zip -r -9
++
++load(qt_config)
+diff -urN qt-everywhere-opensource-src-4.8.6/mkspecs/win32-cygwin-g++/qplatformdefs.h qt-everywhere-opensource-src-4.8.6.fixed/mkspecs/win32-cygwin-g++/qplatformdefs.h
+--- qt-everywhere-opensource-src-4.8.6/mkspecs/win32-cygwin-g++/qplatformdefs.h	1969-12-31 16:00:00.000000000 -0800
++++ qt-everywhere-opensource-src-4.8.6.fixed/mkspecs/win32-cygwin-g++/qplatformdefs.h	2015-02-25 11:27:42.666332600 -0800
+@@ -0,0 +1,95 @@
++/****************************************************************************
++**
++** Copyright (C) 2014 Digia Plc and/or its subsidiary(-ies).
++** Contact: http://www.qt-project.org/legal
++**
++** This file is part of the qmake spec of the Qt Toolkit.
++**
++** $QT_BEGIN_LICENSE:LGPL$
++** Commercial License Usage
++** Licensees holding valid commercial Qt licenses may use this file in
++** accordance with the commercial license agreement provided with the
++** Software or, alternatively, in accordance with the terms contained in
++** a written agreement between you and Digia.  For licensing terms and
++** conditions see http://qt.digia.com/licensing.  For further information
++** use the contact form at http://qt.digia.com/contact-us.
++**
++** GNU Lesser General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU Lesser
++** General Public License version 2.1 as published by the Free Software
++** Foundation and appearing in the file LICENSE.LGPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU Lesser General Public License version 2.1 requirements
++** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
++**
++** In addition, as a special exception, Digia gives you certain additional
++** rights.  These rights are described in the Digia Qt LGPL Exception
++** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
++**
++** GNU General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU
++** General Public License version 3.0 as published by the Free Software
++** Foundation and appearing in the file LICENSE.GPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU General Public License version 3.0 requirements will be
++** met: http://www.gnu.org/copyleft/gpl.html.
++**
++**
++** $QT_END_LICENSE$
++**
++****************************************************************************/
++
++#ifndef QPLATFORMDEFS_H
++#define QPLATFORMDEFS_H
++
++// Get Qt defines/settings
++
++#include "qglobal.h"
++
++// Set any POSIX/XOPEN defines at the top of this file to turn on specific APIs
++
++// 1) need to reset default environment if _BSD_SOURCE is defined
++// 2) need to specify POSIX thread interfaces explicitly in glibc 2.0
++// 3) it seems older glibc need this to include the X/Open stuff
++#ifndef _GNU_SOURCE
++#  define _GNU_SOURCE
++#endif
++
++#include <unistd.h>
++
++
++// We are hot - unistd.h should have turned on the specific APIs we requested
++
++
++#include <pthread.h>
++#include <dirent.h>
++#include <fcntl.h>
++#include <grp.h>
++#include <pwd.h>
++#include <signal.h>
++#include <dlfcn.h>
++
++#include <sys/types.h>
++#include <sys/ioctl.h>
++// Cygwin does not provide <sys/ipc.h> and <sys/shm.h> because it
++// doesn't support SysV IPC or shared memory. See for example:
++// 	http://afni.nimh.nih.gov/afni/afniboard/messages/1725.html
++#include <sys/time.h>
++#include <sys/socket.h>
++#include <sys/stat.h>
++#include <sys/wait.h>
++//#include <windows.h>
++#include <netinet/in.h>
++
++#define QT_NO_USE_FSEEKO
++#include "../common/posix/qplatformdefs.h"
++
++#undef QT_OPEN_LARGEFILE
++#define QT_OPEN_LARGEFILE 0
++
++#if defined(_XOPEN_SOURCE) && (_XOPEN_SOURCE >= 500)
++#define QT_SNPRINTF		::snprintf
++#define QT_VSNPRINTF		::vsnprintf
++#endif
++
++#endif // QPLATFORMDEFS_H
+diff -urN qt-everywhere-opensource-src-4.8.6/projects.pro qt-everywhere-opensource-src-4.8.6.fixed/projects.pro
+--- qt-everywhere-opensource-src-4.8.6/projects.pro	2014-04-10 21:37:14.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/projects.pro	2015-02-25 11:27:42.338299800 -0800
+@@ -37,9 +37,9 @@
+     isEqual(PROJECT, tools) {
+        SUBDIRS += tools
+     } else:isEqual(PROJECT, examples) {
+-       SUBDIRS += examples
++#       SUBDIRS += examples
+     } else:isEqual(PROJECT, demos) {
+-       SUBDIRS += demos
++#       SUBDIRS += demos
+     } else:isEqual(PROJECT, libs) {
+        include(src/src.pro)
+     } else:isEqual(PROJECT, docs) {
+diff -urN qt-everywhere-opensource-src-4.8.6/src/corelib/global/qfeatures.h qt-everywhere-opensource-src-4.8.6.fixed/src/corelib/global/qfeatures.h
+--- qt-everywhere-opensource-src-4.8.6/src/corelib/global/qfeatures.h	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/corelib/global/qfeatures.h	2015-02-25 11:27:42.349300900 -0800
+@@ -86,7 +86,9 @@
+ //#define QT_NO_FILESYSTEMWATCHER
+ 
+ // Freetype Font Engine
+-//#define QT_NO_FREETYPE
++#define QT_NO_FREETYPE
++
++#define UNICODE
+ 
+ // Gesture
+ //#define QT_NO_GESTURES
+@@ -272,7 +274,7 @@
+ //#define QT_NO_SYSTEMTRAYICON
+ 
+ // QTabletEvent
+-//#define QT_NO_TABLETEVENT
++#define QT_NO_TABLETEVENT
+ 
+ // QTemporaryFile
+ //#define QT_NO_TEMPORARYFILE
+@@ -758,6 +760,8 @@
+ #define QT_NO_ACCESSIBILITY
+ #endif
+ 
++#define QT_NO_ACCESSIBILITY
++
+ // QColumnView
+ #if !defined(QT_NO_COLUMNVIEW) && (defined(QT_NO_LISTVIEW))
+ #define QT_NO_COLUMNVIEW
+diff -urN qt-everywhere-opensource-src-4.8.6/src/corelib/global/qglobal.h qt-everywhere-opensource-src-4.8.6.fixed/src/corelib/global/qglobal.h
+--- qt-everywhere-opensource-src-4.8.6/src/corelib/global/qglobal.h	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/corelib/global/qglobal.h	2015-02-25 11:27:42.357301700 -0800
+@@ -885,7 +885,7 @@
+ #  error "Qt requires Win32 and does not work with Windows 3.x"
+ #elif defined(_WIN32_X11_)
+ #  define Q_WS_X11
+-#elif defined(Q_OS_WIN32)
++#elif defined(Q_OS_WIN32) || defined(__CYGWIN__)
+ #  define Q_WS_WIN32
+ #  if defined(Q_OS_WIN64)
+ #    define Q_WS_WIN64
+diff -urN qt-everywhere-opensource-src-4.8.6/src/corelib/io/qdir.cpp qt-everywhere-opensource-src-4.8.6.fixed/src/corelib/io/qdir.cpp
+--- qt-everywhere-opensource-src-4.8.6/src/corelib/io/qdir.cpp	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/corelib/io/qdir.cpp	2015-02-25 11:27:42.364302400 -0800
+@@ -1779,7 +1779,7 @@
+ */
+ QChar QDir::separator()
+ {
+-#if defined (Q_FS_FAT) || defined(Q_WS_WIN) || defined(Q_OS_SYMBIAN)
++#if defined (Q_FS_FAT) || defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)
+     return QLatin1Char('\\');
+ #elif defined(Q_OS_UNIX)
+     return QLatin1Char('/');
+diff -urN qt-everywhere-opensource-src-4.8.6/src/corelib/io/qfsfileengine_p.h qt-everywhere-opensource-src-4.8.6.fixed/src/corelib/io/qfsfileengine_p.h
+--- qt-everywhere-opensource-src-4.8.6/src/corelib/io/qfsfileengine_p.h	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/corelib/io/qfsfileengine_p.h	2015-02-25 11:27:42.367302700 -0800
+@@ -83,7 +83,7 @@
+     Q_DECLARE_PUBLIC(QFSFileEngine)
+ 
+ public:
+-#ifdef Q_WS_WIN
++#ifdef Q_OS_WIN
+     static QString longFileName(const QString &path);
+ #endif
+ 
+@@ -151,7 +151,7 @@
+ #endif
+ #endif
+ 
+-#ifdef Q_WS_WIN
++#ifdef Q_OS_WIN
+     HANDLE fileHandle;
+     HANDLE mapHandle;
+     QHash<uchar *, DWORD /* offset % AllocationGranularity */> maps;
+diff -urN qt-everywhere-opensource-src-4.8.6/src/corelib/io/qtemporaryfile.cpp qt-everywhere-opensource-src-4.8.6.fixed/src/corelib/io/qtemporaryfile.cpp
+--- qt-everywhere-opensource-src-4.8.6/src/corelib/io/qtemporaryfile.cpp	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/corelib/io/qtemporaryfile.cpp	2015-02-25 11:27:42.374303400 -0800
+@@ -194,7 +194,7 @@
+         }
+ #else // POSIX
+         file = QT_OPEN(path.constData(),
+-                QT_OPEN_CREAT | O_EXCL | QT_OPEN_RDWR | QT_OPEN_LARGEFILE,
++                QT_OPEN_CREAT | O_EXCL | QT_OPEN_RDWR,
+                 0600);
+ 
+         if (file != -1)
+diff -urN qt-everywhere-opensource-src-4.8.6/src/corelib/kernel/kernel.pri qt-everywhere-opensource-src-4.8.6.fixed/src/corelib/kernel/kernel.pri
+--- qt-everywhere-opensource-src-4.8.6/src/corelib/kernel/kernel.pri	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/corelib/kernel/kernel.pri	2015-02-25 11:27:42.376303600 -0800
+@@ -60,6 +60,18 @@
+         kernel/qmath.cpp \
+         kernel/qsystemerror.cpp
+ 
++cygwin-win32 {
++        SOURCES += kernel/qcoreapplication_win.cpp \
++				   kernel/qeventdispatcher_win.cpp \
++                kernel/qwineventnotifier_p.cpp \
++				   
++        HEADERS += \
++                kernel/qeventdispatcher_win_p.h \
++                kernel/qwineventnotifier_p.h
++				   
++		}
++	
++		
+ win32 {
+         SOURCES += \
+                 kernel/qeventdispatcher_win.cpp \
+diff -urN qt-everywhere-opensource-src-4.8.6/src/corelib/kernel/qcoreapplication_p.h qt-everywhere-opensource-src-4.8.6.fixed/src/corelib/kernel/qcoreapplication_p.h
+--- qt-everywhere-opensource-src-4.8.6/src/corelib/kernel/qcoreapplication_p.h	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/corelib/kernel/qcoreapplication_p.h	2015-02-25 11:27:42.382304200 -0800
+@@ -91,7 +91,7 @@
+ 
+     virtual void createEventDispatcher();
+     static void removePostedEvent(QEvent *);
+-#ifdef Q_OS_WIN
++#ifdef Q_WS_WIN
+     static void removePostedTimerEvent(QObject *object, int timerId);
+ #endif
+ 
+diff -urN qt-everywhere-opensource-src-4.8.6/src/corelib/kernel/qcoreapplication_win.cpp qt-everywhere-opensource-src-4.8.6.fixed/src/corelib/kernel/qcoreapplication_win.cpp
+--- qt-everywhere-opensource-src-4.8.6/src/corelib/kernel/qcoreapplication_win.cpp	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/corelib/kernel/qcoreapplication_win.cpp	2015-02-25 11:27:42.389304900 -0800
+@@ -92,7 +92,7 @@
+     // file path limit, and we handle it normally, if the result is MAX_PATH + 1, we use
+     // heap (even if the result _might_ be exactly MAX_PATH + 1, but that's ok).
+     wchar_t buffer[MAX_PATH + 2];
+-    DWORD v = GetModuleFileName(0, buffer, MAX_PATH + 1);
++    DWORD v = GetModuleFileNameW(0, buffer, MAX_PATH + 1);
+     buffer[MAX_PATH + 1] = 0;
+ 
+     if (v == 0)
+@@ -109,7 +109,7 @@
+         size = MAX_PATH * i;
+         b = reinterpret_cast<wchar_t *>(realloc(b, (size + 1) * sizeof(wchar_t)));
+         if (b)
+-            v = GetModuleFileName(NULL, b, size);
++            v = GetModuleFileNameW(NULL, b, size);
+     } while (b && v == size);
+ 
+     if (b)
+@@ -120,10 +120,12 @@
+     return res;
+ }
+ 
++#if !defined(__CYGWIN__)
+ QString QCoreApplicationPrivate::appName() const
+ {
+     return QFileInfo(qAppFileName()).baseName();
+ }
++#endif
+ 
+ class QWinMsgHandlerCriticalSection
+ {
+@@ -156,7 +158,7 @@
+ 
+     QString s(QString::fromLocal8Bit(str));
+     s += QLatin1Char('\n');
+-    OutputDebugString((wchar_t*)s.utf16());
++    OutputDebugStringW((wchar_t*)s.utf16());
+ 
+     staticCriticalSection.unlock();
+ }
+@@ -165,6 +167,8 @@
+ /*****************************************************************************
+   qWinMain() - Initializes Windows. Called from WinMain() in qtmain_win.cpp
+  *****************************************************************************/
++ 
++#if !defined(__CYGWIN__)
+ 
+ #if defined(Q_OS_WINCE)
+ Q_CORE_EXPORT void __cdecl qWinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR cmdParam,
+@@ -197,6 +201,8 @@
+     Q_UNUSED(prevInstance);
+ }
+ 
++#endif
++
+ /*!
+     The message procedure calls this function for every message
+     received. Reimplement this function if you want to process window
+@@ -218,6 +224,7 @@
+     return false;
+ }
+ 
++
+ void QCoreApplicationPrivate::removePostedTimerEvent(QObject *object, int timerId)
+ {
+     QThreadData *data = object->d_func()->threadData;
+@@ -240,6 +247,7 @@
+     }
+ }
+ 
++
+ #if defined(Q_WS_WIN) && !defined(QT_NO_DEBUG_STREAM)
+ /*****************************************************************************
+   Convenience functions for convert WM_* messages into human readable strings,
+diff -urN qt-everywhere-opensource-src-4.8.6/src/corelib/kernel/qeventdispatcher_win.cpp qt-everywhere-opensource-src-4.8.6.fixed/src/corelib/kernel/qeventdispatcher_win.cpp
+--- qt-everywhere-opensource-src-4.8.6/src/corelib/kernel/qeventdispatcher_win.cpp	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/corelib/kernel/qeventdispatcher_win.cpp	2015-02-25 11:27:42.397305700 -0800
+@@ -54,6 +54,40 @@
+ #include "qcoreapplication_p.h"
+ #include <private/qthread_p.h>
+ 
++#ifdef __CYGWIN__
++#define FD_READ_BIT      0
++#define FD_READ          (1 << FD_READ_BIT)
++
++#define FD_WRITE_BIT     1
++#define FD_WRITE         (1 << FD_WRITE_BIT)
++
++#define FD_OOB_BIT       2
++#define FD_OOB           (1 << FD_OOB_BIT)
++
++#define FD_ACCEPT_BIT    3
++#define FD_ACCEPT        (1 << FD_ACCEPT_BIT)
++
++#define FD_CONNECT_BIT   4
++#define FD_CONNECT       (1 << FD_CONNECT_BIT)
++
++#define FD_CLOSE_BIT     5
++#define FD_CLOSE         (1 << FD_CLOSE_BIT)
++
++#define FD_QOS_BIT       6
++#define FD_QOS           (1 << FD_QOS_BIT)
++
++#define WSAGETSELECTEVENT(lParam)           LOWORD(lParam)
++
++extern "C" int __stdcall
++WSAAsyncSelect(
++     int s,
++     void *hWnd,
++     unsigned wMsg,
++     long lEvent
++    );
++
++#endif
++
+ QT_BEGIN_NAMESPACE
+ 
+ HINSTANCE qWinAppInst();
+@@ -99,6 +133,7 @@
+ #include <qmutex.h>
+ QT_END_INCLUDE_NAMESPACE
+ 
++
+ //#define QCE_ASYNC_DEBUG
+ 
+ namespace {
+@@ -305,7 +340,7 @@
+ typedef QList<WinTimerInfo*>  WinTimerVec;      // vector of TimerInfo structs
+ typedef QHash<int, WinTimerInfo*> WinTimerDict; // fast dict of timers
+ 
+-#if !defined(DWORD_PTR) && !defined(Q_WS_WIN64)
++#if !defined(DWORD_PTR) && !defined(Q_WS_WIN64) && !defined(__CYGWIN__)
+ #define DWORD_PTR DWORD
+ #endif
+ 
+diff -urN qt-everywhere-opensource-src-4.8.6/src/corelib/plugin/plugin.pri qt-everywhere-opensource-src-4.8.6.fixed/src/corelib/plugin/plugin.pri
+--- qt-everywhere-opensource-src-4.8.6/src/corelib/plugin/plugin.pri	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/corelib/plugin/plugin.pri	2015-02-25 11:27:42.400306000 -0800
+@@ -24,6 +24,10 @@
+ 		plugin/qsystemlibrary.cpp
+ }
+ 
++cygwin-win32 {
++	SOURCES += plugin/qsystemlibrary.cpp
++}
++
+ unix {
+ 	SOURCES += plugin/qlibrary_unix.cpp
+ }
+diff -urN qt-everywhere-opensource-src-4.8.6/src/corelib/plugin/qlibrary_p.h qt-everywhere-opensource-src-4.8.6.fixed/src/corelib/plugin/qlibrary_p.h
+--- qt-everywhere-opensource-src-4.8.6/src/corelib/plugin/qlibrary_p.h	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/corelib/plugin/qlibrary_p.h	2015-02-25 11:27:42.406306600 -0800
+@@ -53,7 +53,7 @@
+ // We mean it.
+ //
+ 
+-#ifdef Q_WS_WIN
++#ifdef Q_OS_WIN
+ # include "QtCore/qt_windows.h"
+ #endif
+ #include "QtCore/qlibrary.h"
+@@ -73,7 +73,7 @@
+ {
+ public:
+ 
+-#ifdef Q_WS_WIN
++#ifdef Q_OS_WIN
+     HINSTANCE
+ #else
+     void *
+diff -urN qt-everywhere-opensource-src-4.8.6/src/corelib/plugin/qsystemlibrary.cpp qt-everywhere-opensource-src-4.8.6.fixed/src/corelib/plugin/qsystemlibrary.cpp
+--- qt-everywhere-opensource-src-4.8.6/src/corelib/plugin/qsystemlibrary.cpp	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/corelib/plugin/qsystemlibrary.cpp	2015-02-25 11:27:42.409306900 -0800
+@@ -81,7 +81,7 @@
+ 
+ QT_BEGIN_NAMESPACE
+ 
+-#if defined(Q_OS_WINCE)
++#if defined(Q_OS_WINCE) || defined(__CYGWIN__)
+ HINSTANCE QSystemLibrary::load(const wchar_t *libraryName, bool onlySystemDirectory /* = true */)
+ {
+     Q_UNUSED(onlySystemDirectory);
+@@ -106,7 +106,7 @@
+     return QString::fromWCharArray(fullPath.constData(), int(retLen));
+ }
+ 
+-HINSTANCE QSystemLibrary::load(const wchar_t *libraryName, bool onlySystemDirectory /* = true */)
++HINSTANCE QSystemLibrary(const wchar_t *libraryName, bool onlySystemDirectory /* = true */)
+ {
+     QStringList searchOrder;
+ 
+@@ -117,7 +117,7 @@
+     searchOrder << qSystemDirectory();
+ 
+     if (!onlySystemDirectory) {
+-        const QString PATH = QString::fromWCharArray((const wchar_t *)_wgetenv(L"PATH"));
++        const QString PATH = QString::fromUtf8((const char  *)getenv("PATH"));
+         searchOrder << PATH.split(QLatin1Char(';'), QString::SkipEmptyParts);
+     }
+ 
+diff -urN qt-everywhere-opensource-src-4.8.6/src/corelib/plugin/qsystemlibrary_p.h qt-everywhere-opensource-src-4.8.6.fixed/src/corelib/plugin/qsystemlibrary_p.h
+--- qt-everywhere-opensource-src-4.8.6/src/corelib/plugin/qsystemlibrary_p.h	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/corelib/plugin/qsystemlibrary_p.h	2015-02-25 11:27:42.416307600 -0800
+@@ -43,7 +43,7 @@
+ #define QSYSTEMLIBRARY_P_H
+ 
+ #include <QtCore/qglobal.h>
+-#ifdef Q_OS_WIN
++#if defined(Q_OS_WIN) || defined(__CYGWIN__)
+ #include <qt_windows.h>
+ #include <QtCore/qstring.h>
+ 
+diff -urN qt-everywhere-opensource-src-4.8.6/src/corelib/thread/qthread.cpp qt-everywhere-opensource-src-4.8.6.fixed/src/corelib/thread/qthread.cpp
+--- qt-everywhere-opensource-src-4.8.6/src/corelib/thread/qthread.cpp	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/corelib/thread/qthread.cpp	2015-02-25 11:27:42.422308200 -0800
+@@ -182,9 +182,8 @@
+     id = 0;
+     waiters = 0;
+ #endif
+-#if defined (Q_WS_WIN) || defined (Q_OS_SYMBIAN)
+-    terminationEnabled = true;
+-    terminatePending = false;
++#if (defined (Q_WS_WIN) || defined (Q_OS_SYMBIAN)) && !defined(__CYGWIN__)
++    setTerminationEnabled();
+ #endif
+ 
+     if (!data)
+diff -urN qt-everywhere-opensource-src-4.8.6/src/corelib/tools/qdatetime.cpp qt-everywhere-opensource-src-4.8.6.fixed/src/corelib/tools/qdatetime.cpp
+--- qt-everywhere-opensource-src-4.8.6/src/corelib/tools/qdatetime.cpp	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/corelib/tools/qdatetime.cpp	2015-02-25 11:27:42.433309300 -0800
+@@ -48,7 +48,7 @@
+ #include "qdatetime.h"
+ #include "qregexp.h"
+ #include "qdebug.h"
+-#if defined(Q_OS_WIN32) || defined(Q_OS_WINCE)
++#if defined(Q_OS_WIN32) || defined(Q_OS_WINCE) || defined(__CYGWIN__)
+ #include <qt_windows.h>
+ #endif
+ #ifndef Q_WS_WIN
+@@ -2528,7 +2528,7 @@
+         buf += QString::number(d->date.day());
+ #else
+         wchar_t out[255];
+-        GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_ILDATE, out, 255);
++        GetLocaleInfoW(LOCALE_USER_DEFAULT, LOCALE_ILDATE, out, 255);
+         QString winstr = QString::fromWCharArray(out);
+         switch (winstr.toInt()) {
+         case 1:
+diff -urN qt-everywhere-opensource-src-4.8.6/src/gui/accessible/accessible.pri qt-everywhere-opensource-src-4.8.6.fixed/src/gui/accessible/accessible.pri
+--- qt-everywhere-opensource-src-4.8.6/src/gui/accessible/accessible.pri	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/gui/accessible/accessible.pri	2015-02-25 11:27:42.436309600 -0800
+@@ -16,7 +16,7 @@
+         HEADERS += accessible/qaccessible_mac_p.h
+         OBJECTIVE_SOURCES += accessible/qaccessible_mac.mm \
+                              accessible/qaccessible_mac_cocoa.mm
+-      } else:win32 { 
++      } else:win32|cygwin-win32 { 
+         SOURCES += accessible/qaccessible_win.cpp
+       } else {
+         HEADERS += accessible/qaccessiblebridge.h
+diff -urN qt-everywhere-opensource-src-4.8.6/src/gui/accessible/qaccessible_win.cpp qt-everywhere-opensource-src-4.8.6.fixed/src/gui/accessible/qaccessible_win.cpp
+--- qt-everywhere-opensource-src-4.8.6/src/gui/accessible/qaccessible_win.cpp	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/gui/accessible/qaccessible_win.cpp	2015-02-25 11:27:42.443310300 -0800
+@@ -38,6 +38,7 @@
+ ** $QT_END_LICENSE$
+ **
+ ****************************************************************************/
++#define INITGUID
+ #include "qaccessible.h"
+ #ifndef QT_NO_ACCESSIBILITY
+ 
+@@ -71,6 +72,7 @@
+ #include "qguifunctions_wince.h"
+ #endif
+ 
++
+ QT_BEGIN_NAMESPACE
+ 
+ //#define DEBUG_SHOW_ATCLIENT_COMMANDS
+diff -urN qt-everywhere-opensource-src-4.8.6/src/gui/dialogs/dialogs.pri qt-everywhere-opensource-src-4.8.6.fixed/src/gui/dialogs/dialogs.pri
+--- qt-everywhere-opensource-src-4.8.6/src/gui/dialogs/dialogs.pri	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/gui/dialogs/dialogs.pri	2015-02-25 11:27:42.446310600 -0800
+@@ -49,7 +49,7 @@
+     QMAKE_EXTRA_COMPILERS += exceptions_compiler
+ }
+ 
+-win32 {
++win32 | cygwin-win32 {
+     HEADERS += dialogs/qwizard_win_p.h \
+                dialogs/qfiledialog_win_p.h
+     SOURCES += dialogs/qdialogsbinarycompat_win.cpp \
+@@ -61,7 +61,7 @@
+     !win32-borland:!wince*: LIBS += -lshell32 	# the filedialog needs this library
+ }
+ 
+-!mac:!embedded:!symbian:unix|qpa {
++!mac:!embedded:!symbian:!cygwin-win32:unix|qpa {
+         HEADERS += dialogs/qpagesetupdialog_unix_p.h
+ 	SOURCES += dialogs/qprintdialog_unix.cpp \
+ 		   dialogs/qpagesetupdialog_unix.cpp
+diff -urN qt-everywhere-opensource-src-4.8.6/src/gui/dialogs/qfiledialog_win.cpp qt-everywhere-opensource-src-4.8.6.fixed/src/gui/dialogs/qfiledialog_win.cpp
+--- qt-everywhere-opensource-src-4.8.6/src/gui/dialogs/qfiledialog_win.cpp	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/gui/dialogs/qfiledialog_win.cpp	2015-02-25 11:27:42.452311200 -0800
+@@ -272,6 +272,12 @@
+         ofn->nFilterIndex = idx + 1;
+     if (GetOpenFileName(ofn)) {
+         result = QString::fromWCharArray(ofn->lpstrFile);
++		if (result.size() >= 4 && result[1] == ':')
++		{
++			// c:/xxx => /cygdrive/c/xxx
++			result = QString(QLatin1String("/cygdrive/")+ result[0]).toLower() + result.mid(2).replace('\\', '/');
++		}
++			
+         selFilIdx = ofn->nFilterIndex;
+     }
+     qt_win_clean_up_OFN(&ofn);
+@@ -352,6 +358,11 @@
+         ofn->nFilterIndex = idx + 1;
+     if (GetSaveFileName(ofn)) {
+         result = QString::fromWCharArray(ofn->lpstrFile);
++		if (result.size() >= 4 && result[1] == ':')
++		{
++			// c:/xxx => /cygdrive/c/xxx
++			result = QString(QLatin1String("/cygdrive/")+ result[0]).toLower() + result.mid(2).replace('\\', '/');
++		}
+         selFilIdx = ofn->nFilterIndex;
+     }
+     qt_win_clean_up_OFN(&ofn);
+diff -urN qt-everywhere-opensource-src-4.8.6/src/gui/dialogs/qpagesetupdialog.h qt-everywhere-opensource-src-4.8.6.fixed/src/gui/dialogs/qpagesetupdialog.h
+--- qt-everywhere-opensource-src-4.8.6/src/gui/dialogs/qpagesetupdialog.h	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/gui/dialogs/qpagesetupdialog.h	2015-02-25 11:27:42.458311800 -0800
+@@ -84,7 +84,7 @@
+     void setOptions(PageSetupDialogOptions options);
+     PageSetupDialogOptions options() const;
+ 
+-#if defined(Q_WS_MAC) || defined(Q_OS_WIN)
++#if defined(Q_WS_MAC) || defined(Q_WS_WIN)
+     virtual void setVisible(bool visible);
+ #endif
+     virtual int exec();
+diff -urN qt-everywhere-opensource-src-4.8.6/src/gui/dialogs/qprintdialog.h qt-everywhere-opensource-src-4.8.6.fixed/src/gui/dialogs/qprintdialog.h
+--- qt-everywhere-opensource-src-4.8.6/src/gui/dialogs/qprintdialog.h	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/gui/dialogs/qprintdialog.h	2015-02-25 11:27:42.464312400 -0800
+@@ -56,7 +56,7 @@
+ class QPushButton;
+ class QPrinter;
+ 
+-#if defined (Q_OS_UNIX) && !defined(QTOPIA_PRINTDIALOG) && !defined(Q_WS_MAC) && !defined(Q_OS_SYMBIAN)
++#if 0	//defined (Q_OS_UNIX) && !defined(QTOPIA_PRINTDIALOG) && !defined(Q_WS_MAC) && !defined(Q_OS_SYMBIAN) && !defined(Q_WS_WIN)
+ class QUnixPrintWidgetPrivate;
+ 
+ class Q_GUI_EXPORT QUnixPrintWidget : public QWidget
+@@ -92,14 +92,14 @@
+ 
+     int exec();
+ #if defined (Q_OS_UNIX) && !defined(QTOPIA_PRINTDIALOG) && !defined(Q_WS_MAC)
+-    virtual void accept();
++    //virtual void accept();
+ #endif
+     void done(int result);
+ 
+ #if defined (Q_OS_UNIX) && defined (QT3_SUPPORT)
+-    QT3_SUPPORT void setPrinter(QPrinter *, bool = false);
+-    QT3_SUPPORT QPrinter *printer() const;
+-    QT3_SUPPORT void addButton(QPushButton *button);
++    //QT3_SUPPORT void setPrinter(QPrinter *, bool = false);
++    //QT3_SUPPORT QPrinter *printer() const;
++    //QT3_SUPPORT void addButton(QPushButton *button);
+ #endif
+ 
+     void setOption(PrintDialogOption option, bool on = true);
+@@ -144,10 +144,10 @@
+ #ifndef QTOPIA_PRINTDIALOG
+     Q_PRIVATE_SLOT(d_func(), void _q_chbPrintLastFirstToggled(bool))
+ #if defined (Q_OS_UNIX) && !defined (Q_OS_MAC)
+-    Q_PRIVATE_SLOT(d_func(), void _q_collapseOrExpandDialog())
++    //Q_PRIVATE_SLOT(d_func(), void _q_collapseOrExpandDialog())
+ #endif
+ # if defined(Q_OS_UNIX) && !defined (Q_OS_MAC) && !defined(QT_NO_MESSAGEBOX)
+-    Q_PRIVATE_SLOT(d_func(), void _q_checkFields())
++    //Q_PRIVATE_SLOT(d_func(), void _q_checkFields())
+ # endif
+ #else // QTOPIA_PRINTDIALOG
+     Q_PRIVATE_SLOT(d_func(), void _q_okClicked())
+diff -urN qt-everywhere-opensource-src-4.8.6/src/gui/gui.pro qt-everywhere-opensource-src-4.8.6.fixed/src/gui/gui.pro
+--- qt-everywhere-opensource-src-4.8.6/src/gui/gui.pro	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/gui/gui.pro	2015-02-25 11:27:42.470313000 -0800
+@@ -5,7 +5,7 @@
+ win32-msvc*|win32-icc:QMAKE_LFLAGS += /BASE:0x65000000
+ irix-cc*:QMAKE_CXXFLAGS += -no_prelink -ptused
+ 
+-!win32:!embedded:!qpa:!mac:!symbian:CONFIG      += x11
++!win32:!embedded:!qpa:!mac:!symbian:!cygwin-win32:CONFIG      += x11
+ 
+ unix|win32-g++*:QMAKE_PKGCONFIG_REQUIRES = QtCore
+ 
+@@ -16,7 +16,7 @@
+ #platforms
+ x11:include(kernel/x11.pri)
+ mac:include(kernel/mac.pri)
+-win32:include(kernel/win.pri)
++win32|cygwin-win32:include(kernel/win.pri)
+ embedded:include(embedded/embedded.pri)
+ symbian {
+     include(kernel/symbian.pri)
+@@ -42,7 +42,7 @@
+ include(effects/effects.pri)
+ 
+ include(egl/egl.pri)
+-win32:!wince*: DEFINES += QT_NO_EGL
++win32|cygwin-win32:!wince*: DEFINES += QT_NO_EGL
+ embedded: QT += network
+ 
+ QMAKE_LIBS += $$QMAKE_LIBS_GUI
+diff -urN qt-everywhere-opensource-src-4.8.6/src/gui/image/image.pri qt-everywhere-opensource-src-4.8.6.fixed/src/gui/image/image.pri
+--- qt-everywhere-opensource-src-4.8.6/src/gui/image/image.pri	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/gui/image/image.pri	2015-02-25 11:27:42.473313300 -0800
+@@ -59,7 +59,7 @@
+         image/qimagepixmapcleanuphooks.cpp \
+         image/qvolatileimage.cpp
+ 
+-win32 {
++win32|cygwin-win32 {
+     SOURCES += image/qpixmap_win.cpp
+ }
+ else:embedded {
+diff -urN qt-everywhere-opensource-src-4.8.6/src/gui/image/qiconloader.cpp qt-everywhere-opensource-src-4.8.6.fixed/src/gui/image/qiconloader.cpp
+--- qt-everywhere-opensource-src-4.8.6/src/gui/image/qiconloader.cpp	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/gui/image/qiconloader.cpp	2015-02-25 11:27:42.480314000 -0800
+@@ -83,6 +83,9 @@
+         return QLatin1String("hicolor");
+     }
+ #endif
++#ifdef __CYGWIN__
++	return QString::fromLatin1("oxygen");
++#endif
+     return QString();
+ }
+ 
+diff -urN qt-everywhere-opensource-src-4.8.6/src/gui/image/qpnghandler.pri qt-everywhere-opensource-src-4.8.6.fixed/src/gui/image/qpnghandler.pri
+--- qt-everywhere-opensource-src-4.8.6/src/gui/image/qpnghandler.pri	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/gui/image/qpnghandler.pri	2015-02-25 11:27:42.482314200 -0800
+@@ -2,7 +2,7 @@
+ HEADERS += $$PWD/qpnghandler_p.h
+ SOURCES += $$PWD/qpnghandler.cpp
+ contains(QT_CONFIG, system-png) {
+-    if(unix|win32-g++*): LIBS_PRIVATE  += -lpng
++    if(unix|win32-g++*): LIBS_PRIVATE  += -lpng16
+     else:win32:          LIBS += libpng.lib
+ 
+ } else {
+diff -urN qt-everywhere-opensource-src-4.8.6/src/gui/inputmethod/inputmethod.pri qt-everywhere-opensource-src-4.8.6.fixed/src/gui/inputmethod/inputmethod.pri
+--- qt-everywhere-opensource-src-4.8.6/src/gui/inputmethod/inputmethod.pri	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/gui/inputmethod/inputmethod.pri	2015-02-25 11:27:42.485314500 -0800
+@@ -11,7 +11,7 @@
+     HEADERS += inputmethod/qximinputcontext_p.h
+     SOURCES += inputmethod/qximinputcontext_x11.cpp
+ }
+-win32 {
++win32|cygwin-win32 {
+     HEADERS += inputmethod/qwininputcontext_p.h
+     SOURCES += inputmethod/qwininputcontext_win.cpp
+ }
+diff -urN qt-everywhere-opensource-src-4.8.6/src/gui/kernel/kernel.pri qt-everywhere-opensource-src-4.8.6.fixed/src/gui/kernel/kernel.pri
+--- qt-everywhere-opensource-src-4.8.6/src/gui/kernel/kernel.pri	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/gui/kernel/kernel.pri	2015-02-25 11:27:42.492315200 -0800
+@@ -85,7 +85,7 @@
+     kernel/qdesktopwidget.cpp \
+ 	kernel/qguiplatformplugin.cpp
+ 
+-win32 {
++win32|cygwin-win32 {
+ 	DEFINES += QT_NO_DIRECTDRAW
+ 
+     HEADERS += \
+diff -urN qt-everywhere-opensource-src-4.8.6/src/gui/kernel/qapplication.h qt-everywhere-opensource-src-4.8.6.fixed/src/gui/kernel/qapplication.h
+--- qt-everywhere-opensource-src-4.8.6/src/gui/kernel/qapplication.h	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/gui/kernel/qapplication.h	2015-02-25 11:27:42.497315700 -0800
+@@ -420,7 +420,7 @@
+ #endif
+ 
+ #if defined(Q_WS_MAC) || defined(Q_WS_X11)
+-    Q_PRIVATE_SLOT(d_func(), void _q_alertTimeOut())
++    //Q_PRIVATE_SLOT(d_func(), void _q_alertTimeOut())
+ #endif
+ #if defined(QT_RX71_MULTITOUCH)
+     Q_PRIVATE_SLOT(d_func(), void _q_readRX71MultiTouchEvents())
+diff -urN qt-everywhere-opensource-src-4.8.6/src/gui/kernel/qapplication_p.h qt-everywhere-opensource-src-4.8.6.fixed/src/gui/kernel/qapplication_p.h
+--- qt-everywhere-opensource-src-4.8.6/src/gui/kernel/qapplication_p.h	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/gui/kernel/qapplication_p.h	2015-02-25 11:27:42.503316300 -0800
+@@ -205,6 +205,8 @@
+ #endif
+ 
+ #if defined(Q_WS_WIN)
++#include <windows.h>
++
+ typedef BOOL (WINAPI *PtrRegisterTouchWindow)(HWND, ULONG);
+ typedef BOOL (WINAPI *PtrGetTouchInputInfo)(HANDLE, UINT, PVOID, int);
+ typedef BOOL (WINAPI *PtrCloseTouchInputHandle)(HANDLE);
+diff -urN qt-everywhere-opensource-src-4.8.6/src/gui/kernel/qapplication_win.cpp qt-everywhere-opensource-src-4.8.6.fixed/src/gui/kernel/qapplication_win.cpp
+--- qt-everywhere-opensource-src-4.8.6/src/gui/kernel/qapplication_win.cpp	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/gui/kernel/qapplication_win.cpp	2015-02-25 11:27:42.513317300 -0800
+@@ -182,7 +182,7 @@
+ 
+ #if defined(__CYGWIN32__)
+ #define __INSIDE_CYGWIN32__
+-#include <mywinsock.h>
++//#include <mywinsock.h>
+ #endif
+ 
+ #ifndef IMR_RECONVERTSTRING
+@@ -281,9 +281,11 @@
+ extern bool qt_sendSpontaneousEvent(QObject*, QEvent*);
+ extern QRegion qt_dirtyRegion(QWidget *);
+ 
++#ifndef QT_NO_TABLETEVENT
+ typedef QHash<quint64, QTabletDeviceData> QTabletCursorInfo;
+ Q_GLOBAL_STATIC(QTabletCursorInfo, tCursorInfo)
+ QTabletDeviceData currentTabletPointer;
++#endif
+ 
+ // from qregion_win.cpp
+ extern HRGN qt_tryCreateRegion(QRegion::RegionType type, int left, int top, int right, int bottom);
+@@ -959,6 +961,10 @@
+ typedef QHash<QString, int> WinClassNameHash;
+ Q_GLOBAL_STATIC(WinClassNameHash, winclassNames)
+ 
++#ifdef __CYGWIN__
++#define WqWinAppInst() GetModuleHandle(NULL)
++#endif
++
+ //
+ // If 0 is passed as the widget pointer, register a window class
+ // for QWidget as default. This is used in QGLTemporaryContext
+@@ -1046,8 +1052,8 @@
+     static int classExists = -1;
+ 
+     if (classExists == -1) {
+-        WNDCLASS wcinfo;
+-        classExists = GetClassInfo((HINSTANCE)qWinAppInst(), (wchar_t*)cname.utf16(), &wcinfo);
++        WNDCLASSW wcinfo;
++        classExists = GetClassInfoW((HINSTANCE)qWinAppInst(), (wchar_t*)cname.utf16(), &wcinfo);
+         classExists = classExists && wcinfo.lpfnWndProc != QtWndProc;
+     }
+ 
+@@ -1058,8 +1064,8 @@
+         return cname;
+ 
+ #ifndef Q_WS_WINCE
+-    WNDCLASSEX wc;
+-    wc.cbSize       = sizeof(WNDCLASSEX);
++    WNDCLASSEXW wc;
++    wc.cbSize       = sizeof(WNDCLASSEXW);
+ #else
+     WNDCLASS wc;
+ #endif
+@@ -1069,12 +1075,12 @@
+     wc.cbWndExtra   = 0;
+     wc.hInstance    = qWinAppInst();
+     if (icon) {
+-        wc.hIcon = (HICON)LoadImage(qWinAppInst(), L"IDI_ICON1", IMAGE_ICON, 0, 0, LR_DEFAULTSIZE);
++        wc.hIcon = (HICON)LoadImageW(WqWinAppInst(), L"IDI_ICON1", IMAGE_ICON, 0, 0, LR_DEFAULTSIZE);
+ #ifndef Q_WS_WINCE
+         if (wc.hIcon) {
+             int sw = GetSystemMetrics(SM_CXSMICON);
+             int sh = GetSystemMetrics(SM_CYSMICON);
+-            wc.hIconSm = (HICON)LoadImage(qWinAppInst(), L"IDI_ICON1", IMAGE_ICON, sw, sh, 0);
++            wc.hIconSm = (HICON)LoadImageW(qWinAppInst(), L"IDI_ICON1", IMAGE_ICON, sw, sh, 0);
+         } else {
+             wc.hIcon = (HICON)LoadImage(0, IDI_APPLICATION, IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_SHARED);
+             wc.hIconSm = 0;
+@@ -1099,7 +1105,7 @@
+     wc.lpszClassName = (wchar_t*)cname.utf16();
+ 
+ #ifndef Q_WS_WINCE
+-    ATOM atom = RegisterClassEx(&wc);
++    ATOM atom = RegisterClassExW(&wc);
+ #else
+     ATOM atom = RegisterClass(&wc);
+ #endif
+@@ -1125,7 +1131,7 @@
+     WinClassNameHash *hash = winclassNames();
+     QHash<QString, int>::ConstIterator it = hash->constBegin();
+     while (it != hash->constEnd()) {
+-        UnregisterClass((wchar_t*)it.key().utf16(), qWinAppInst());
++        UnregisterClassW((wchar_t*)it.key().utf16(), qWinAppInst());
+         ++it;
+     }
+     hash->clear();
+@@ -1560,7 +1566,9 @@
+         if (qt_session_manager_self)
+             qApp->commitData(*qt_session_manager_self);
+         if (lParam & ENDSESSION_LOGOFF) {
++#ifndef __CYGWIN__
+             _flushall();
++#endif
+         }
+         RETURN(!sm_cancel);
+     }
+@@ -2531,7 +2539,7 @@
+ #ifndef Q_WS_WINCE
+         case WM_INPUTLANGCHANGE: {
+             wchar_t info[7];
+-            if (!GetLocaleInfo(MAKELCID(lParam, SORT_DEFAULT), LOCALE_IDEFAULTANSICODEPAGE, info, 6)) {
++            if (!GetLocaleInfoW(MAKELCID(lParam, SORT_DEFAULT), LOCALE_IDEFAULTANSICODEPAGE, info, 6)) {
+                 inputcharset = CP_ACP;
+             } else {
+                 inputcharset = QString::fromWCharArray(info).toInt();
+@@ -3593,6 +3601,9 @@
+ bool QETWidget::translateTabletEvent(const MSG &msg, PACKET *localPacketBuf,
+                                       int numPackets)
+ {
++#ifdef QT_NO_TABLETEVENT
++	return false;
++#else
+     Q_UNUSED(msg);
+     POINT ptNew;
+     static DWORD btnNew, btnOld, btnChange;
+@@ -3752,6 +3763,7 @@
+ #endif // QT_NO_TABLETEVENT
+     }
+     return sendEvent;
++#endif
+ }
+ 
+ extern bool qt_is_gui_used;
+diff -urN qt-everywhere-opensource-src-4.8.6/src/gui/kernel/qcursor_win.cpp qt-everywhere-opensource-src-4.8.6.fixed/src/gui/kernel/qcursor_win.cpp
+--- qt-everywhere-opensource-src-4.8.6/src/gui/kernel/qcursor_win.cpp	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/gui/kernel/qcursor_win.cpp	2015-02-25 11:27:42.519317900 -0800
+@@ -38,7 +38,7 @@
+ ** $QT_END_LICENSE$
+ **
+ ****************************************************************************/
+-
++#define UNICODE
+ #include <private/qcursor_p.h>
+ #include <qbitmap.h>
+ #include <qcursor.h>
+diff -urN qt-everywhere-opensource-src-4.8.6/src/gui/kernel/qguiplatformplugin.cpp qt-everywhere-opensource-src-4.8.6.fixed/src/gui/kernel/qguiplatformplugin.cpp
+--- qt-everywhere-opensource-src-4.8.6/src/gui/kernel/qguiplatformplugin.cpp	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/gui/kernel/qguiplatformplugin.cpp	2015-02-25 11:27:42.526318600 -0800
+@@ -224,7 +224,7 @@
+ QStringList QGuiPlatformPlugin::iconThemeSearchPaths()
+ {
+     QStringList paths;
+-#if defined(Q_WS_X11)
++#if defined(Q_WS_X11) || defined(__CYGWIN__)
+     QString xdgDirString = QFile::decodeName(getenv("XDG_DATA_DIRS"));
+     if (xdgDirString.isEmpty())
+         xdgDirString = QLatin1String("/usr/local/share/:/usr/share/");
+@@ -236,6 +236,7 @@
+         if (dir.exists())
+             paths.append(dir.path() + QLatin1String("/icons"));
+     }
++#ifdef Q_WS_X11
+     if (X11->desktopEnvironment == DE_KDE) {
+         paths << QLatin1Char(':') + QKde::kdeHome() + QLatin1String("/share/icons");
+         QStringList kdeDirs = QFile::decodeName(getenv("KDEDIRS")).split(QLatin1Char(':'));
+@@ -245,6 +246,7 @@
+                 paths.append(dir.path());
+         }
+     }
++#endif
+ 
+     // Add home directory first in search path
+     QDir homeDir(QDir::homePath() + QLatin1String("/.icons"));
+diff -urN qt-everywhere-opensource-src-4.8.6/src/gui/kernel/qkeymapper.cpp qt-everywhere-opensource-src-4.8.6.fixed/src/gui/kernel/qkeymapper.cpp
+--- qt-everywhere-opensource-src-4.8.6/src/gui/kernel/qkeymapper.cpp	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/gui/kernel/qkeymapper.cpp	2015-02-25 11:27:42.528318800 -0800
+@@ -39,7 +39,6 @@
+ **
+ ****************************************************************************/
+ 
+-
+ #include "qapplication.h"
+ 
+ #include <private/qobject_p.h>
+diff -urN qt-everywhere-opensource-src-4.8.6/src/gui/kernel/qkeymapper_p.h qt-everywhere-opensource-src-4.8.6.fixed/src/gui/kernel/qkeymapper_p.h
+--- qt-everywhere-opensource-src-4.8.6/src/gui/kernel/qkeymapper_p.h	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/gui/kernel/qkeymapper_p.h	2015-02-25 11:27:42.534319400 -0800
+@@ -91,7 +91,7 @@
+ 
+ 
+ 
+-#if defined(Q_OS_WIN)
++#if defined(Q_WS_WIN)
+ enum WindowsNativeModifiers {
+     ShiftLeft            = 0x00000001,
+     ControlLeft          = 0x00000002,
+@@ -155,7 +155,7 @@
+     QLocale keyboardInputLocale;
+     Qt::LayoutDirection keyboardInputDirection;
+ 
+-#if defined(Q_OS_WIN)
++#if defined(Q_WS_WIN)
+     void clearRecordedKeys();
+     void updateKeyMap(const MSG &msg);
+     bool translateKeyEvent(QWidget *receiver, const MSG &msg, bool grab);
+diff -urN qt-everywhere-opensource-src-4.8.6/src/gui/kernel/qkeymapper_win.cpp qt-everywhere-opensource-src-4.8.6.fixed/src/gui/kernel/qkeymapper_win.cpp
+--- qt-everywhere-opensource-src-4.8.6/src/gui/kernel/qkeymapper_win.cpp	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/gui/kernel/qkeymapper_win.cpp	2015-02-25 11:27:42.541320100 -0800
+@@ -39,6 +39,8 @@
+ **
+ ****************************************************************************/
+ 
++#define UNICODE
++
+ #include "qkeymapper_p.h"
+ 
+ #include <qt_windows.h>
+diff -urN qt-everywhere-opensource-src-4.8.6/src/gui/kernel/qmime_win.cpp qt-everywhere-opensource-src-4.8.6.fixed/src/gui/kernel/qmime_win.cpp
+--- qt-everywhere-opensource-src-4.8.6/src/gui/kernel/qmime_win.cpp	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/gui/kernel/qmime_win.cpp	2015-02-25 11:27:42.547320700 -0800
+@@ -39,6 +39,7 @@
+ **
+ ****************************************************************************/
+ 
++#define UNICODE
+ #include "qmime.h"
+ 
+ #include "qimagereader.h"
+diff -urN qt-everywhere-opensource-src-4.8.6/src/gui/kernel/qsound_win.cpp qt-everywhere-opensource-src-4.8.6.fixed/src/gui/kernel/qsound_win.cpp
+--- qt-everywhere-opensource-src-4.8.6/src/gui/kernel/qsound_win.cpp	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/gui/kernel/qsound_win.cpp	2015-02-25 11:27:42.553321300 -0800
+@@ -39,6 +39,7 @@
+ **
+ ****************************************************************************/
+ 
++#define UNICODE
+ #include "qsound.h"
+ 
+ #ifndef QT_NO_SOUND
+diff -urN qt-everywhere-opensource-src-4.8.6/src/gui/kernel/qwidget_win.cpp qt-everywhere-opensource-src-4.8.6.fixed/src/gui/kernel/qwidget_win.cpp
+--- qt-everywhere-opensource-src-4.8.6/src/gui/kernel/qwidget_win.cpp	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/gui/kernel/qwidget_win.cpp	2015-02-25 11:27:42.561322100 -0800
+@@ -39,6 +39,7 @@
+ **
+ ****************************************************************************/
+ 
++#define UNICODE
+ #include "qapplication.h"
+ #include "qapplication_p.h"
+ #include "qbitmap.h"
+diff -urN qt-everywhere-opensource-src-4.8.6/src/gui/kernel/qwindowdefs_win.h qt-everywhere-opensource-src-4.8.6.fixed/src/gui/kernel/qwindowdefs_win.h
+--- qt-everywhere-opensource-src-4.8.6/src/gui/kernel/qwindowdefs_win.h	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/gui/kernel/qwindowdefs_win.h	2015-02-25 11:27:42.566322600 -0800
+@@ -110,7 +110,7 @@
+ #ifndef HMONITOR
+ Q_DECLARE_HANDLE(HMONITOR);
+ #endif
+-#ifndef HRESULT
++#if !defined(HRESULT) && !defined(__CYGWIN__)
+ typedef long HRESULT;
+ #endif
+ 
+diff -urN qt-everywhere-opensource-src-4.8.6/src/gui/painting/painting.pri qt-everywhere-opensource-src-4.8.6.fixed/src/gui/painting/painting.pri
+--- qt-everywhere-opensource-src-4.8.6/src/gui/painting/painting.pri	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/gui/painting/painting.pri	2015-02-25 11:27:42.573323300 -0800
+@@ -105,7 +105,7 @@
+                 painting/qpaintengine_blitter_p.h       \
+                 painting/qblittable_p.h                 \
+ 
+-win32 {
++win32|cygwin-win32 {
+         HEADERS += painting/qprintengine_win_p.h
+ 
+         SOURCES += \
+@@ -166,14 +166,14 @@
+                 painting/qprintengine_mac.mm \
+ }
+ 
+-unix:!mac:!symbian|qpa {
++unix:!mac:!cygwin-win32:!symbian|qpa {
+         HEADERS += \
+                 painting/qprinterinfo_unix_p.h
+         SOURCES += \
+                 painting/qprinterinfo_unix.cpp
+ }
+ 
+-win32|x11|mac|embedded|qpa|symbian {
++win32|x11|mac|embedded|qpa|symbian|cygwin-win32 {
+         SOURCES += painting/qbackingstore.cpp
+         HEADERS += painting/qbackingstore_p.h
+ }
+diff -urN qt-everywhere-opensource-src-4.8.6/src/gui/painting/qprintengine_win.cpp qt-everywhere-opensource-src-4.8.6.fixed/src/gui/painting/qprintengine_win.cpp
+--- qt-everywhere-opensource-src-4.8.6/src/gui/painting/qprintengine_win.cpp	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/gui/painting/qprintengine_win.cpp	2015-02-25 11:27:42.580324000 -0800
+@@ -39,6 +39,7 @@
+ **
+ ****************************************************************************/
+ 
++#define UNICODE
+ #ifndef QT_NO_PRINTER
+ 
+ #include "qprinter_p.h"
+diff -urN qt-everywhere-opensource-src-4.8.6/src/gui/painting/qprinterinfo_win.cpp qt-everywhere-opensource-src-4.8.6.fixed/src/gui/painting/qprinterinfo_win.cpp
+--- qt-everywhere-opensource-src-4.8.6/src/gui/painting/qprinterinfo_win.cpp	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/gui/painting/qprinterinfo_win.cpp	2015-02-25 11:27:42.586324600 -0800
+@@ -39,6 +39,7 @@
+ **
+ ****************************************************************************/
+ 
++#define UNICODE
+ #include "qprinterinfo.h"
+ #include "qprinterinfo_p.h"
+ 
+diff -urN qt-everywhere-opensource-src-4.8.6/src/gui/styles/qwindowsstyle.cpp qt-everywhere-opensource-src-4.8.6.fixed/src/gui/styles/qwindowsstyle.cpp
+--- qt-everywhere-opensource-src-4.8.6/src/gui/styles/qwindowsstyle.cpp	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/gui/styles/qwindowsstyle.cpp	2015-02-25 11:27:42.594325400 -0800
+@@ -934,7 +934,7 @@
+ 
+ #endif //QT_NO_IMAGEFORMAT_XPM
+ 
+-#ifdef Q_OS_WIN
++#ifdef Q_WS_WIN
+ static QPixmap loadIconFromShell32( int resourceId, int size )
+ {
+ #ifdef Q_OS_WINCE
+diff -urN qt-everywhere-opensource-src-4.8.6/src/gui/text/qfontdatabase.cpp qt-everywhere-opensource-src-4.8.6.fixed/src/gui/text/qfontdatabase.cpp
+--- qt-everywhere-opensource-src-4.8.6/src/gui/text/qfontdatabase.cpp	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/gui/text/qfontdatabase.cpp	2015-02-25 11:27:42.602326200 -0800
+@@ -81,6 +81,10 @@
+ #  define FM_DEBUG if (false) qDebug
+ #endif
+ 
++#ifdef __CYGWIN__
++#define QT_NO_DIRECTWRITE
++#endif
++
+ #if defined(Q_WS_WIN) && !defined(QT_NO_DIRECTWRITE)
+ #  include <dwrite.h>
+ #endif
+@@ -696,7 +700,7 @@
+     struct ApplicationFont {
+         QString fileName;
+         QByteArray data;
+-#if defined(Q_OS_WIN)
++#if defined(Q_WS_WIN)
+         HANDLE handle;
+         bool memoryFont;
+         QVector<FONTSIGNATURE> signatures;
+diff -urN qt-everywhere-opensource-src-4.8.6/src/gui/text/qfontdatabase_win.cpp qt-everywhere-opensource-src-4.8.6.fixed/src/gui/text/qfontdatabase_win.cpp
+--- qt-everywhere-opensource-src-4.8.6/src/gui/text/qfontdatabase_win.cpp	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/gui/text/qfontdatabase_win.cpp	2015-02-25 11:27:42.608326800 -0800
+@@ -540,6 +540,11 @@
+     }
+ }
+ 
++extern "C" int __stdcall GetUserDefaultLocaleName(
++    wchar_t *lpLocaleName,
++     int cchLocaleName
++);
++
+ #if !defined(QT_NO_DIRECTWRITE)
+ static void initFontInfo(QFontEngineDirectWrite *fe, const QFontDef &request,
+                          int dpi, IDWriteFont *font)
+diff -urN qt-everywhere-opensource-src-4.8.6/src/gui/text/qrawfont_win.cpp qt-everywhere-opensource-src-4.8.6.fixed/src/gui/text/qrawfont_win.cpp
+--- qt-everywhere-opensource-src-4.8.6/src/gui/text/qrawfont_win.cpp	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/gui/text/qrawfont_win.cpp	2015-02-25 11:27:42.614327400 -0800
+@@ -45,6 +45,11 @@
+ 
+ #include <private/qsystemlibrary_p.h>
+ 
++#ifdef __CYGWIN__
++#define QT_NO_DIRECTWRITE
++#endif
++
++
+ #if !defined(QT_NO_DIRECTWRITE)
+ #  include "qfontenginedirectwrite_p.h"
+ #  include <dwrite.h>
+diff -urN qt-everywhere-opensource-src-4.8.6/src/gui/text/text.pri qt-everywhere-opensource-src-4.8.6.fixed/src/gui/text/text.pri
+--- qt-everywhere-opensource-src-4.8.6/src/gui/text/text.pri	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/gui/text/text.pri	2015-02-25 11:27:42.618327800 -0800
+@@ -77,7 +77,7 @@
+         text/qrawfont.cpp \
+     text/qglyphrun.cpp
+ 
+-win32 {
++win32|cygwin-win32 {
+ 	SOURCES += \
+ 		text/qfont_win.cpp \
+                 text/qfontengine_win.cpp \
+diff -urN qt-everywhere-opensource-src-4.8.6/src/gui/util/util.pri qt-everywhere-opensource-src-4.8.6.fixed/src/gui/util/util.pri
+--- qt-everywhere-opensource-src-4.8.6/src/gui/util/util.pri	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/gui/util/util.pri	2015-02-25 11:27:42.620328000 -0800
+@@ -23,7 +23,7 @@
+ wince* {
+ 		SOURCES += \
+ 				util/qsystemtrayicon_wince.cpp
+-} else:win32 {
++} else:win32|cygwin-win32 {
+ 		SOURCES += \
+ 				util/qsystemtrayicon_win.cpp
+ }
+diff -urN qt-everywhere-opensource-src-4.8.6/src/opengl/opengl.pro qt-everywhere-opensource-src-4.8.6.fixed/src/opengl/opengl.pro
+--- qt-everywhere-opensource-src-4.8.6/src/opengl/opengl.pro	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/opengl/opengl.pro	2015-02-25 11:27:42.624328400 -0800
+@@ -1,7 +1,7 @@
+ TARGET     = QtOpenGL
+ QPRO_PWD   = $$PWD
+ QT         = core gui
+-DEFINES   += QT_BUILD_OPENGL_LIB
++DEFINES   += QT_BUILD_OPENGL_LIB USE_OPENGL32
+ DEFINES   += QT_NO_USING_NAMESPACE
+ win32-msvc*|win32-icc:QMAKE_LFLAGS += /BASE:0x63000000
+ solaris-cc*:QMAKE_CXXFLAGS_RELEASE -= -O2
+@@ -11,7 +11,7 @@
+ 
+ include(../qbase.pri)
+ 
+-!win32:!embedded:!mac:!symbian:!qpa:CONFIG	   += x11
++!win32:!embedded:!mac:!symbian:!qpa:!cygwin-win32:CONFIG	   += x11
+ contains(QT_CONFIG, opengl):CONFIG += opengl
+ contains(QT_CONFIG, opengles1):CONFIG += opengles1
+ contains(QT_CONFIG, opengles2):CONFIG += opengles2
+@@ -125,7 +125,7 @@
+                          qglpixelbuffer_mac.mm
+     LIBS_PRIVATE += -framework AppKit -framework Carbon
+ }
+-win32:!wince*: {
++win32:!wince*|cygwin-win32 {
+     DEFINES += QT_NO_EGL
+     SOURCES += qgl_win.cpp \
+ 	           qglpixelbuffer_win.cpp
+diff -urN qt-everywhere-opensource-src-4.8.6/src/qt3support/network/q3dns.cpp qt-everywhere-opensource-src-4.8.6.fixed/src/qt3support/network/q3dns.cpp
+--- qt-everywhere-opensource-src-4.8.6/src/qt3support/network/q3dns.cpp	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6.fixed/src/qt3support/network/q3dns.cpp	2015-02-25 11:27:42.642330200 -0800
+@@ -2258,12 +2258,12 @@
+ 
+     wchar_t buf[1024];
+     DWORD bsz = sizeof(buf) / sizeof(wchar_t);
+-    int r = RegQueryValueEx(key, (wchar_t*)subKey.utf16(), 0, 0, (LPBYTE)buf, &bsz);
++    int r = RegQueryValueExW(key, (wchar_t*)subKey.utf16(), 0, 0, (LPBYTE)buf, &bsz);
+     if (r == ERROR_SUCCESS) {
+         s = QString::fromWCharArray(buf);
+     } else if (r == ERROR_MORE_DATA) {
+         char *ptr = new char[bsz+1];
+-        r = RegQueryValueEx(key, (wchar_t*)subKey.utf16(), 0, 0, (LPBYTE)ptr, &bsz);
++        r = RegQueryValueExW(key, (wchar_t*)subKey.utf16(), 0, 0, (LPBYTE)ptr, &bsz);
+         if (r == ERROR_SUCCESS)
+             s = QLatin1String(ptr);
+         delete [] ptr;
+@@ -2276,7 +2276,7 @@
+     QString *domainName, QString *nameServer, QString *searchList )
+ {
+     HKEY k;
+-    int r = RegOpenKeyEx( HKEY_LOCAL_MACHINE, (wchar_t*)path.utf16(), 0, KEY_READ, &k );
++    int r = RegOpenKeyExW( HKEY_LOCAL_MACHINE, (wchar_t*)path.utf16(), 0, KEY_READ, &k );
+ 
+     if ( r == ERROR_SUCCESS ) {
+ 	*domainName = getWindowsRegString( k, QLatin1String("DhcpDomain") );
+@@ -2309,7 +2309,7 @@
+     bool gotNetworkParams = false;
+     // try the API call GetNetworkParams() first and use registry lookup only
+     // as a fallback
+-    HINSTANCE hinstLib = QSystemLibrary::load( L"iphlpapi" );
++    HINSTANCE hinstLib = LoadLibraryW( L"iphlpapi" );
+     if ( hinstLib != 0 ) {
+ #ifdef Q_OS_WINCE
+ 	GNP getNetworkParams = (GNP) GetProcAddress( hinstLib, L"GetNetworkParams" );
+--- qt-everywhere-opensource-src-4.8.6.orig/src/network/socket/qnativesocketengine.cpp	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6/src/network/socket/qnativesocketengine.cpp	2015-02-26 09:56:14.591328700 -0800
+@@ -948,7 +948,7 @@
+     // On Windows, the socket is in connected state if a call to
+     // select(writable) is successful. In this case we should not
+     // issue a second call to WSAConnect()
+-#if defined (Q_WS_WIN)
++#if defined (Q_OS_WIN)
+     if (ret > 0) {
+         setState(QAbstractSocket::ConnectedState);
+         d_func()->fetchConnectionParameters();
+@@ -1001,7 +1001,7 @@
+     // On Windows, the socket is in connected state if a call to
+     // select(writable) is successful. In this case we should not
+     // issue a second call to WSAConnect()
+-#if defined (Q_WS_WIN)
++#if defined (Q_OS_WIN)
+     if (checkWrite && ((readyToWrite && *readyToWrite) || !readyToWrite) && ret > 0) {
+         setState(QAbstractSocket::ConnectedState);
+         d_func()->fetchConnectionParameters();
+diff -ur qt-everywhere-opensource-src-4.8.6-orig/src/network/kernel/qnetworkinterface.h qt-everywhere-opensource-src-4.8.6/src/network/kernel/qnetworkinterface.h
+--- qt-everywhere-opensource-src-4.8.6-orig/src/network/kernel/qnetworkinterface.h	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6/src/network/kernel/qnetworkinterface.h	2015-02-28 19:08:12.015897700 -0800
+@@ -48,6 +48,10 @@
+ 
+ #ifndef QT_NO_NETWORKINTERFACE
+ 
++#ifdef interface
++#undef interface
++#endif
++
+ QT_BEGIN_HEADER
+ 
+ QT_BEGIN_NAMESPACE
+diff -ur qt-everywhere-opensource-src-4.8.6-old/src/imports/imports.pro qt-everywhere-opensource-src-4.8.6/src/imports/imports.pro
+--- qt-everywhere-opensource-src-4.8.6-old/src/imports/imports.pro	2014-04-10 21:37:12.000000000 -0700
++++ qt-everywhere-opensource-src-4.8.6/src/imports/imports.pro	2015-03-02 16:14:04.766250400 -0800
+@@ -1,5 +1,5 @@
+ TEMPLATE = subdirs
+ 
+ SUBDIRS += folderlistmodel particles gestures
+-contains(QT_CONFIG, opengl):!contains(QT_CONFIG, opengles1): SUBDIRS += shaders
++#contains(QT_CONFIG, opengl):!contains(QT_CONFIG, opengles1): SUBDIRS += shaders
+ 
