@@ -1,5 +1,6 @@
+diff -urN pcl-pcl-1.7.1-orig/CMakeLists.txt pcl-pcl-1.7.1/CMakeLists.txt
 --- pcl-pcl-1.7.1-orig/CMakeLists.txt	2013-10-07 06:09:35.000000000 -0700
-+++ pcl-pcl-1.7.1/CMakeLists.txt	2015-02-27 20:08:16.060334500 -0800
++++ pcl-pcl-1.7.1/CMakeLists.txt	2015-09-03 12:15:14.895069400 -0700
 @@ -91,9 +91,9 @@
      endif ()
    endif()
@@ -12,3 +13,64 @@
  
    if(WIN32)
      if(PCL_SHARED_LIBS)
+diff -urN pcl-pcl-1.7.1-orig/io/src/lzf_image_io.cpp pcl-pcl-1.7.1/io/src/lzf_image_io.cpp
+--- pcl-pcl-1.7.1-orig/io/src/lzf_image_io.cpp	2013-10-07 06:09:35.000000000 -0700
++++ pcl-pcl-1.7.1/io/src/lzf_image_io.cpp	2015-09-03 12:40:25.103069400 -0700
+@@ -59,6 +59,17 @@
+ 
+ #define LZF_HEADER_SIZE 37
+ 
++
++// The signature of boost::property_tree::xml_parser::write_xml() changed in Boost 1.56
++// See https://github.com/PointCloudLibrary/pcl/issues/864
++#include <boost/version.hpp>
++#if (BOOST_VERSION >= 105600)
++  typedef boost::property_tree::xml_writer_settings<std::string> xml_writer_settings;
++#else
++  typedef boost::property_tree::xml_writer_settings<char> xml_writer_settings;
++#endif
++
++
+ //////////////////////////////////////////////////////////////////////////////
+ bool
+ pcl::io::LZFImageWriter::saveImageBlob (const char* data, 
+@@ -198,9 +209,8 @@
+   catch (std::exception& e)
+   {}
+ 
+-  boost::property_tree::xml_writer_settings<char> settings ('\t', 1);
+   pt.put (tag, parameter);
+-  write_xml (filename, pt, std::locale (), settings);
++  write_xml (filename, pt, std::locale (), xml_writer_settings ('\t', 1));
+ 
+   return (true);
+ }
+@@ -218,13 +228,12 @@
+   catch (std::exception& e)
+   {}
+ 
+-  boost::property_tree::xml_writer_settings<char> settings ('\t', 1);
+   pt.put ("depth.focal_length_x", parameters.focal_length_x);
+   pt.put ("depth.focal_length_y", parameters.focal_length_y);
+   pt.put ("depth.principal_point_x", parameters.principal_point_x);
+   pt.put ("depth.principal_point_y", parameters.principal_point_y);
+   pt.put ("depth.z_multiplication_factor", z_multiplication_factor_);
+-  write_xml (filename, pt, std::locale (), settings);
++  write_xml (filename, pt, std::locale (), xml_writer_settings ('\t', 1));
+ 
+   return (true);
+ }
+@@ -279,12 +288,11 @@
+   catch (std::exception& e)
+   {}
+ 
+-  boost::property_tree::xml_writer_settings<char> settings ('\t', 1);
+   pt.put ("rgb.focal_length_x", parameters.focal_length_x);
+   pt.put ("rgb.focal_length_y", parameters.focal_length_y);
+   pt.put ("rgb.principal_point_x", parameters.principal_point_x);
+   pt.put ("rgb.principal_point_y", parameters.principal_point_y);
+-  write_xml (filename, pt, std::locale (), settings);
++  write_xml (filename, pt, std::locale (), xml_writer_settings ('\t', 1));
+ 
+   return (true);
+ }

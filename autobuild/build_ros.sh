@@ -2,7 +2,8 @@
 CYGWIN_MIRROR="--mirror http://cygwin.mirror.gtcomm.net/"
 ROS_WORKSPACE=/opt/ros
 ROS_DEPS=/opt/rosdeps
-export SOURCEFORGE_MIRROR=softlayer-dal.dl.sourceforge.net
+ROS_DISTRO=indigo
+export SOURCEFORGE_MIRROR=downloads.sourceforge.net
 
 SCRIPT_ROOT=$(dirname $(readlink -f $0))
 
@@ -70,6 +71,7 @@ done
 provide_prerequisite gcc-g++ "/usr/bin/g++ --version" || exit 1
 provide_prerequisite diffutils "/usr/bin/cmp --version" || exit 1
 provide_prerequisite libtool "libtool --version" || exit 1
+provide_prerequisite fluid "test -f /usr/bin/fluid.exe" || exit 1
 
 echo "Checking library prerequisites..."
 provide_prerequisite libpoco-devel "test -f /lib/libPocoData.dll.a" || exit 1
@@ -113,8 +115,8 @@ for pkg in `ls -1 $SCRIPT_ROOT/install_helpers/*.sh`; do
 done
 
 cd $ROS_WORKSPACE || exit 1
-test -e indigo-desktop-full-wet.rosinstall || (echo "Generating package list..."; rosinstall_generator desktop_full --rosdistro indigo --deps --wet-only --tar > indigo-desktop-full-wet.rosinstall)
-test -e src/.rosinstall || (echo "Downloading package sources..."; wstool init -j8 src indigo-desktop-full-wet.rosinstall)
+test -e $ROS_DISTRO-desktop-full-wet.rosinstall || (echo "Generating package list..."; rosinstall_generator desktop_full --rosdistro $ROS_DISTRO --deps --wet-only --tar > $ROS_DISTRO-desktop-full-wet.rosinstall)
+test -e src/.rosinstall || (echo "Downloading package sources..."; wstool init -j8 src $ROS_DISTRO-desktop-full-wet.rosinstall)
 
 echo "Patching ROS sources..."
 for dir in `ls -1 $ROS_WORKSPACE/src`; do
