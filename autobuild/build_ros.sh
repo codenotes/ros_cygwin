@@ -107,6 +107,7 @@ fi
 export PATH=$PATH:$QTDIR/lib
 
 echo "Patching system files..."
+patch_system_file /usr/include/boost/thread/pthread/recursive_mutex.hpp $SCRIPT_ROOT/patches/boost.patch
 patch_system_file /usr/include/ctype.h $SCRIPT_ROOT/patches/ctype.patch
 
 echo "Checking buildable external packages..."
