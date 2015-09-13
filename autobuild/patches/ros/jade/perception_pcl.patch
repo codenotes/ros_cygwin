@@ -1,0 +1,12 @@
+diff -urN src/perception_pcl/pcl_ros/CMakeLists.txt src.new/perception_pcl/pcl_ros/CMakeLists.txt
+--- src/perception_pcl/pcl_ros/CMakeLists.txt	2015-06-22 14:18:02.000000000 -0700
++++ src.new/perception_pcl/pcl_ros/CMakeLists.txt	2015-09-12 13:11:31.395571300 -0700
+@@ -4,7 +4,7 @@
+ ## Find system dependencies
+ find_package(cmake_modules REQUIRED)
+ find_package(Boost REQUIRED COMPONENTS system filesystem thread)
+-find_package(Eigen3 REQUIRED)
++find_package(Eigen REQUIRED)
+ find_package(PCL REQUIRED)
+ 
+ ## Find catkin packages

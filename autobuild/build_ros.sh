@@ -49,11 +49,17 @@ install_pip () {
 }
 
 patch_single_module() {	#Args: <module name>
-	test -e $SCRIPT_ROOT/patches/ros/$1.patch || return 0	#No patch avilable
+	test -e $SCRIPT_ROOT/patches/ros/$ROS_DISTRO/$1.patch || test -e $SCRIPT_ROOT/patches/ros/$1.patch || return 0	#No patch avilable
 	test -e $ROS_WORKSPACE/src/$1/$1.patch && return 0	#Already patched
 	echo "Patching $1..."
-	patch -d $ROS_WORKSPACE/src/$1 -p2 < $SCRIPT_ROOT/patches/ros/$1.patch || return 1
-	cp $SCRIPT_ROOT/patches/ros/$1.patch $ROS_WORKSPACE/src/$1/$1.patch	#Just to indicate that this has already been patched
+	if [ -e $SCRIPT_ROOT/patches/ros/$ROS_DISTRO/$1.patch ]; then
+		PATCH_FILE=$SCRIPT_ROOT/patches/ros/$ROS_DISTRO/$1.patch
+	else
+		PATCH_FILE=$SCRIPT_ROOT/patches/ros/$1.patch
+	fi
+
+	patch -d $ROS_WORKSPACE/src/$1 -p2 < $PATCH_FILE || return 1
+	cp $PATCH_FILE $ROS_WORKSPACE/src/$1/$1.patch	#Just to indicate that this has already been patched
 }
 
 patch_system_file() { #Args: file, patch file
