@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ROSInstaller", "ROSInstaller.csproj", "{E7AAE355-267F-432D-A85F-527347B7F2B8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release (Indigo)|Any CPU = Release (Indigo)|Any CPU
+		Release (Jade)|Any CPU = Release (Jade)|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E7AAE355-267F-432D-A85F-527347B7F2B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7AAE355-267F-432D-A85F-527347B7F2B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7AAE355-267F-432D-A85F-527347B7F2B8}.Release (Indigo)|Any CPU.ActiveCfg = Release (Indigo)|Any CPU
+		{E7AAE355-267F-432D-A85F-527347B7F2B8}.Release (Indigo)|Any CPU.Build.0 = Release (Indigo)|Any CPU
+		{E7AAE355-267F-432D-A85F-527347B7F2B8}.Release (Jade)|Any CPU.ActiveCfg = Release (Jade)|Any CPU
+		{E7AAE355-267F-432D-A85F-527347B7F2B8}.Release (Jade)|Any CPU.Build.0 = Release (Jade)|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
