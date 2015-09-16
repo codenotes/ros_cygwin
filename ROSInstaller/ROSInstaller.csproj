@@ -84,6 +84,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CygwinTarUnpacker.cs" />
     <Compile Include="ROSInstallTask.cs" />
+    <Compile Include="ShellLink.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

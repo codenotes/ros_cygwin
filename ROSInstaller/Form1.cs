@@ -12,6 +12,7 @@ using System.IO;
 using System.IO.Pipes;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices.ComTypes;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Text;
@@ -105,6 +106,7 @@ namespace ROSInstaller
                         MessageBox.Show("Installation complete", "ROS", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         if (cbOpenCygwin.Checked)
                             Process.Start(Path.Combine(task.DestDir, "cygwin.bat"));
+                        CreateDesktopShortcut(task.DestDir);
                         Close();
                     }
                     else
@@ -112,6 +114,30 @@ namespace ROSInstaller
                         MessageBox.Show(ex.Message, "ROS", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
+            }
+        }
+
+        private void CreateDesktopShortcut(string destDir)
+        {
+            try
+            {
+                IShellLink link = (IShellLink)new ShellLink();
+                string distroName = "";
+#if ROS_INDIGO
+            distroName = @"Indigo";
+#elif ROS_JADE
+            distroName = @"Jade";
+#endif
+
+                link.SetPath(Path.Combine(destDir, "cygwin.bat"));
+                link.SetIconLocation(Path.Combine(destDir, "cygwin.ico"), 0);
+
+                IPersistFile file = (IPersistFile)link;
+                file.Save(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "ROS " + distroName + " Cygwin Shell.lnk"), false);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message, "ROS", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
