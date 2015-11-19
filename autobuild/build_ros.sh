@@ -160,4 +160,9 @@ export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig
 src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_SHARED_LIBS=1 -DCMAKE_LEGACY_CYGWIN_WIN32=0 -DCATKIN_ENABLE_TESTING=0 $*
 
 chmod 777 $ROS_WORKSPACE/install_isolated/lib/python2.7/site-packages/qt_gui_cpp/libqt_gui_cpp_sip.dll
+
+cp $SCRIPT_ROOT/linkexes.pl .
+perl linkexes.pl
 test -d /usr/share/icons/Tango || (echo "!!!! Tango icons not found !!!!" ; echo "Please copy the /usr/share/icons/Tango folder from a Linux machine with KDE")
+echo "ROS build complete."
+echo "Do not forget to rebase it by closing ALL cygwin windows and running rebase_ros.bat"
