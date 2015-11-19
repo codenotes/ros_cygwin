@@ -1,18 +1,9 @@
---- recursive_mutex.old	2014-10-24 09:43:26.000000000 -0700
-+++ recursive_mutex.hpp	2015-09-08 16:16:09.655757800 -0700
-@@ -59,7 +59,7 @@
+--- recursive_mutex.hpp.orig	2015-11-19 14:57:11.568821900 -0800
++++ recursive_mutex.hpp	2015-11-19 15:00:12.397821900 -0800
+@@ -62,7 +62,7 @@
          recursive_mutex()
          {
- #ifdef BOOST_HAS_PTHREAD_MUTEXATTR_SETTYPE
--            pthread_mutexattr_t attr;
-+            pthread_mutexattr_t attr = {0, };
- 
-             int const init_attr_res=pthread_mutexattr_init(&attr);
-             if(init_attr_res)
-@@ -195,7 +195,7 @@
-         recursive_timed_mutex()
-         {
- #ifdef BOOST_USE_PTHREAD_RECURSIVE_TIMEDLOCK
+ #ifdef BOOST_THREAD_HAS_PTHREAD_MUTEXATTR_SETTYPE
 -            pthread_mutexattr_t attr;
 +            pthread_mutexattr_t attr = {0, };
  

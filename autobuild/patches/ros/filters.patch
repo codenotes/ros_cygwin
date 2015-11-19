@@ -1,0 +1,46 @@
+diff -urN src.orig/filters/CMakeLists.txt src.fix/filters/CMakeLists.txt
+--- src.orig/filters/CMakeLists.txt	2015-08-04 17:37:39.000000000 -0700
++++ src.fix/filters/CMakeLists.txt	2015-11-19 11:29:13.478350800 -0800
+@@ -43,30 +43,42 @@
+ # Test median filter
+ add_executable(median_test EXCLUDE_FROM_ALL test/test_median.cpp )
+ target_link_libraries(median_test median ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${GTEST_LIBRARIES}) 
++if (CATKIN_ENABLE_TESTING)
+ add_rostest(test/test_median.launch)
++endif()
+ 
+ # Test transfer function filter
+ add_executable(transfer_function_test EXCLUDE_FROM_ALL test/test_transfer_function.cpp)
+ target_link_libraries(transfer_function_test transfer_function ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${GTEST_LIBRARIES})
++if (CATKIN_ENABLE_TESTING)
+ add_rostest(test/test_transfer_function.launch)
++endif()
+ 
+ # Test mean filter
+ add_executable(mean_test EXCLUDE_FROM_ALL test/test_mean.cpp)
+ target_link_libraries(mean_test mean ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${GTEST_LIBRARIES})
++if (CATKIN_ENABLE_TESTING)
+ add_rostest(test/test_mean.launch)
++endif()
+ 
+ # Test params filter
+ add_executable(params_test EXCLUDE_FROM_ALL test/test_params.cpp)
+ target_link_libraries(params_test params ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${GTEST_LIBRARIES})
++if (CATKIN_ENABLE_TESTING)
+ add_rostest(test/test_params.launch)
++endif()
+ 
+ # Test plugin loading into filter chain
+ add_executable(chain_test EXCLUDE_FROM_ALL test/test_chain.cpp)
+ target_link_libraries(chain_test increment ${Boost_libraries} ${catkin_LIBRARIES} ${GTEST_LIBRARIES}) # Needed for OSX
++if (CATKIN_ENABLE_TESTING)
+ add_rostest(test/test_chain.launch)
++endif()
+ 
+ # Test realtime safe buffer class
++if (CATKIN_ENABLE_TESTING)
+ catkin_add_gtest(realtime_buffer_test EXCLUDE_FROM_ALL test/test_realtime_circular_buffer.cpp)
++endif()
+ 
+ ##############################################################################
+ # Install

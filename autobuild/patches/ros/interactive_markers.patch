@@ -1,6 +1,6 @@
-diff -ur src.orig/interactive_markers/CMakeLists.txt src/interactive_markers/CMakeLists.txt
---- src.orig/interactive_markers/CMakeLists.txt	2014-12-16 13:21:50.000000000 -0800
-+++ src/interactive_markers/CMakeLists.txt	2015-02-26 15:56:20.945437000 -0800
+diff -urN src.orig/interactive_markers/CMakeLists.txt src.fix/interactive_markers/CMakeLists.txt
+--- src.orig/interactive_markers/CMakeLists.txt	2015-04-20 22:43:06.000000000 -0700
++++ src.fix/interactive_markers/CMakeLists.txt	2015-11-19 12:41:01.894337200 -0800
 @@ -31,7 +31,8 @@
  
  install(TARGETS ${PROJECT_NAME}
@@ -11,3 +11,20 @@ diff -ur src.orig/interactive_markers/CMakeLists.txt src/interactive_markers/CMa
  install(DIRECTORY include/interactive_markers/
    DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
    FILES_MATCHING PATTERN "*.h")
+@@ -60,9 +61,14 @@
+ # Test program to simulate Interactive Marker with missing tf information
+ add_executable(bursty_tf EXCLUDE_FROM_ALL src/test/bursty_tf.cpp)
+ target_link_libraries(bursty_tf ${PROJECT_NAME})
+-add_dependencies(tests bursty_tf)
++if(GTEST_FOUND)
++	add_dependencies(tests bursty_tf)
++endif()
+ 
+ # Test program to simulate Interactive Marker with wrong tf information
+ add_executable(missing_tf EXCLUDE_FROM_ALL src/test/missing_tf.cpp)
+ target_link_libraries(missing_tf ${PROJECT_NAME})
+-add_dependencies(tests missing_tf)
++
++if(GTEST_FOUND)
++	add_dependencies(tests missing_tf)
++endif()

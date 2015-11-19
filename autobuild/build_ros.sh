@@ -2,7 +2,7 @@
 CYGWIN_MIRROR="--mirror http://cygwin.mirror.gtcomm.net/"
 ROS_WORKSPACE=/opt/ros
 ROS_DEPS=/opt/rosdeps
-ROS_DISTRO=indigo
+ROS_DISTRO=jade
 export SOURCEFORGE_MIRROR=downloads.sourceforge.net
 
 SCRIPT_ROOT=$(dirname $(readlink -f $0))
@@ -68,6 +68,11 @@ patch_system_file() { #Args: file, patch file
 	cp $2 $1.patch
 }
 
+add_package_to_src() { #Args: subdir, URL
+	test -d src/$1 && echo "$1 already checked out" && return 0
+	test -d $1 || git clone $2 src/$1
+}
+
 mkdir -m 777 -p $ROS_WORKSPACE $ROS_DEPS
 
 echo "Checking tool prerequisites..."
@@ -78,6 +83,10 @@ provide_prerequisite gcc-g++ "/usr/bin/g++ --version" || exit 1
 provide_prerequisite diffutils "/usr/bin/cmp --version" || exit 1
 provide_prerequisite libtool "libtool --version" || exit 1
 provide_prerequisite fluid "test -f /usr/bin/fluid.exe" || exit 1
+provide_prerequisite graphviz "test -f /usr/bin/dot.exe" || exit 1
+provide_prerequisite oxygen-icons "test -d /usr/share/icons/oxygen" || exit 1
+provide_prerequisite hicolor-icon-theme "test -d /usr/share/icons/hicolor" || exit 1
+provide_prerequisite gnome-icon-theme "test -d /usr/share/icons/gnome" || exit 1
 
 echo "Checking library prerequisites..."
 provide_prerequisite libpoco-devel "test -f /lib/libPocoData.dll.a" || exit 1
@@ -85,7 +94,7 @@ provide_prerequisite libboost-devel "test -f /lib/libboost_system.dll.a" || exit
 provide_prerequisite libboost_python-devel "test -f /lib/libboost_python.dll.a" || exit 1
 provide_prerequisite libGLU-devel "test -f /lib/libGL.dll.a" || exit 1
 provide_prerequisite libgtk2.0-devel "test -f /lib/libgtk-x11-2.0.dll.a" || exit 1
-for lib in curl jpeg fltk X11 Xext freetype xml2 qhull; do
+for lib in curl jpeg fltk X11 Xext freetype xml2 qhull SDL SDL_image; do
 	provide_prerequisite lib$lib-devel "test -f /lib/lib$lib.dll.a" || exit 1
 done
 
@@ -101,6 +110,11 @@ for pkg in empy; do
 done
 
 provide_pip_prerequisite numpy "test -d /lib/python2.7/site-packages/numpy"
+provide_pip_prerequisite pyparsing "test -f /lib/python2.7/site-packages/pyparsing.py"
+provide_pip_prerequisite pydot "test -f /lib/python2.7/site-packages/pydot.py"
+provide_pip_prerequisite pyqtgraph "test -d /lib/python2.7/site-packages/pyqtgraph"
+provide_pip_prerequisite Pillow "test -d /lib/python2.7/site-packages/PIL"
+provide_pip_prerequisite cairocffi "test -d /lib/python2.7/site-packages/cairocffi"
 
 
 if [ -z $NUMBER_OF_PROCESSORS ]; then
@@ -125,6 +139,11 @@ cd $ROS_WORKSPACE || exit 1
 test -e $ROS_DISTRO-desktop-full-wet.rosinstall || (echo "Generating package list..."; rosinstall_generator desktop_full --rosdistro $ROS_DISTRO --deps --wet-only --tar > $ROS_DISTRO-desktop-full-wet.rosinstall)
 test -e src/.rosinstall || (echo "Downloading package sources..."; wstool init -j8 src $ROS_DISTRO-desktop-full-wet.rosinstall)
 
+add_package_to_src navigation https://github.com/ros-planning/navigation.git
+add_package_to_src navigation_msgs https://github.com/ros-planning/navigation_msgs.git
+add_package_to_src openslam_gmapping https://github.com/ros-perception/openslam_gmapping.git
+add_package_to_src slam_gmapping https://github.com/ros-perception/slam_gmapping.git 
+
 echo "Patching ROS sources..."
 for dir in `ls -1 $ROS_WORKSPACE/src`; do
 	patch_single_module $dir || exit 1
@@ -137,6 +156,8 @@ done
 
 echo "Building ROS..."
 export PYTHONPATH=$PYTHONPATH:$ROS_WORKSPACE/install_isolated/lib/python2.7/site-packages
-src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_SHARED_LIBS=1 -DCMAKE_LEGACY_CYGWIN_WIN32=0 $*
+export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig
+src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_SHARED_LIBS=1 -DCMAKE_LEGACY_CYGWIN_WIN32=0 -DCATKIN_ENABLE_TESTING=0 $*
 
 chmod 777 $ROS_WORKSPACE/install_isolated/lib/python2.7/site-packages/qt_gui_cpp/libqt_gui_cpp_sip.dll
+test -d /usr/share/icons/Tango || (echo "!!!! Tango icons not found !!!!" ; echo "Please copy the /usr/share/icons/Tango folder from a Linux machine with KDE")

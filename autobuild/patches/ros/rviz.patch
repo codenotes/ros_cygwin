@@ -1,6 +1,6 @@
-diff -urN src.orig/rviz/CMakeLists.txt src/rviz/CMakeLists.txt
---- src.orig/rviz/CMakeLists.txt	2015-08-05 18:19:33.000000000 -0700
-+++ src/rviz/CMakeLists.txt	2015-09-03 13:01:36.281567700 -0700
+diff -urN src.orig/rviz/CMakeLists.txt src.fix/rviz/CMakeLists.txt
+--- src.orig/rviz/CMakeLists.txt	2015-10-13 10:52:04.000000000 -0700
++++ src.fix/rviz/CMakeLists.txt	2015-11-19 09:12:17.905810300 -0800
 @@ -17,12 +17,16 @@
    thread
  )
@@ -55,30 +55,30 @@ diff -urN src.orig/rviz/CMakeLists.txt src/rviz/CMakeLists.txt
  if(APPLE)
    FIND_LIBRARY(Cocoa_LIBRARIES Cocoa)
    set(rviz_ADDITIONAL_LIBRARIES ${Cocoa_LIBRARIES})
-diff -urN src.orig/rviz/plugin_description.xml src/rviz/plugin_description.xml
---- src.orig/rviz/plugin_description.xml	2015-08-05 18:19:33.000000000 -0700
-+++ src/rviz/plugin_description.xml	2015-09-03 13:01:36.290567700 -0700
+diff -urN src.orig/rviz/plugin_description.xml src.fix/rviz/plugin_description.xml
+--- src.orig/rviz/plugin_description.xml	2015-10-13 10:52:04.000000000 -0700
++++ src.fix/rviz/plugin_description.xml	2015-11-19 09:12:17.909810700 -0800
 @@ -1,4 +1,4 @@
 -<library path="libdefault_plugin">
 +<library path="cygdefault_plugin">
    <class name="rviz/Axes" type="rviz::AxesDisplay" base_class_type="rviz::Display">
      <description>
        Displays an axis at the Target Frame's origin.  &lt;a href="http://www.ros.org/wiki/rviz/DisplayTypes/Axes"&gt;More Information&lt;/a&gt;.
-diff -urN src.orig/rviz/src/python_bindings/sip/CMakeLists.txt src/rviz/src/python_bindings/sip/CMakeLists.txt
---- src.orig/rviz/src/python_bindings/sip/CMakeLists.txt	2015-08-05 18:19:33.000000000 -0700
-+++ src/rviz/src/python_bindings/sip/CMakeLists.txt	2015-09-03 13:01:36.296567700 -0700
+diff -urN src.orig/rviz/src/python_bindings/sip/CMakeLists.txt src.fix/rviz/src/python_bindings/sip/CMakeLists.txt
+--- src.orig/rviz/src/python_bindings/sip/CMakeLists.txt	2015-10-13 10:52:04.000000000 -0700
++++ src.fix/rviz/src/python_bindings/sip/CMakeLists.txt	2015-11-19 09:13:44.921511000 -0800
 @@ -41,7 +41,7 @@
  
  # maintain context for different named target
  set(rviz_sip_INCLUDE_DIRS ${rviz_INCLUDE_DIRS} "${PROJECT_SOURCE_DIR}/src" ${catkin_INCLUDE_DIRS})
 -set(rviz_sip_LIBRARIES ${rviz_LIBRARIES} ${PROJECT_NAME})
 +set(rviz_sip_LIBRARIES ${rviz_LIBRARIES} ${PROJECT_NAME} boost_system)
- set(rviz_sip_LIBRARY_DIRS ${rviz_LIBRARY_DIRS} ${CATKIN_DEVEL_PREFIX}/lib)
- set(rviz_sip_LDFLAGS_OTHER ${rviz_LDFLAGS_OTHER} -Wl,-rpath,\\"${CATKIN_DEVEL_PREFIX}/lib\\")
+ set(rviz_sip_LIBRARY_DIRS ${rviz_LIBRARY_DIRS} ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_LIB_DESTINATION})
+ set(rviz_sip_LDFLAGS_OTHER ${rviz_LDFLAGS_OTHER} -Wl,-rpath,\\"${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_LIB_DESTINATION}\\")
  
-diff -urN src.orig/rviz/src/rviz/CMakeLists.txt src/rviz/src/rviz/CMakeLists.txt
---- src.orig/rviz/src/rviz/CMakeLists.txt	2015-08-05 18:19:33.000000000 -0700
-+++ src/rviz/src/rviz/CMakeLists.txt	2015-09-03 13:01:36.301567700 -0700
+diff -urN src.orig/rviz/src/rviz/CMakeLists.txt src.fix/rviz/src/rviz/CMakeLists.txt
+--- src.orig/rviz/src/rviz/CMakeLists.txt	2015-10-13 10:52:04.000000000 -0700
++++ src.fix/rviz/src/rviz/CMakeLists.txt	2015-11-19 09:12:17.920811800 -0800
 @@ -211,7 +211,8 @@
                        PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
  
@@ -89,9 +89,9 @@ diff -urN src.orig/rviz/src/rviz/CMakeLists.txt src/rviz/src/rviz/CMakeLists.txt
    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
  )
  install(DIRECTORY ./
-diff -urN src.orig/rviz/src/rviz/default_plugin/CMakeLists.txt src/rviz/src/rviz/default_plugin/CMakeLists.txt
---- src.orig/rviz/src/rviz/default_plugin/CMakeLists.txt	2015-08-05 18:19:33.000000000 -0700
-+++ src/rviz/src/rviz/default_plugin/CMakeLists.txt	2015-09-03 13:01:36.307567700 -0700
+diff -urN src.orig/rviz/src/rviz/default_plugin/CMakeLists.txt src.fix/rviz/src/rviz/default_plugin/CMakeLists.txt
+--- src.orig/rviz/src/rviz/default_plugin/CMakeLists.txt	2015-10-13 10:52:04.000000000 -0700
++++ src.fix/rviz/src/rviz/default_plugin/CMakeLists.txt	2015-11-19 09:12:17.924812200 -0800
 @@ -115,7 +115,9 @@
  
  install(TARGETS default_plugin
@@ -103,9 +103,9 @@ diff -urN src.orig/rviz/src/rviz/default_plugin/CMakeLists.txt src/rviz/src/rviz
  
  #message("TODO: stop installing libdefault_plugin.so into share/rviz after pluginlib starts looking for it in lib.")
  #install(TARGETS default_plugin
-diff -urN src.orig/rviz/src/rviz/mesh_loader.cpp src/rviz/src/rviz/mesh_loader.cpp
---- src.orig/rviz/src/rviz/mesh_loader.cpp	2015-08-05 18:19:33.000000000 -0700
-+++ src/rviz/src/rviz/mesh_loader.cpp	2015-09-03 13:01:36.314567700 -0700
+diff -urN src.orig/rviz/src/rviz/mesh_loader.cpp src.fix/rviz/src/rviz/mesh_loader.cpp
+--- src.orig/rviz/src/rviz/mesh_loader.cpp	2015-10-13 10:52:04.000000000 -0700
++++ src.fix/rviz/src/rviz/mesh_loader.cpp	2015-11-19 09:12:17.928812600 -0800
 @@ -53,6 +53,7 @@
  
  #include <ros/assert.h>
@@ -114,9 +114,9 @@ diff -urN src.orig/rviz/src/rviz/mesh_loader.cpp src/rviz/src/rviz/mesh_loader.c
  #if defined(ASSIMP_UNIFIED_HEADER_NAMES)
  #include <assimp/Importer.hpp>
  #include <assimp/scene.h>
-diff -urN src.orig/rviz/src/rviz/ogre_helpers/render_system.cpp src/rviz/src/rviz/ogre_helpers/render_system.cpp
---- src.orig/rviz/src/rviz/ogre_helpers/render_system.cpp	2015-08-05 18:19:33.000000000 -0700
-+++ src/rviz/src/rviz/ogre_helpers/render_system.cpp	2015-09-03 13:01:36.321567700 -0700
+diff -urN src.orig/rviz/src/rviz/ogre_helpers/render_system.cpp src.fix/rviz/src/rviz/ogre_helpers/render_system.cpp
+--- src.orig/rviz/src/rviz/ogre_helpers/render_system.cpp	2015-10-13 10:52:04.000000000 -0700
++++ src.fix/rviz/src/rviz/ogre_helpers/render_system.cpp	2015-11-19 09:12:17.933813100 -0800
 @@ -30,7 +30,7 @@
  // This is required for QT_MAC_USE_COCOA to be set
  #include <QtCore/qglobal.h>
@@ -159,9 +159,9 @@ diff -urN src.orig/rviz/src/rviz/ogre_helpers/render_system.cpp src/rviz/src/rvi
    params["externalWindowHandle"] = window_handle_stream.str();
  #else
    params["parentWindowHandle"] = window_handle_stream.str();
-diff -urN src.orig/rviz/src/rviz/ogre_helpers/render_widget.cpp src/rviz/src/rviz/ogre_helpers/render_widget.cpp
---- src.orig/rviz/src/rviz/ogre_helpers/render_widget.cpp	2015-08-05 18:19:33.000000000 -0700
-+++ src/rviz/src/rviz/ogre_helpers/render_widget.cpp	2015-09-03 13:01:36.326567700 -0700
+diff -urN src.orig/rviz/src/rviz/ogre_helpers/render_widget.cpp src.fix/rviz/src/rviz/ogre_helpers/render_widget.cpp
+--- src.orig/rviz/src/rviz/ogre_helpers/render_widget.cpp	2015-10-13 10:52:04.000000000 -0700
++++ src.fix/rviz/src/rviz/ogre_helpers/render_widget.cpp	2015-11-19 09:12:17.938813600 -0800
 @@ -70,7 +70,7 @@
  #ifdef Q_OS_MAC
    uintptr_t win_id = winId();
@@ -171,9 +171,9 @@ diff -urN src.orig/rviz/src/rviz/ogre_helpers/render_widget.cpp src/rviz/src/rvi
  #endif  
    QApplication::flush();
    QApplication::syncX();
-diff -urN src.orig/rviz/src/rviz/yaml_config_reader.cpp src/rviz/src/rviz/yaml_config_reader.cpp
---- src.orig/rviz/src/rviz/yaml_config_reader.cpp	2015-08-05 18:19:33.000000000 -0700
-+++ src/rviz/src/rviz/yaml_config_reader.cpp	2015-09-03 13:01:36.333567700 -0700
+diff -urN src.orig/rviz/src/rviz/yaml_config_reader.cpp src.fix/rviz/src/rviz/yaml_config_reader.cpp
+--- src.orig/rviz/src/rviz/yaml_config_reader.cpp	2015-10-13 10:52:04.000000000 -0700
++++ src.fix/rviz/src/rviz/yaml_config_reader.cpp	2015-11-19 09:12:17.942814000 -0800
 @@ -30,6 +30,8 @@
  #include <fstream>
  #include <sstream>
