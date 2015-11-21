@@ -70,7 +70,7 @@ patch_system_file() { #Args: file, patch file
 
 add_package_to_src() { #Args: subdir, URL
 	test -d src/$1 && echo "$1 already checked out" && return 0
-	test -d $1 || git clone $2 src/$1
+	test -d $1 || git clone $2 src/$1 || return 1
 }
 
 mkdir -m 777 -p $ROS_WORKSPACE $ROS_DEPS
@@ -139,10 +139,14 @@ cd $ROS_WORKSPACE || exit 1
 test -e $ROS_DISTRO-desktop-full-wet.rosinstall || (echo "Generating package list..."; rosinstall_generator desktop_full --rosdistro $ROS_DISTRO --deps --wet-only --tar > $ROS_DISTRO-desktop-full-wet.rosinstall)
 test -e src/.rosinstall || (echo "Downloading package sources..."; wstool init -j8 src $ROS_DISTRO-desktop-full-wet.rosinstall)
 
-add_package_to_src navigation https://github.com/ros-planning/navigation.git
-add_package_to_src navigation_msgs https://github.com/ros-planning/navigation_msgs.git
-add_package_to_src openslam_gmapping https://github.com/ros-perception/openslam_gmapping.git
-add_package_to_src slam_gmapping https://github.com/ros-perception/slam_gmapping.git 
+if [ -d src/navigation_msgs ] && [ ! -d src/navigation_msgs/move_base_msgs ]; then
+	rm -rf src/navigation_msgs
+fi
+
+add_package_to_src navigation https://github.com/ros-planning/navigation.git || exit 1
+add_package_to_src navigation_msgs https://github.com/ros-planning/navigation_msgs.git || exit 1
+add_package_to_src openslam_gmapping https://github.com/ros-perception/openslam_gmapping.git || exit 1
+add_package_to_src slam_gmapping https://github.com/ros-perception/slam_gmapping.git  || exit 1
 
 echo "Patching ROS sources..."
 for dir in `ls -1 $ROS_WORKSPACE/src`; do
@@ -157,7 +161,7 @@ done
 echo "Building ROS..."
 export PYTHONPATH=$PYTHONPATH:$ROS_WORKSPACE/install_isolated/lib/python2.7/site-packages
 export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig
-src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_SHARED_LIBS=1 -DCMAKE_LEGACY_CYGWIN_WIN32=0 -DCATKIN_ENABLE_TESTING=0 $*
+src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_SHARED_LIBS=1 -DCMAKE_LEGACY_CYGWIN_WIN32=0 -DCATKIN_ENABLE_TESTING=0 $* || exit 1
 
 chmod 777 $ROS_WORKSPACE/install_isolated/lib/python2.7/site-packages/qt_gui_cpp/libqt_gui_cpp_sip.dll
 
