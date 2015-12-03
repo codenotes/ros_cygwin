@@ -94,7 +94,7 @@ provide_prerequisite libboost-devel "test -f /lib/libboost_system.dll.a" || exit
 provide_prerequisite libboost_python-devel "test -f /lib/libboost_python.dll.a" || exit 1
 provide_prerequisite libGLU-devel "test -f /lib/libGL.dll.a" || exit 1
 provide_prerequisite libgtk2.0-devel "test -f /lib/libgtk-x11-2.0.dll.a" || exit 1
-for lib in curl jpeg fltk X11 Xext freetype xml2 qhull SDL SDL_image; do
+for lib in curl jpeg fltk X11 Xext freetype xml2 qhull SDL SDL_image ffi; do
 	provide_prerequisite lib$lib-devel "test -f /lib/lib$lib.dll.a" || exit 1
 done
 
