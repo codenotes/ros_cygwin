@@ -1,0 +1,77 @@
+diff -urN src.x/pluginlib/include/pluginlib/class_loader_imp.h src/pluginlib/include/pluginlib/class_loader_imp.h
+--- src.x/pluginlib/include/pluginlib/class_loader_imp.h	2014-12-31 12:34:55.000000000 -0800
++++ src/pluginlib/include/pluginlib/class_loader_imp.h	2015-12-02 14:07:58.912522400 -0800
+@@ -234,6 +234,33 @@
+     //TODO: This needs to be replaced with an api call
+     return(parseToStringVector(callCommandLine("catkin_find --lib")));
+   }
++  
++  static inline void addFullLibraryPath(std::vector<std::string> &all_paths, const std::string &library)
++  {
++	  all_paths.push_back(library);
++
++#if __CYGWIN__	  
++	  off_t off = library.rfind('/') + 1;
++	  std::string bestCygwinPath = library;
++	  if (!strncasecmp(library.c_str() + off, "lib", 3))
++	  {
++		  //Fallback #1 - replace libXXX.dll with cygXXX.dll
++		  bestCygwinPath = library.substr(0, off) + "cyg" + (library.c_str() + off + 3);
++		  all_paths.push_back(bestCygwinPath);
++	  }
++	  
++	  off_t dirOff = off ? off - 1 : 0;
++	  while (dirOff > 0 && bestCygwinPath[dirOff - 1] == '/')
++		  dirOff--;
++	  
++	  if (dirOff >= 4 && !strncasecmp(bestCygwinPath.c_str() + dirOff - 4, "/lib/", 5))
++	  {
++		  //Fallback #2 - additionally to searching for xxx/lib/cygYYY.dll, search for xxx/bin/cygYYY.dll in case it got deployed to 'bin' instead of 'lib'
++		  //There is no point of searching for xxx/bin/libYYY.dll, as cygwin always prefixes the libraries with 'lib'
++		  all_paths.push_back(bestCygwinPath.substr(0, dirOff - 4) + "/bin/" + (bestCygwinPath.c_str() + dirOff + 1));
++	  }  
++#endif
++  }
+ 
+   template <class T>
+   std::vector<std::string> ClassLoader<T>::getAllLibraryPathsToTry(const std::string& library_name, const std::string& exporting_package_name)
+@@ -263,12 +290,13 @@
+     for(unsigned int c = 0; c < all_paths_without_extension.size(); c++)
+     {
+       std::string current_path = all_paths_without_extension.at(c);
+-      all_paths.push_back(current_path + path_separator + library_name_with_extension);
+-      all_paths.push_back(current_path + path_separator + stripped_library_name_with_extension);
++	  addFullLibraryPath(all_paths, current_path + path_separator + library_name_with_extension);
++	  addFullLibraryPath(all_paths, current_path + path_separator + stripped_library_name_with_extension);
++	  
+       // We're in debug mode, try debug libraries as well
+       if(debug_library_suffix) {
+-          all_paths.push_back(current_path + path_separator + library_name + class_loader::systemLibrarySuffix());
+-          all_paths.push_back(current_path + path_separator + stripped_library_name + class_loader::systemLibrarySuffix());
++          addFullLibraryPath(all_paths, current_path + path_separator + library_name + class_loader::systemLibrarySuffix());
++          addFullLibraryPath(all_paths, current_path + path_separator + stripped_library_name + class_loader::systemLibrarySuffix());
+       }
+     }
+ 
+@@ -323,13 +351,21 @@
+     ROS_DEBUG_NAMED("pluginlib.ClassLoader","Class %s maps to library %s in classes_available_.", lookup_name.c_str(), library_name.c_str());
+ 
+     std::vector<std::string> paths_to_try = getAllLibraryPathsToTry(library_name, it->second.package_);
++	const char *pDebugDlls = getenv("ROS_DEBUG_PLUGIN_DLLS");
++	if (pDebugDlls && pDebugDlls[0])
++		printf("ROS pluginlib: Searching for %s...\n", library_name.c_str());
+ 
+     ROS_DEBUG_NAMED("pluginlib.ClassLoader","Iterating through all possible paths where %s could be located...", library_name.c_str());
+     for(std::vector<std::string>::const_iterator it = paths_to_try.begin(); it != paths_to_try.end(); it++)
+     {
+       ROS_DEBUG_NAMED("pluginlib.ClassLoader","Checking path %s ", it->c_str());
++	  if (pDebugDlls && pDebugDlls[0])
++		  printf("ROS pluginlib: Checking %s...\n", it->c_str());
++	  
+       if (boost::filesystem::exists(*it))
+       {
++		if (pDebugDlls && pDebugDlls[0])
++			printf("ROS pluginlib: Found %s!\n", it->c_str());
+         ROS_DEBUG_NAMED("pluginlib.ClassLoader","Library %s found at explicit path %s.", library_name.c_str(), it->c_str());
+         return *it;
+       }

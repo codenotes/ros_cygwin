@@ -1,0 +1,45 @@
+diff -urN src.b1/navigation/base_local_planner/CMakeLists.txt src/navigation/base_local_planner/CMakeLists.txt
+--- src.b1/navigation/base_local_planner/CMakeLists.txt	2015-11-20 19:20:38.507915200 -0800
++++ src/navigation/base_local_planner/CMakeLists.txt	2015-12-02 16:22:31.968622400 -0800
+@@ -116,6 +116,7 @@
+             trajectory_planner_ros
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
++       RUNTIME DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        )
+ 
+ install(FILES blp_plugin.xml
+diff -urN src.b1/navigation/costmap_2d/CMakeLists.txt src/navigation/costmap_2d/CMakeLists.txt
+--- src.b1/navigation/costmap_2d/CMakeLists.txt	2015-11-20 19:20:38.856950100 -0800
++++ src/navigation/costmap_2d/CMakeLists.txt	2015-12-02 16:21:34.933922400 -0800
+@@ -198,6 +198,7 @@
+     layers
+     ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+     LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
++    RUNTIME DESTINATION DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+ )
+ 
+ install(FILES costmap_plugins.xml
+diff -urN src.b1/navigation/navfn/CMakeLists.txt src/navigation/navfn/CMakeLists.txt
+--- src.b1/navigation/navfn/CMakeLists.txt	2015-11-20 19:20:39.440008400 -0800
++++ src/navigation/navfn/CMakeLists.txt	2015-12-02 16:23:37.400722400 -0800
+@@ -68,7 +68,7 @@
+ install(TARGETS navfn navfn_node
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+-       RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
++       RUNTIME DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        )
+ 
+ install(DIRECTORY include/navfn/
+diff -urN src.b1/navigation/voxel_grid/CMakeLists.txt src/navigation/voxel_grid/CMakeLists.txt
+--- src.b1/navigation/voxel_grid/CMakeLists.txt	2015-11-20 19:20:39.642028600 -0800
++++ src/navigation/voxel_grid/CMakeLists.txt	2015-12-02 16:20:04.328222400 -0800
+@@ -23,6 +23,7 @@
+ install(TARGETS voxel_grid
+   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
++  RUNTIME DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+ )
+ 
+ install(DIRECTORY include/${PROJECT_NAME}/
