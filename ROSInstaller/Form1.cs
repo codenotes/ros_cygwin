@@ -100,7 +100,7 @@ namespace ROSInstaller
                 if (task.HasExited)
                 {
                     _InstallTask = null;
-                    var ex = task.Exception;
+                    var ex = task.ErrorMessage;
                     if (ex == null)
                     {
                         MessageBox.Show("Installation complete", "ROS", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -111,7 +111,7 @@ namespace ROSInstaller
                     }
                     else
                     {
-                        MessageBox.Show(ex.Message, "ROS", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show(ex, "ROS", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }

@@ -28,11 +28,16 @@ namespace ROSInstaller
             get { return !_DecompThread.IsAlive && !_TarThread.IsAlive; }
         }
 
-        public Exception Exception
+        public string ErrorMessage
         {
             get
             {
-                return _TarException ?? _DecompException;
+                StringBuilder result = new StringBuilder();
+                if (_DecompException != null)
+                    result.AppendLine("Decompressing failed: " + _DecompException.Message);
+                if (_TarException != null)
+                    result.AppendLine("TAR Unpacking failed: " + _TarException.Message);
+                return result.Length == 0 ? null : result.ToString();
             }
         }
 
@@ -54,6 +59,7 @@ namespace ROSInstaller
             try
             {
                 CygwinTarUnpacker unpacker = new CygwinTarUnpacker(_TarStream, DestDir);
+                Directory.CreateDirectory(DestDir);
                 unpacker.Unpack(false, true);
 
                 File.WriteAllText(Path.Combine(DestDir, "cygwin.bat"), "@set MYDIR=%~dp0\r\n@start %MYDIR%\\bin\\mintty.exe -i /Cygwin-Terminal.ico -\r\n");
@@ -69,6 +75,19 @@ namespace ROSInstaller
                     throw new Exception(profile + " not found. Please run bash and update it manually");
 
                 File.AppendAllText(profile, "\ncd /opt/ros/install_isolated\nCATKIN_SHELL=sh\n. ./setup.sh\nexport PATH=$PATH:/usr/local/lib:/opt/ros/install_isolated/lib\n");
+
+                //The unpacker might have returned due to reading an empty record that may be followed by some padding records.
+                //If we close the pipe without reading the padding records, the unpacking thread will see this as an error.
+                byte[] data = new byte[512];
+                for (;;)
+                {
+                    int done = _TarStream.Read(data, 0, data.Length);
+                    if (done == 0)
+                        break;
+                    for (int i = 0; i < done; i++)
+                        if (data[i] != 0)
+                            throw new Exception("Unexpected data after the end of TAR stream:" + string.Format("{0:x2}", data[i]));
+                }
             }
             catch (Exception ex)
             {
@@ -102,7 +121,7 @@ namespace ROSInstaller
                 else
                 {
                     inStream = new FileStream(Assembly.GetExecutingAssembly().Location, FileMode.Open, FileAccess.Read);
-                    inStream.Seek(88064, SeekOrigin.Begin);
+                    inStream.Seek(88576, SeekOrigin.Begin);
                 }
 
                 byte[] properties = new byte[5];
