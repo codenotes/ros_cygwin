@@ -121,7 +121,7 @@ namespace ROSInstaller
                 else
                 {
                     inStream = new FileStream(Assembly.GetExecutingAssembly().Location, FileMode.Open, FileAccess.Read);
-                    inStream.Seek(88576, SeekOrigin.Begin);
+                    inStream.Seek(89088, SeekOrigin.Begin);
                 }
 
                 byte[] properties = new byte[5];

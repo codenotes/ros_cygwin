@@ -22,7 +22,7 @@ namespace ROSInstaller
             var currentIdentity = WindowsIdentity.GetCurrent();
             _UserSID = currentIdentity.User;
 
-            if (Environment.MachineName == Environment.UserDomainName)
+            if (StringComparer.InvariantCultureIgnoreCase.Compare(Environment.MachineName, Environment.UserDomainName) == 0)
             {
                 using (DirectoryEntry machine = new DirectoryEntry("WinNT://" + Environment.MachineName))
                 {
