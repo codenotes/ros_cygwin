@@ -15,5 +15,17 @@ Please forgive the lack of specific documentation, this is a work in progress.
 
 Strongly suggest you read the FAQ document.  A fair amount of detail in there. 
 
+INSTRUCTIONS:
+Once it is installed, run the .bat file installed to your desktop.  You will see a bash command prompt. From there type:
+
+source /opt/ros/install_isolated/setup.bash
+
+And then maybe:
+
+export ROS_IP=<your IP address>
+
+And now things should work the way they would (mostly) on ubuntu.  
+
+
 Gregory Brill
 
