@@ -80,7 +80,7 @@ a fair amount of work and the creation of a new, automated build process to acco
 so we felt it was best, at least for now, to just put the distro here and let folks use it.
 
 Q: Should I be using this at all? What about a linux VM on Windows?
-A: We did VMs initially and still, occaisonally, use them to test. That system works very well, the downside the context
+A: We did VMs initially and still, occasionally, use them to test. That system works very well, the downside the context
 switching the developer needs to do to constantly shuffle between very different environments.  VMs also have add a fair bit
 of overhead and sometimes there can be frustrating network-related bridging issues between the host and guest OSs.  But
 there is really nothing wrong with it and, in fact, probably the recommended path for most users, particularly beginners. 
