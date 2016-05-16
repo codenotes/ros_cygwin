@@ -93,7 +93,7 @@ A: Probably. But not often, and only if the Windows/Ubuntu initiative does not b
 applications that rely on a stable ROS platform. 
 
 Q: If this is useful to me, who should I be thankful to?
-A: The folks at OSF whi have written a tremendously great library where they anticipated the need for a windows port
+A: The folks at OSF who have written a tremendously great library where they anticipated the need for a windows port
 and put the basics of that in their stable, well-thought out environment.  Also the folks at cygwin who took on the 
 task of bringing *nix to windows and being able to map OS functionality from one to the other.  Also, the folks at sysprogs 
 who make the world's great cross-compilation tool for VS, VisualGDB.  They figured out most the complex porting issues
