@@ -13,5 +13,7 @@ Please note that if you build from source with your own cygwin install, you are 
 
 Please forgive the lack of specific documentation, this is a work in progress. 
 
+Strongly suggest you read the FAQ document.  A fair amount of detail in there. 
+
 Gregory Brill
 
