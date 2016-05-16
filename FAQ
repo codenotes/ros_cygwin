@@ -26,12 +26,13 @@ unzipping the archive.
 
 
 Q: Can I rebuild from source to leverage newer versions of Jade?
-A: Build scripts are included, but it is not easy nor automatic. It is recommended you stick with the version of Jade that is compiled for the time being.
+A: Build scripts are included, but it is not easy nor automatic. It is recommended you stick with the version of Jade that it
+is compiled for for the time being.
 
 Q: What is cygwin?
 A: It is a linux-like subsystem for Windows.  It emulates a linux-like environment and provides applications with the tools
-and comilation infrastructure such that *nix programs can most often be compiled and run successfully on Windows.  Also, it provides
-a full bash shell. If you are not familiar with cygwin, you will want to become so. 
+and compilation infrastructure such that *nix programs can most often be compiled and run successfully on Windows.  Also, it provides
+a full bash shell. If you are not familiar with cygwin, you will want to become so. It is terrific.
 
 Q: There is a Windows Ubuntu initiative from Microsoft, can we use that instead?
 A: Hopefully, in time. At present it is missing a few key features than create problems for the ROS libraries...mainly
@@ -41,26 +42,30 @@ need for this distro.
 Q: Can I use Microsoft Visual Studio to link against these binary libraries?  
 A: Not directly. Compilations are done with gcc in cygwin, and these are C++ libraries so they are not binary
 compatible with MSVC compilers. However, it is fairly trivial to take the roscpp sources, put them in a Visual Studio project
-and compile the as MSVC windows dlls. This is what we use for our clients, actually: we run roscore on cygwin, but our clients
+and compile the as MSVC windows dlls. This is what we use for our clients, actually: we run roscore and tools on cygwin, but our clients
 are MSVC applications linked against MSVC-compiled ROS binaries.  Little known fact that the ROS authors put all the necessary preprocessor
-instructions for windows compilation in their code, so you do not need Catkin to compile MSVC windows binaries. 
+instructions for windows compilation in their code, so you do not need Catkin to compile MSVC windows binaries.  At some point
+I will release the binaries we use for msvc (or if anyone asks for them) and provide a tutorial as to how to compile ROS client
+for MSVC using Visual Studio and no catkin. It is very straightforward. 
 
 Q: What isn't here?
 A: Most tools are present. But many of the lesser used ones are not tested.  There can be some quirks with the GUI tools due
 to QT on windows vs other environments.  The X-windows dependent tools can work, but an x-windows server for windows needs
 to be installed. Roscore runs well, rostopic, rosnode, all these seem to operate.  The package management tools are not really
 tested, but may work (or may be fixed via their python source).  apt-get certainly will not work as an installation method as
-cygwin doesn't have this.  apt-cyg is installed (like apt-get) but that system doesn't know anything about ROS. 
+cygwin doesn't have this.  apt-cyg is installed (like apt-get) but that system doesn't know anything about ROS. So you will need
+to build any ROS nodes that you want to use. 
 
 Q: What issues am I likely to encounter when I try this out?
 A: Most likely you will encounter things that seem like cygwin issues but are really regular ROS issues.  Networking can be
 complex: be very, very sure to set ROS_IP equal to your IP address on both cygwin bash AND as environemtnal variable on
 your windows machine.  ROS_MASTER_URI is also critical to be set correctly on your windows machine.  Use numeric ipv4 
 addresses, don't rely on host name resolution.  And you MAY want to deprioritize ipv6 as that can create issues. So many
-connection issues are do to this.
+connection issues are do to to environmental variables not being set up correctly. You blame ROS, but ROS is just reading
+from the environment. 
 
 Q: How stable is this?
-A: Pretty stable. Have done relatively intense messaging over prolonger periods of time.
+A: Pretty stable. Have done relatively intense messaging over prolonged periods of time.
 
 Q: Why isn't there more documentation?
 A: This port is part of an active project and developed for a particular use case where we only have windows hardware. It
@@ -70,9 +75,9 @@ But we don't have all the badwidth we'd like to support this fully...hopefully i
 a proper community project. 
 
 Q: Why isn't the OSF maintaining this?
-A: THe build is complex, not automatied and cygwin-based.  We have discussed handing this over, but it would require
-a fair amount of work and the creation of a new process to accomodate this.  That would delay the release quite a bit, so 
-we felt it was best, at least for now, to just put the distro here and let folks use it.
+A: The build is complex, not automatied, and the solution is cygwin-based.  We have discussed handing this over, but it would require
+a fair amount of work and the creation of a new, automated build process to accomodate this.  That would delay the release quite a bit,
+so we felt it was best, at least for now, to just put the distro here and let folks use it.
 
 Q: Should I be using this at all? What about a linux VM on Windows?
 A: We did VMs initially and still, occaisonally, use them to test. That system works very well, the downside the context
