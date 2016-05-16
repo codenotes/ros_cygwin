@@ -12,8 +12,9 @@ A:It will install cygwin along with ros binaries and environment.  Installer wil
 HIGHLY recommend something simple, like "c:\cygjade".  If you install it in a path with spaces you are just asking for trouble. 
 The complete ROS environment will be included there. There will be a little batch file installed to your desktop, click it, and
 you are in cygwin bash. From there you need to do what you would do in an UBUNTU ros installation. Modify your .bashrc to
-set ROS_IP, etc.   Probably your first step is to say "source /opt/ros/jade/setup.sh" to set your environment for you shell so you
-can work with ROS commands and catkin. 
+set ROS_IP, etc.   Probably your first step is to say "source /opt/ros/install_isolated/setup.bash" to set your environment 
+for you shell so you can work with ROS commands and catkin. You should set your ROS_IP and ROS_MASTER as well using the "export" command.
+
 
 Q: Will it change anyting on my computer
 A: No. It is a completely self contained directory including all things.  No changes to environment, registry, etc., and
