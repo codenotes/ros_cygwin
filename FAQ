@@ -1,17 +1,17 @@
 Q: Can I create my own installation of cygwin and install the binaries to that?
 A: No. The build and tools are specific to a particular verison of cygwin and may break if a different cygwin distro is used.
 
-Q: I have 32 bit windows, is there something for that?
+Q: I have 32 bit Windows, is there something for that?
 A: No.
 
 Q: Can I rebuild from source to leverage newer versions of Jade?
 A: Build scripts are included, but it is not easy nor automatic. It is recommended you stick with the version of Jade that
-is compiled for the time-being.
+is compiled for the time being.
 
 Q: What is cygwin?
 A: It is a linux-like subsystem for Windows.  It emulates a linux-like environment and provides applications with the tools
-and comilation infrastructure such that *nix programs can most often be compiled and run successfully on Windows.  If you 
-are not familiar with cygwin, you will want to become so. 
+and comilation infrastructure such that *nix programs can most often be compiled and run successfully on Windows.  Also, it provides
+a full bash shell. If you are not familiar with cygwin, you will want to become so. 
 
 Q: There is a Windows Ubuntu initiative from Microsoft, can we use that instead?
 A: Hopefully, in time. At present it is missing a few key features than create problems for the ROS libraries...mainly
@@ -70,6 +70,8 @@ applications that rely on a stable ROS platform.
 Q: If this is useful to me, who should I be thankful to?
 A: The folks at OSF whi have written a tremendously create library where they anticipated the need for a windows port
 and put the basics of that in their stable, well-thought out environment.  Also the folks at cygwin who took on the 
-task of bringing *nix to windows and being able to map OS functionality from one to the other. 
+task of bringing *nix to windows and being able to map OS functionality from one to the other.  Also, the folks at sysprogs 
+who make the world's great cross-compilation tool for VS, VisualGDB.  They figured out most the complex porting issues
+such that the ROS toolset (like rviz, rqt_) could run. 
 
 
