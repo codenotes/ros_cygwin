@@ -22,7 +22,7 @@ source /opt/ros/install_isolated/setup.bash
 
 And then maybe:
 
-export ROS_IP=<your IP address>
+export ROS_IP=[your IP address]
 
 And now things should work the way they would (mostly) on ubuntu.  
 
