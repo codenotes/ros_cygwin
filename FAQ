@@ -7,6 +7,23 @@ A: No.
 Q: What versions of Windows does this support?
 A: Any 64 bit Windows variant should work.  Most of the testing has been on Windows 10. Windows 7 should work.  Earlier than that, not sure. 
 
+Q:What will this install do?
+A:It will install cygwin along with ros binaries and environment.  Installer will deploy environment to a directory of your choice.
+HIGHLY recommend something simple, like "c:\cygjade".  If you install it in a path with spaces you are just asking for trouble. 
+The complete ROS environment will be included there. There will be a little batch file installed to your desktop, click it, and
+you are in cygwin bash. From there you need to do what you would do in an UBUNTU ros installation. Modify your .bashrc to
+set ROS_IP, etc.   Probably your first step is to say "source /opt/ros/jade/setup.sh" to set your environment for you shell so you
+can work with ROS commands and catkin. 
+
+Q: Will it change anyting on my computer
+A: No. It is a completely self contained directory including all things.  No changes to environment, registry, etc., and
+no installation of dlls.
+
+Q:Why does this come with an installer and not just a zip of this directory?
+A:Because complicated file permissions have to be set for this to work right.  That is mainly what the installer does after 
+unzipping the archive. 
+
+
 Q: Can I rebuild from source to leverage newer versions of Jade?
 A: Build scripts are included, but it is not easy nor automatic. It is recommended you stick with the version of Jade that is compiled for the time being.
 
