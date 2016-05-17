@@ -3,7 +3,7 @@ Cygwin port of ROS
 
 This repo contains relatively complete binary releases of ROS Jade and Indigo for the Windows environment (via Cygwin, 64 bit only). 
 
-Setup/installs (https://github.com/codenotes/ros_cygwin/releases) are included which will install a pre-configured cygwin environment to your Windows installation that is set up with the appropriate binaries which approximate a "desktop-full" release of ROS for windows.  These include the cor ROS libraries, key packages and tools (such as RVIZ/RQT) etc.  
+Setup/installs (https://github.com/codenotes/ros_cygwin/releases) are included which will install a pre-configured cygwin environment to your Windows installation. Please use the Jade distro. (Note that while an indigo distro is provided, it is somewhat older, not as complete and its installer can have issues with older versions of Windows.)  It is set up with the appropriate binaries which approximate a "desktop-full" release of ROS for windows.  These include the cor ROS libraries, key packages and tools (such as RVIZ/RQT) etc.  
 
 Process should be turnkey and "just work." upon launching the cygwin shell after install.  The goal is to create a complete working environment in cygwin for Windows that operates the same as the Ubuntu distros.  Many of the tools (rqt_*, rviz, etc.) are present and work. Some tools and libraries may be present or missing and work or not work...this distro has not been heavily tested outside of my group's particular use case, so you will certainly find issues.  Cygwin is terrific, but it is an imperfect linux.  Take a look at the FAQ for more information. 
 
