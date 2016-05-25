@@ -1,8 +1,7 @@
-Only in src/ros_comm: ros_comm.patch
-diff -ur src.orig/ros_comm/rosbag_storage/CMakeLists.txt src/ros_comm/rosbag_storage/CMakeLists.txt
---- src.orig/ros_comm/rosbag_storage/CMakeLists.txt	2014-12-22 18:49:39.000000000 -0800
-+++ src/ros_comm/rosbag_storage/CMakeLists.txt	2015-03-01 21:29:06.683908800 -0800
-@@ -36,7 +36,7 @@
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/ros_comm/rosbag_storage/CMakeLists.txt src/ros_comm/rosbag_storage/CMakeLists.txt
+--- src.orig/ros_comm/rosbag_storage/CMakeLists.txt	2016-04-19 10:11:43.000000000 -0700
++++ src/ros_comm/rosbag_storage/CMakeLists.txt	2016-05-24 14:48:02.033009500 -0700
+@@ -43,7 +43,7 @@
  install(TARGETS rosbag_storage
    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
@@ -11,19 +10,19 @@ diff -ur src.orig/ros_comm/rosbag_storage/CMakeLists.txt src/ros_comm/rosbag_sto
  )
  
  install(DIRECTORY include/
-diff -ur src.orig/ros_comm/roslz4/CMakeLists.txt src/ros_comm/roslz4/CMakeLists.txt
---- src.orig/ros_comm/roslz4/CMakeLists.txt	2014-12-22 18:49:03.000000000 -0800
-+++ src/ros_comm/roslz4/CMakeLists.txt	2015-03-01 21:29:06.689909400 -0800
-@@ -33,7 +33,7 @@
- 
- add_library(roslz4_py src/_roslz4module.c)
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/ros_comm/roslz4/CMakeLists.txt src/ros_comm/roslz4/CMakeLists.txt
+--- src.orig/ros_comm/roslz4/CMakeLists.txt	2016-04-19 10:11:23.000000000 -0700
++++ src/ros_comm/roslz4/CMakeLists.txt	2016-05-24 14:48:02.034009600 -0700
+@@ -43,7 +43,7 @@
+   src/_roslz4module.c
+ PROPERTIES COMPILE_FLAGS "-Wno-missing-field-initializers -Wno-unused-variable")
  set_target_properties(
 -  roslz4_py PROPERTIES OUTPUT_NAME roslz4 PREFIX "_" SUFFIX ".so"
 +  roslz4_py PROPERTIES OUTPUT_NAME _roslz4 PREFIX ""
    LIBRARY_OUTPUT_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${PYTHON_INSTALL_DIR}/roslz4)
  target_link_libraries(roslz4_py roslz4 ${catkin_LIBRARIES} ${PYTHON_LIBRARIES})
  endif()
-@@ -41,12 +41,14 @@
+@@ -51,12 +51,14 @@
  install(TARGETS roslz4
    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
@@ -40,10 +39,10 @@ diff -ur src.orig/ros_comm/roslz4/CMakeLists.txt src/ros_comm/roslz4/CMakeLists.
  endif()
  
  install(DIRECTORY include/${PROJECT_NAME}
-diff -ur src.orig/ros_comm/rosout/CMakeLists.txt src/ros_comm/rosout/CMakeLists.txt
---- src.orig/ros_comm/rosout/CMakeLists.txt	2014-12-22 18:48:39.000000000 -0800
-+++ src/ros_comm/rosout/CMakeLists.txt	2015-03-02 11:25:02.448973900 -0800
-@@ -9,5 +9,10 @@
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/ros_comm/rosout/CMakeLists.txt src/ros_comm/rosout/CMakeLists.txt
+--- src.orig/ros_comm/rosout/CMakeLists.txt	2016-04-19 10:11:13.000000000 -0700
++++ src/ros_comm/rosout/CMakeLists.txt	2016-05-24 14:48:02.035009700 -0700
+@@ -14,5 +14,10 @@
  add_executable(rosout rosout.cpp)
  target_link_libraries(rosout ${catkin_LIBRARIES})
  

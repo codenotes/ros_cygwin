@@ -1,11 +1,11 @@
-diff -ur src.orig/rosconsole_bridge/CMakeLists.txt src/rosconsole_bridge/CMakeLists.txt
---- src.orig/rosconsole_bridge/CMakeLists.txt	2014-07-18 12:08:23.000000000 -0700
-+++ src/rosconsole_bridge/CMakeLists.txt	2015-02-26 14:39:33.305996900 -0800
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/rosconsole_bridge/CMakeLists.txt src/rosconsole_bridge/CMakeLists.txt
+--- src.orig/rosconsole_bridge/CMakeLists.txt	2016-04-18 14:37:05.000000000 -0700
++++ src/rosconsole_bridge/CMakeLists.txt	2016-05-24 14:51:10.536858000 -0700
 @@ -22,6 +22,7 @@
    TARGETS ${PROJECT_NAME}
-   ARCHIVE DESTINATION lib
-   LIBRARY DESTINATION lib
-+  RUNTIME DESTINATION lib
+   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
++  RUNTIME DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
  )
  
  install(

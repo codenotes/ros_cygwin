@@ -1,6 +1,6 @@
-diff -urN src.orig/interactive_markers/CMakeLists.txt src.fix/interactive_markers/CMakeLists.txt
---- src.orig/interactive_markers/CMakeLists.txt	2015-04-20 22:43:06.000000000 -0700
-+++ src.fix/interactive_markers/CMakeLists.txt	2015-11-19 12:41:01.894337200 -0800
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/interactive_markers/CMakeLists.txt src/interactive_markers/CMakeLists.txt
+--- src.orig/interactive_markers/CMakeLists.txt	2014-12-16 13:21:50.000000000 -0800
++++ src/interactive_markers/CMakeLists.txt	2016-05-24 14:48:01.868993100 -0700
 @@ -31,7 +31,8 @@
  
  install(TARGETS ${PROJECT_NAME}

@@ -1,0 +1,29 @@
+--- features.h.orig	2016-04-21 13:14:57.000000000 -0700
++++ features.h	2016-05-24 11:06:02.556195000 -0700
+@@ -21,6 +21,26 @@
+ #ifndef _SYS_FEATURES_H
+ #define _SYS_FEATURES_H
+ 
++#ifndef _POSIX_C_SOURCE
++#define _POSIX_C_SOURCE 200809L
++#endif
++
++#ifndef _ATFILE_SOURCE
++#define _ATFILE_SOURCE 1
++#endif
++
++#ifndef _POSIX_SOURCE
++#define _POSIX_SOURCE 1
++#endif
++
++#ifndef _DEFAULT_SOURCE
++#define _DEFAULT_SOURCE 1
++#endif
++
++#ifndef _GNU_SOURCE
++#define _GNU_SOURCE 1
++#endif
++
+ #ifdef __cplusplus
+ extern "C" {
+ #endif

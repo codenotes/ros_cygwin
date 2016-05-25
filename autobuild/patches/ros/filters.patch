@@ -1,6 +1,6 @@
-diff -urN src.orig/filters/CMakeLists.txt src.fix/filters/CMakeLists.txt
---- src.orig/filters/CMakeLists.txt	2015-08-04 17:37:39.000000000 -0700
-+++ src.fix/filters/CMakeLists.txt	2015-11-19 11:29:13.478350800 -0800
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/filters/CMakeLists.txt src/filters/CMakeLists.txt
+--- src.orig/filters/CMakeLists.txt	2014-03-02 07:10:58.000000000 -0800
++++ src/filters/CMakeLists.txt	2016-05-24 14:48:01.786984900 -0700
 @@ -43,30 +43,42 @@
  # Test median filter
  add_executable(median_test EXCLUDE_FROM_ALL test/test_median.cpp )

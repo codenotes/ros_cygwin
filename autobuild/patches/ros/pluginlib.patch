@@ -1,7 +1,7 @@
-diff -urN src.x/pluginlib/include/pluginlib/class_loader_imp.h src/pluginlib/include/pluginlib/class_loader_imp.h
---- src.x/pluginlib/include/pluginlib/class_loader_imp.h	2014-12-31 12:34:55.000000000 -0800
-+++ src/pluginlib/include/pluginlib/class_loader_imp.h	2015-12-02 14:07:58.912522400 -0800
-@@ -234,6 +234,33 @@
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/pluginlib/include/pluginlib/class_loader_imp.h src/pluginlib/include/pluginlib/class_loader_imp.h
+--- src.orig/pluginlib/include/pluginlib/class_loader_imp.h	2016-03-18 09:48:20.000000000 -0700
++++ src/pluginlib/include/pluginlib/class_loader_imp.h	2016-05-24 14:48:01.953001500 -0700
+@@ -239,6 +239,33 @@
      //TODO: This needs to be replaced with an api call
      return(parseToStringVector(callCommandLine("catkin_find --lib")));
    }
@@ -35,7 +35,7 @@ diff -urN src.x/pluginlib/include/pluginlib/class_loader_imp.h src/pluginlib/inc
  
    template <class T>
    std::vector<std::string> ClassLoader<T>::getAllLibraryPathsToTry(const std::string& library_name, const std::string& exporting_package_name)
-@@ -263,12 +290,13 @@
+@@ -268,12 +295,13 @@
      for(unsigned int c = 0; c < all_paths_without_extension.size(); c++)
      {
        std::string current_path = all_paths_without_extension.at(c);
@@ -53,7 +53,7 @@ diff -urN src.x/pluginlib/include/pluginlib/class_loader_imp.h src/pluginlib/inc
        }
      }
  
-@@ -323,13 +351,21 @@
+@@ -328,13 +356,21 @@
      ROS_DEBUG_NAMED("pluginlib.ClassLoader","Class %s maps to library %s in classes_available_.", lookup_name.c_str(), library_name.c_str());
  
      std::vector<std::string> paths_to_try = getAllLibraryPathsToTry(library_name, it->second.package_);

@@ -1,7 +1,6 @@
-Only in src/octomap/octomap: bin
-diff -ur src.orig/octomap/octomap/CMakeLists.txt src/octomap/octomap/CMakeLists.txt
---- src.orig/octomap/octomap/CMakeLists.txt	2014-09-06 03:17:53.000000000 -0700
-+++ src/octomap/octomap/CMakeLists.txt	2015-02-28 16:29:29.193702200 -0800
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/octomap/octomap/CMakeLists.txt src/octomap/octomap/CMakeLists.txt
+--- src.orig/octomap/octomap/CMakeLists.txt	2016-01-13 14:00:55.000000000 -0800
++++ src/octomap/octomap/CMakeLists.txt	2016-05-24 14:48:01.935999800 -0700
 @@ -34,7 +34,7 @@
  SET( BASE_DIR ${CMAKE_SOURCE_DIR} )
  SET( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${BASE_DIR}/lib )
@@ -20,10 +19,9 @@ diff -ur src.orig/octomap/octomap/CMakeLists.txt src/octomap/octomap/CMakeLists.
  	LIBRARY DESTINATION lib
  	ARCHIVE DESTINATION lib
  )
-Only in src/octomap/octomap: lib
-diff -ur src.orig/octomap/octomap/octomap-config.cmake.in src/octomap/octomap/octomap-config.cmake.in
---- src.orig/octomap/octomap/octomap-config.cmake.in	2014-09-06 03:17:53.000000000 -0700
-+++ src/octomap/octomap/octomap-config.cmake.in	2015-02-28 16:34:18.001702200 -0800
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/octomap/octomap/octomap-config.cmake.in src/octomap/octomap/octomap-config.cmake.in
+--- src.orig/octomap/octomap/octomap-config.cmake.in	2016-01-13 14:00:55.000000000 -0800
++++ src/octomap/octomap/octomap-config.cmake.in	2016-05-24 14:48:01.936999900 -0700
 @@ -26,9 +26,16 @@
  set(OCTOMAP_INCLUDE_DIRS "@OCTOMAP_INCLUDE_DIRS@")
  set(OCTOMAP_LIBRARY_DIRS "@OCTOMAP_LIB_DIR@")

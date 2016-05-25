@@ -1,7 +1,6 @@
-Only in src/geometry: geometry.patch
-diff -ur src.orig/geometry/tf/CMakeLists.txt src/geometry/tf/CMakeLists.txt
---- src.orig/geometry/tf/CMakeLists.txt	2014-12-23 21:17:52.000000000 -0800
-+++ src/geometry/tf/CMakeLists.txt	2015-02-26 15:48:28.421085800 -0800
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/geometry/tf/CMakeLists.txt src/geometry/tf/CMakeLists.txt
+--- src.orig/geometry/tf/CMakeLists.txt	2016-03-04 12:12:26.000000000 -0800
++++ src/geometry/tf/CMakeLists.txt	2016-05-24 14:48:01.802986500 -0700
 @@ -127,7 +127,7 @@
  add_dependencies(pytf_py ${PROJECT_NAME}_gencpp)
  
@@ -10,8 +9,8 @@ diff -ur src.orig/geometry/tf/CMakeLists.txt src/geometry/tf/CMakeLists.txt
 +set_target_properties(pytf_py PROPERTIES OUTPUT_NAME _tf PREFIX ""
    LIBRARY_OUTPUT_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${PYTHON_INSTALL_DIR}/tf)
  
- # target_link_libraries(pytf_py ${PROJECT_NAME})
-@@ -154,9 +154,15 @@
+ 
+@@ -151,9 +151,15 @@
  
  if(NOT ANDROID)
  install(TARGETS pytf_py
@@ -28,9 +27,9 @@ diff -ur src.orig/geometry/tf/CMakeLists.txt src/geometry/tf/CMakeLists.txt
  # Install rosrun-able scripts
  install(PROGRAMS 
    scripts/bullet_migration_sed.py
-diff -ur src.orig/geometry/tf/include/tf/tf.h src/geometry/tf/include/tf/tf.h
---- src.orig/geometry/tf/include/tf/tf.h	2014-12-23 21:17:52.000000000 -0800
-+++ src/geometry/tf/include/tf/tf.h	2015-02-26 11:12:55.320929400 -0800
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/geometry/tf/include/tf/tf.h src/geometry/tf/include/tf/tf.h
+--- src.orig/geometry/tf/include/tf/tf.h	2016-03-04 12:12:26.000000000 -0800
++++ src/geometry/tf/include/tf/tf.h	2016-05-24 14:48:01.803986600 -0700
 @@ -47,6 +47,10 @@
  
  #include <tf2_ros/buffer.h>

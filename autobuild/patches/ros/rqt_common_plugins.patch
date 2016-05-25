@@ -1,6 +1,6 @@
-diff -urN src.orig/rqt_common_plugins/rqt_bag_plugins/src/rqt_bag_plugins/image_helper.py src/rqt_common_plugins/rqt_bag_plugins/src/rqt_bag_plugins/image_helper.py
---- src.orig/rqt_common_plugins/rqt_bag_plugins/src/rqt_bag_plugins/image_helper.py	2015-07-24 14:17:18.000000000 -0700
-+++ src/rqt_common_plugins/rqt_bag_plugins/src/rqt_bag_plugins/image_helper.py	2015-11-18 20:07:24.889049200 -0800
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/rqt_common_plugins/rqt_bag_plugins/src/rqt_bag_plugins/image_helper.py src/rqt_common_plugins/rqt_bag_plugins/src/rqt_bag_plugins/image_helper.py
+--- src.orig/rqt_common_plugins/rqt_bag_plugins/src/rqt_bag_plugins/image_helper.py	2016-03-08 17:30:41.000000000 -0800
++++ src/rqt_common_plugins/rqt_bag_plugins/src/rqt_bag_plugins/image_helper.py	2016-05-24 14:48:02.091015300 -0700
 @@ -36,7 +36,7 @@
  
  from PIL import Image

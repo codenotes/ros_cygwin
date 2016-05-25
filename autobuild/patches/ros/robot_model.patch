@@ -1,6 +1,6 @@
-diff -ur src.orig/robot_model/collada_parser/CMakeLists.txt src/robot_model/collada_parser/CMakeLists.txt
---- src.orig/robot_model/collada_parser/CMakeLists.txt	2014-11-30 11:22:09.000000000 -0800
-+++ src/robot_model/collada_parser/CMakeLists.txt	2015-02-27 19:45:59.410746000 -0800
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/robot_model/collada_parser/CMakeLists.txt src/robot_model/collada_parser/CMakeLists.txt
+--- src.orig/robot_model/collada_parser/CMakeLists.txt	2016-02-23 10:48:10.000000000 -0800
++++ src/robot_model/collada_parser/CMakeLists.txt	2016-05-24 14:48:02.005006700 -0700
 @@ -18,7 +18,7 @@
  
  set(CMAKE_MODULE_PATH  ${PROJECT_SOURCE_DIR}/cmake-extensions/)
@@ -10,9 +10,9 @@ diff -ur src.orig/robot_model/collada_parser/CMakeLists.txt src/robot_model/coll
  if(COLLADA_DOM_FOUND)
    include_directories(${COLLADA_DOM_INCLUDE_DIRS})
    link_directories(${COLLADA_DOM_LIBRARY_DIRS})
-diff -ur src.orig/robot_model/collada_urdf/CMakeLists.txt src/robot_model/collada_urdf/CMakeLists.txt
---- src.orig/robot_model/collada_urdf/CMakeLists.txt	2014-11-30 11:22:21.000000000 -0800
-+++ src/robot_model/collada_urdf/CMakeLists.txt	2015-02-28 16:23:41.573702200 -0800
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/robot_model/collada_urdf/CMakeLists.txt src/robot_model/collada_urdf/CMakeLists.txt
+--- src.orig/robot_model/collada_urdf/CMakeLists.txt	2016-02-23 10:48:32.000000000 -0800
++++ src/robot_model/collada_urdf/CMakeLists.txt	2016-05-24 14:48:02.006006800 -0700
 @@ -4,6 +4,7 @@
  find_package(catkin REQUIRED COMPONENTS angles collada_parser resource_retriever urdf geometric_shapes tf cmake_modules)
  
@@ -30,9 +30,9 @@ diff -ur src.orig/robot_model/collada_urdf/CMakeLists.txt src/robot_model/collad
    find_package(Assimp QUIET)
    if ( NOT ASSIMP_FOUND )
      find_package(PkgConfig REQUIRED)
-diff -ur src.orig/robot_model/collada_urdf/src/collada_to_urdf.cpp src/robot_model/collada_urdf/src/collada_to_urdf.cpp
---- src.orig/robot_model/collada_urdf/src/collada_to_urdf.cpp	2014-11-30 11:22:21.000000000 -0800
-+++ src/robot_model/collada_urdf/src/collada_to_urdf.cpp	2015-02-28 12:54:05.735768800 -0800
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/robot_model/collada_urdf/src/collada_to_urdf.cpp src/robot_model/collada_urdf/src/collada_to_urdf.cpp
+--- src.orig/robot_model/collada_urdf/src/collada_to_urdf.cpp	2016-02-23 10:48:32.000000000 -0800
++++ src/robot_model/collada_urdf/src/collada_to_urdf.cpp	2016-05-24 14:48:02.007006900 -0700
 @@ -13,12 +13,12 @@
  #include <assimp/postprocess.h>
  #include <assimp/scene.h>
@@ -49,9 +49,9 @@ diff -ur src.orig/robot_model/collada_urdf/src/collada_to_urdf.cpp src/robot_mod
  #endif
  
  #include <iostream>
-diff -ur src.orig/robot_model/collada_urdf/src/collada_urdf.cpp src/robot_model/collada_urdf/src/collada_urdf.cpp
---- src.orig/robot_model/collada_urdf/src/collada_urdf.cpp	2014-11-30 11:22:21.000000000 -0800
-+++ src/robot_model/collada_urdf/src/collada_urdf.cpp	2015-02-28 12:53:00.806276500 -0800
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/robot_model/collada_urdf/src/collada_urdf.cpp src/robot_model/collada_urdf/src/collada_urdf.cpp
+--- src.orig/robot_model/collada_urdf/src/collada_urdf.cpp	2016-02-23 10:48:32.000000000 -0800
++++ src/robot_model/collada_urdf/src/collada_urdf.cpp	2016-05-24 14:48:02.008007000 -0700
 @@ -71,12 +71,12 @@
  #include <assimp/Importer.hpp>
  #include <assimp/postprocess.h>
@@ -71,11 +71,10 @@ diff -ur src.orig/robot_model/collada_urdf/src/collada_urdf.cpp src/robot_model/
  #endif
  
  #include <geometric_shapes/shapes.h>
-Only in src/robot_model: robot_model.patch
-diff -ur src.orig/robot_model/urdf/CMakeLists.txt src/robot_model/urdf/CMakeLists.txt
---- src.orig/robot_model/urdf/CMakeLists.txt	2014-11-30 11:22:12.000000000 -0800
-+++ src/robot_model/urdf/CMakeLists.txt	2015-02-26 20:27:40.142992100 -0800
-@@ -48,7 +48,7 @@
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/robot_model/urdf/CMakeLists.txt src/robot_model/urdf/CMakeLists.txt
+--- src.orig/robot_model/urdf/CMakeLists.txt	2016-02-23 10:48:15.000000000 -0800
++++ src/robot_model/urdf/CMakeLists.txt	2016-05-24 14:48:02.009007100 -0700
+@@ -51,7 +51,7 @@
  install(TARGETS ${PROJECT_NAME} 
    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}

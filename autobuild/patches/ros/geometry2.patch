@@ -1,0 +1,26 @@
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/geometry2/tf2_py/CMakeLists.txt src/geometry2/tf2_py/CMakeLists.txt
+--- src.orig/geometry2/tf2_py/CMakeLists.txt	2016-03-04 11:57:32.000000000 -0800
++++ src/geometry2/tf2_py/CMakeLists.txt	2016-05-24 15:45:12.529024800 -0700
+@@ -94,11 +94,12 @@
+ target_link_libraries(tf2_py ${catkin_LIBRARIES})
+ add_dependencies(tf2_py tf2_msgs_gencpp)
+ 
+-set_target_properties(tf2_py PROPERTIES OUTPUT_NAME tf2 PREFIX "_" SUFFIX ".so")
++set_target_properties(tf2_py PROPERTIES OUTPUT_NAME tf2 PREFIX "_" SUFFIX ".dll")
+ set_target_properties(tf2_py PROPERTIES COMPILE_FLAGS "-g -Wno-missing-field-initializers")
+ set_target_properties(tf2_py PROPERTIES
+   ARCHIVE_OUTPUT_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_PYTHON_DESTINATION}
+   LIBRARY_OUTPUT_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_PYTHON_DESTINATION}
++  RUNTIME_OUTPUT_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_PYTHON_DESTINATION}
+ )
+ #!! rosbuild_add_compile_flags(tf2_py ${SSE_FLAGS}) #conditionally adds sse flags if available
+ 
+@@ -138,7 +139,7 @@
+ #   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+ # )
+ 
+-install(FILES ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_PYTHON_DESTINATION}/_tf2.so
++install(FILES ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_PYTHON_DESTINATION}/_tf2.dll
+   DESTINATION ${CATKIN_PACKAGE_PYTHON_DESTINATION}
+ )
+ 

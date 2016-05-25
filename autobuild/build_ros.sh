@@ -2,7 +2,7 @@
 CYGWIN_MIRROR="--mirror http://cygwin.mirror.gtcomm.net/"
 ROS_WORKSPACE=/opt/ros
 ROS_DEPS=/opt/rosdeps
-ROS_DISTRO=jade
+ROS_DISTRO=indigo
 export SOURCEFORGE_MIRROR=downloads.sourceforge.net
 
 SCRIPT_ROOT=$(dirname $(readlink -f $0))
@@ -129,6 +129,7 @@ export PATH=$PATH:$QTDIR/lib
 echo "Patching system files..."
 patch_system_file /usr/include/boost/thread/pthread/recursive_mutex.hpp $SCRIPT_ROOT/patches/boost.patch
 patch_system_file /usr/include/ctype.h $SCRIPT_ROOT/patches/ctype.patch
+patch_system_file /usr/include/sys/features.h $SCRIPT_ROOT/patches/features.patch
 
 echo "Checking buildable external packages..."
 for pkg in `ls -1 $SCRIPT_ROOT/install_helpers/*.sh`; do

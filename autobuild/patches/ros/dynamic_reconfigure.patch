@@ -1,7 +1,7 @@
-diff -urN src.orig/dynamic_reconfigure/cmake/dynamic_reconfigure-macros.cmake src.fix/dynamic_reconfigure/cmake/dynamic_reconfigure-macros.cmake
---- src.orig/dynamic_reconfigure/cmake/dynamic_reconfigure-macros.cmake	2015-04-22 12:24:37.000000000 -0700
-+++ src.fix/dynamic_reconfigure/cmake/dynamic_reconfigure-macros.cmake	2015-11-19 09:12:17.029722700 -0800
-@@ -38,12 +38,21 @@
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/dynamic_reconfigure/cmake/dynamic_reconfigure-macros.cmake src/dynamic_reconfigure/cmake/dynamic_reconfigure-macros.cmake
+--- src.orig/dynamic_reconfigure/cmake/dynamic_reconfigure-macros.cmake	2016-03-19 11:37:11.000000000 -0700
++++ src/dynamic_reconfigure/cmake/dynamic_reconfigure-macros.cmake	2016-05-24 14:48:01.770983300 -0700
+@@ -52,12 +52,21 @@
  
      #file(WRITE ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_PYTHON_DESTINATION}/cfg/__init__.py)
  
@@ -24,9 +24,9 @@ diff -urN src.orig/dynamic_reconfigure/cmake/dynamic_reconfigure-macros.cmake sr
  
      list(APPEND ${PROJECT_NAME}_generated
        ${_output_cpp} ${_output_py}
-diff -urN src.orig/dynamic_reconfigure/test/CMakeLists.txt src.fix/dynamic_reconfigure/test/CMakeLists.txt
---- src.orig/dynamic_reconfigure/test/CMakeLists.txt	2015-04-22 12:24:37.000000000 -0700
-+++ src.fix/dynamic_reconfigure/test/CMakeLists.txt	2015-11-19 11:22:04.364350800 -0800
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/dynamic_reconfigure/test/CMakeLists.txt src/dynamic_reconfigure/test/CMakeLists.txt
+--- src.orig/dynamic_reconfigure/test/CMakeLists.txt	2016-03-19 11:37:11.000000000 -0700
++++ src/dynamic_reconfigure/test/CMakeLists.txt	2016-05-24 14:48:01.771983400 -0700
 @@ -4,4 +4,6 @@
  
  add_dependencies(tests dynamic_reconfigure-ref_server)

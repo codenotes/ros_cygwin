@@ -1,6 +1,6 @@
-diff -ur src.orig/qt_gui_core/qt_gui_cpp/src/qt_gui_cpp/CMakeLists.txt src/qt_gui_core/qt_gui_cpp/src/qt_gui_cpp/CMakeLists.txt
---- src.orig/qt_gui_core/qt_gui_cpp/src/qt_gui_cpp/CMakeLists.txt	2014-08-18 12:00:51.000000000 -0700
-+++ src/qt_gui_core/qt_gui_cpp/src/qt_gui_cpp/CMakeLists.txt	2015-03-02 14:48:14.765867200 -0800
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/qt_gui_core/qt_gui_cpp/src/qt_gui_cpp/CMakeLists.txt src/qt_gui_core/qt_gui_cpp/src/qt_gui_cpp/CMakeLists.txt
+--- src.orig/qt_gui_core/qt_gui_cpp/src/qt_gui_cpp/CMakeLists.txt	2016-03-30 13:29:26.000000000 -0700
++++ src/qt_gui_core/qt_gui_cpp/src/qt_gui_cpp/CMakeLists.txt	2016-05-24 14:48:01.979004100 -0700
 @@ -39,4 +39,5 @@
  
  install(TARGETS ${PROJECT_NAME}

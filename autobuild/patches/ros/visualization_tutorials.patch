@@ -1,7 +1,6 @@
-Only in src/visualization_tutorials/librviz_tutorial: CMakeLists.txt.orig
-diff -ur src.orig/visualization_tutorials/rviz_plugin_tutorials/CMakeLists.txt src/visualization_tutorials/rviz_plugin_tutorials/CMakeLists.txt
---- src.orig/visualization_tutorials/rviz_plugin_tutorials/CMakeLists.txt	2015-01-26 10:47:53.000000000 -0800
-+++ src/visualization_tutorials/rviz_plugin_tutorials/CMakeLists.txt	2015-02-28 17:29:02.381978300 -0800
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/visualization_tutorials/rviz_plugin_tutorials/CMakeLists.txt src/visualization_tutorials/rviz_plugin_tutorials/CMakeLists.txt
+--- src.orig/visualization_tutorials/rviz_plugin_tutorials/CMakeLists.txt	2015-09-21 10:21:55.000000000 -0700
++++ src/visualization_tutorials/rviz_plugin_tutorials/CMakeLists.txt	2016-05-24 14:48:02.163022500 -0700
 @@ -63,7 +63,7 @@
    ${PROJECT_NAME}
    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
@@ -11,4 +10,3 @@ diff -ur src.orig/visualization_tutorials/rviz_plugin_tutorials/CMakeLists.txt s
  )
  
  install(FILES 
-Only in src/visualization_tutorials: visualization_tutorials.patch

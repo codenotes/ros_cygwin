@@ -1,7 +1,7 @@
-diff -ur src.orig/laser_geometry/CMakeLists.txt src/laser_geometry/CMakeLists.txt
---- src.orig/laser_geometry/CMakeLists.txt	2014-06-08 06:18:06.000000000 -0700
-+++ src/laser_geometry/CMakeLists.txt	2015-02-26 15:58:34.909937000 -0800
-@@ -40,7 +40,8 @@
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/laser_geometry/CMakeLists.txt src/laser_geometry/CMakeLists.txt
+--- src.orig/laser_geometry/CMakeLists.txt	2015-05-17 23:51:16.000000000 -0700
++++ src/laser_geometry/CMakeLists.txt	2016-05-24 14:48:01.902996500 -0700
+@@ -41,7 +41,8 @@
  
  install(TARGETS laser_geometry
    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}

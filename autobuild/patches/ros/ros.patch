@@ -1,12 +1,12 @@
-diff -urN src.orig/ros/rosbash/scripts/rosrun src/ros/rosbash/scripts/rosrun
---- src.orig/ros/rosbash/scripts/rosrun	2015-04-27 16:16:38.000000000 -0700
-+++ src/ros/rosbash/scripts/rosrun	2015-11-18 20:10:16.977049200 -0800
-@@ -66,7 +66,7 @@
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/ros/rosbash/scripts/rosrun src/ros/rosbash/scripts/rosrun
+--- src.orig/ros/rosbash/scripts/rosrun	2016-03-10 15:08:26.000000000 -0800
++++ src/ros/rosbash/scripts/rosrun	2016-05-24 14:50:47.935598100 -0700
+@@ -68,7 +68,7 @@
      _perm="/111"
    fi
    debug "Searching for $2 with permissions $_perm"
--  exepathlist=(`find -L $catkin_package_libexec_dir $pkgdir -name $2 -type f  -perm $_perm ! -regex ".*$pkgdir\/build\/.*" | uniq`)
-+  exepathlist=(`find -L $catkin_package_libexec_dir $pkgdir \( -name $2 -o -name $2.exe \) -type f  -perm $_perm ! -regex ".*$pkgdir\/build\/.*" | uniq`)
-   unset _perm
-   if [[ ${#exepathlist[@]} == 0 ]]; then
-     echo "[rosrun] Couldn't find executable named $2 below $pkgdir"
+-  exepathlist="`find -L "${catkin_package_libexec_dirs[@]}" "$pkgdir" -name "$2" -type f  -perm "$_perm" ! -regex ".*$pkgdir\/build\/.*" | uniq`"
++  exepathlist="`find -L "${catkin_package_libexec_dirs[@]}" "$pkgdir" \( -name "$2" -o -name "$2.exe" \) -type f  -perm "$_perm" ! -regex ".*$pkgdir\/build\/.*" | uniq`"
+   IFS=$'\n'
+   exepathlist=($exepathlist)
+   unset IFS

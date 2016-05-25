@@ -1,0 +1,65 @@
+Binary files src.orig/python_qt_binding/dist/python_qt_binding-0.2.19-py2.7.egg and src/python_qt_binding/dist/python_qt_binding-0.2.19-py2.7.egg differ
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/python_qt_binding/src/python_qt_binding.egg-info/dependency_links.txt src/python_qt_binding/src/python_qt_binding.egg-info/dependency_links.txt
+--- src.orig/python_qt_binding/src/python_qt_binding.egg-info/dependency_links.txt	1969-12-31 16:00:00.000000000 -0800
++++ src/python_qt_binding/src/python_qt_binding.egg-info/dependency_links.txt	2016-05-24 15:00:56.384436900 -0700
+@@ -0,0 +1 @@
++
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/python_qt_binding/src/python_qt_binding.egg-info/PKG-INFO src/python_qt_binding/src/python_qt_binding.egg-info/PKG-INFO
+--- src.orig/python_qt_binding/src/python_qt_binding.egg-info/PKG-INFO	1969-12-31 16:00:00.000000000 -0800
++++ src/python_qt_binding/src/python_qt_binding.egg-info/PKG-INFO	2016-05-24 15:00:56.383436800 -0700
+@@ -0,0 +1,32 @@
++Metadata-Version: 1.1
++Name: python-qt-binding
++Version: 0.2.19
++Summary: This stack provides Python bindings for Qt.
++    There are two providers: pyside and pyqt.  PySide is released under
++    the LGPL.  PyQt is released under the GPL.
++
++    Both the bindings and tools t...
++Home-page: http://ros.org/wiki/python_qt_binding
++Author: Dirk Thomas
++Author-email: dthomas@osrfoundation.org
++License: BSD
++Description: This stack provides Python bindings for Qt.
++            There are two providers: pyside and pyqt.  PySide is released under
++            the LGPL.  PyQt is released under the GPL.
++        
++            Both the bindings and tools to build bindings are included from each
++            available provider.  For PySide, it is called &quot;Shiboken&quot;.  For PyQt,
++            this is called &quot;SIP&quot;.
++        
++            Also provided is adapter code to make the user's Python code
++            independent of which binding provider was actually used which makes
++            it very easy to switch between these.
++Platform: UNKNOWN
++Classifier: Development Status :: 5 - Production/Stable
++Classifier: Intended Audience :: Developers
++Classifier: Operating System :: OS Independent
++Classifier: Programming Language :: Python
++Classifier: Topic :: Software Development :: Libraries :: Python Modules
++Classifier: License :: OSI Approved :: BSD License
++Classifier: License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)
++Classifier: License :: OSI Approved :: GNU General Public License (GPL)
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/python_qt_binding/src/python_qt_binding.egg-info/SOURCES.txt src/python_qt_binding/src/python_qt_binding.egg-info/SOURCES.txt
+--- src.orig/python_qt_binding/src/python_qt_binding.egg-info/SOURCES.txt	1969-12-31 16:00:00.000000000 -0800
++++ src/python_qt_binding/src/python_qt_binding.egg-info/SOURCES.txt	2016-05-24 15:00:56.390437500 -0700
+@@ -0,0 +1,13 @@
++MANIFEST.in
++package.xml
++setup.py
++cmake/shiboken_helper.cmake
++cmake/sip_configure.py
++cmake/sip_helper.cmake
++src/python_qt_binding/QtBindingHelper.py
++src/python_qt_binding/__init__.py
++src/python_qt_binding/binding_helper.py
++src/python_qt_binding.egg-info/PKG-INFO
++src/python_qt_binding.egg-info/SOURCES.txt
++src/python_qt_binding.egg-info/dependency_links.txt
++src/python_qt_binding.egg-info/top_level.txt
+\ No newline at end of file
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/python_qt_binding/src/python_qt_binding.egg-info/top_level.txt src/python_qt_binding/src/python_qt_binding.egg-info/top_level.txt
+--- src.orig/python_qt_binding/src/python_qt_binding.egg-info/top_level.txt	1969-12-31 16:00:00.000000000 -0800
++++ src/python_qt_binding/src/python_qt_binding.egg-info/top_level.txt	2016-05-24 15:00:56.383436800 -0700
+@@ -0,0 +1 @@
++python_qt_binding

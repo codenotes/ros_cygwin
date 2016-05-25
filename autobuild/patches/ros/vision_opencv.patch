@@ -1,7 +1,7 @@
-diff -ur src.orig/vision_opencv/image_geometry/CMakeLists.txt src/vision_opencv/image_geometry/CMakeLists.txt
---- src.orig/vision_opencv/image_geometry/CMakeLists.txt	2014-12-14 11:57:33.000000000 -0800
-+++ src/vision_opencv/image_geometry/CMakeLists.txt	2015-02-26 16:14:24.211209200 -0800
-@@ -30,7 +30,7 @@
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/vision_opencv/image_geometry/CMakeLists.txt src/vision_opencv/image_geometry/CMakeLists.txt
+--- src.orig/vision_opencv/image_geometry/CMakeLists.txt	2016-03-10 02:27:00.000000000 -0800
++++ src/vision_opencv/image_geometry/CMakeLists.txt	2016-05-24 14:48:02.148021000 -0700
+@@ -27,7 +27,7 @@
  )
  
  install(TARGETS ${PROJECT_NAME}
@@ -10,3 +10,15 @@ diff -ur src.orig/vision_opencv/image_geometry/CMakeLists.txt src/vision_opencv/
          ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
          LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
  )
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/vision_opencv/opencv_apps/CMakeLists.txt src/vision_opencv/opencv_apps/CMakeLists.txt
+--- src.orig/vision_opencv/opencv_apps/CMakeLists.txt	2016-03-10 02:27:03.000000000 -0800
++++ src/vision_opencv/opencv_apps/CMakeLists.txt	2016-05-24 16:00:35.558318500 -0700
+@@ -186,6 +186,8 @@
+   ${${PROJECT_NAME}_EXTRA_FILES}
+ )
+ 
++set(OpenCV_LIBRARIES "")
++
+ target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+ add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_gencfg ${PROJECT_NAME}_generate_messages_cpp)
+ install(TARGETS ${PROJECT_NAME}

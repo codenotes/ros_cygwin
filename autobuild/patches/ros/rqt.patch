@@ -1,6 +1,6 @@
-diff -ur src.orig/rqt/rqt_gui_cpp/CMakeLists.txt src/rqt/rqt_gui_cpp/CMakeLists.txt
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/rqt/rqt_gui_cpp/CMakeLists.txt src/rqt/rqt_gui_cpp/CMakeLists.txt
 --- src.orig/rqt/rqt_gui_cpp/CMakeLists.txt	2014-05-21 10:25:58.000000000 -0700
-+++ src/rqt/rqt_gui_cpp/CMakeLists.txt	2015-03-02 14:39:56.698016600 -0800
++++ src/rqt/rqt_gui_cpp/CMakeLists.txt	2016-05-24 14:48:02.075013700 -0700
 @@ -38,6 +38,7 @@
  install(TARGETS ${PROJECT_NAME}
    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
@@ -9,9 +9,9 @@ diff -ur src.orig/rqt/rqt_gui_cpp/CMakeLists.txt src/rqt/rqt_gui_cpp/CMakeLists.
  )
  
  install(DIRECTORY include/${PROJECT_NAME}/
-diff -ur src.orig/rqt/rqt_gui_cpp/plugin.xml src/rqt/rqt_gui_cpp/plugin.xml
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/rqt/rqt_gui_cpp/plugin.xml src/rqt/rqt_gui_cpp/plugin.xml
 --- src.orig/rqt/rqt_gui_cpp/plugin.xml	2014-05-21 10:25:58.000000000 -0700
-+++ src/rqt/rqt_gui_cpp/plugin.xml	2015-03-02 14:39:47.153062200 -0800
++++ src/rqt/rqt_gui_cpp/plugin.xml	2016-05-24 14:48:02.076013800 -0700
 @@ -1,4 +1,4 @@
 -<library path="lib/librqt_gui_cpp">
 +<library path="lib/cygrqt_gui_cpp">

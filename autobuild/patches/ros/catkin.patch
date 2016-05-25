@@ -1,8 +1,8 @@
-diff -ur src.orig/catkin/cmake/all.cmake src/catkin/cmake/all.cmake
---- src.orig/catkin/cmake/all.cmake	2014-12-29 10:18:13.000000000 -0800
-+++ src/catkin/cmake/all.cmake	2015-02-28 12:42:29.167118900 -0800
-@@ -202,5 +202,10 @@
-   catkin_add_env_hooks(05.catkin-test-results SHELLS bat DIRECTORY ${catkin_EXTRAS_DIR}/env-hooks ${catkin_skip_install_env_hooks})
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/catkin/cmake/all.cmake src/catkin/cmake/all.cmake
+--- src.orig/catkin/cmake/all.cmake	2016-03-18 14:31:08.000000000 -0700
++++ src/catkin/cmake/all.cmake	2016-05-24 14:48:01.753981600 -0700
+@@ -200,5 +200,10 @@
+   catkin_add_env_hooks(05.catkin_make_isolated SHELLS bash DIRECTORY ${catkin_EXTRAS_DIR}/env-hooks ${catkin_skip_install_env_hooks})
  endif()
  
 +if(CYGWIN)
@@ -12,9 +12,9 @@ diff -ur src.orig/catkin/cmake/all.cmake src/catkin/cmake/all.cmake
 +
  # requires stamp and environment files
  include(${catkin_EXTRAS_DIR}/catkin_python_setup.cmake)
-diff -ur src.orig/catkin/cmake/catkin_destinations.cmake src/catkin/cmake/catkin_destinations.cmake
---- src.orig/catkin/cmake/catkin_destinations.cmake	2014-12-29 10:18:13.000000000 -0800
-+++ src/catkin/cmake/catkin_destinations.cmake	2015-03-01 17:58:03.651055600 -0800
+diff '--exclude=.git' '--exclude=*.patch' -urN src.orig/catkin/cmake/catkin_destinations.cmake src/catkin/cmake/catkin_destinations.cmake
+--- src.orig/catkin/cmake/catkin_destinations.cmake	2016-03-18 14:31:08.000000000 -0700
++++ src/catkin/cmake/catkin_destinations.cmake	2016-05-24 14:48:01.754981700 -0700
 @@ -43,7 +43,11 @@
      set(_${PROJECT_NAME}_CATKIN_DESTINATIONS TRUE)
  
@@ -28,3 +28,10 @@ diff -ur src.orig/catkin/cmake/catkin_destinations.cmake src/catkin/cmake/catkin
      set(CATKIN_PACKAGE_ETC_DESTINATION ${CATKIN_GLOBAL_ETC_DESTINATION}/${PROJECT_NAME})
      set(CATKIN_PACKAGE_INCLUDE_DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION}/${PROJECT_NAME})
      set(CATKIN_PACKAGE_LIB_DESTINATION ${CATKIN_GLOBAL_LIB_DESTINATION})
+Binary files src.orig/catkin/python/catkin/__init__.pyc and src/catkin/python/catkin/__init__.pyc differ
+Binary files src.orig/catkin/python/catkin/builder.pyc and src/catkin/python/catkin/builder.pyc differ
+Binary files src.orig/catkin/python/catkin/cmake.pyc and src/catkin/python/catkin/cmake.pyc differ
+Binary files src.orig/catkin/python/catkin/environment_cache.pyc and src/catkin/python/catkin/environment_cache.pyc differ
+Binary files src.orig/catkin/python/catkin/find_in_workspaces.pyc and src/catkin/python/catkin/find_in_workspaces.pyc differ
+Binary files src.orig/catkin/python/catkin/terminal_color.pyc and src/catkin/python/catkin/terminal_color.pyc differ
+Binary files src.orig/catkin/python/catkin/workspace.pyc and src/catkin/python/catkin/workspace.pyc differ
