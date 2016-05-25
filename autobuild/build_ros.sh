@@ -154,6 +154,8 @@ for dir in `ls -1 $ROS_WORKSPACE/src`; do
 	patch_single_module $dir || exit 1
 done
 
+test -e src/map_msgs && rm -rf src/map_msgs
+
 for pkg in gazebo_ros_pkgs/gazebo_msgs gazebo_ros_pkgs/gazebo_plugins gazebo_ros_pkgs/gazebo_ros gazebo_ros_pkgs/gazebo_ros_pkgs image_transport_plugins/theora_image_transport; do
 	echo "*** $pkg IS EXCLUDED FROM BUILD ***"
 	test -e src/$pkg/package.xml && mv src/$pkg/package.xml src/$pkg/package.disabled
