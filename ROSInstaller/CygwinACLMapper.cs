@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Microsoft.Win32.SafeHandles;
+using System;
 using System.Collections.Generic;
 using System.DirectoryServices;
 using System.DirectoryServices.AccountManagement;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Text;
@@ -17,78 +19,107 @@ namespace ROSInstaller
         private SecurityIdentifier _UserSID;
         private readonly StreamWriter _LogStream;
 
+        [DllImport("advapi32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool OpenProcessToken(IntPtr ProcessHandle, UInt32 DesiredAccess, out IntPtr TokenHandle);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern IntPtr GetCurrentProcess();
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool CloseHandle(IntPtr hObject);
+
+        [DllImport("advapi32.dll", SetLastError = true)]
+        static extern bool GetTokenInformation(IntPtr TokenHandle, TOKEN_INFORMATION_CLASS TokenInformationClass, IntPtr TokenInformation, int TokenInformationLength, out int ReturnLength);
+
+        enum TOKEN_INFORMATION_CLASS
+        {
+            TokenUser = 1,
+            TokenGroups,
+            TokenPrivileges,
+            TokenOwner,
+            TokenPrimaryGroup,
+            TokenDefaultDacl,
+            TokenSource,
+            TokenType,
+            TokenImpersonationLevel,
+            TokenStatistics,
+            TokenRestrictedSids,
+            TokenSessionId,
+            TokenGroupsAndPrivileges,
+            TokenSessionReference,
+            TokenSandBoxInert,
+            TokenAuditPolicy,
+            TokenOrigin
+        }
+
         public CygwinACLMapper(StreamWriter logStream)
         {
             _LogStream = logStream;
             _LogStream?.WriteLine("Obtaining SIDs for user and group...");
             _WorldSID = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
-            var currentIdentity = WindowsIdentity.GetCurrent();
-            if (currentIdentity == null)
-                throw new Exception("Failed to query current user identity");
 
-            _LogStream?.WriteLine($"Current user: {currentIdentity.Name}, SID = {currentIdentity.User}");
-            _UserSID = currentIdentity.User;
-
-            _LogStream?.WriteLine($"Machine name: {Environment.MachineName}, domain name: {Environment.UserDomainName}");
-            if (StringComparer.InvariantCultureIgnoreCase.Compare(Environment.MachineName, Environment.UserDomainName) == 0 || string.IsNullOrEmpty(Environment.UserDomainName))
+            IntPtr processToken;
+            var currentProc = GetCurrentProcess();
+            _LogStream?.WriteLine($"Current process handle: {currentProc:x}");
+            if (OpenProcessToken(currentProc, 8 /*TOKEN_QUERY*/, out processToken))
             {
-                _LogStream?.WriteLine($"Non-domain machine: obtaining group SID from local directory...");
-
-                using (DirectoryEntry machine = new DirectoryEntry("WinNT://" + Environment.MachineName))
+                int bufferSize = 4096;
+                IntPtr pBuffer = Marshal.AllocHGlobal(bufferSize);
+                try
                 {
-                    DirectoryEntry e = machine.Children.Find("None");
-                    if (e?.Properties == null)
-                        throw new Exception("Failed to obtain a DirectoryEntry for " + Environment.MachineName);
+                    int done;
+                    if (GetTokenInformation(processToken, TOKEN_INFORMATION_CLASS.TokenUser, pBuffer, bufferSize, out done))
+                    {
+                        IntPtr pSid = Marshal.ReadIntPtr(pBuffer);
+                        if ((ulong)pSid >= (ulong)pBuffer && (ulong)pSid < ((ulong)pBuffer + (ulong)bufferSize))
+                        {
+                            _LogStream?.WriteLine("Creating user SecurityIdentifier from raw SID...");
+                            _UserSID = new SecurityIdentifier(pSid);
+                            _LogStream?.WriteLine("Current user SID: " + _UserSID);
+                        }
+                        else
+                            _LogStream?.WriteLine($"GetTokenInformation(TokenUser) returned an invalid SID pointer: 0x{pSid:x}, with buffer at 0x{pBuffer}, size {bufferSize}");
+                    }
+                    else
+                        _LogStream?.WriteLine("GetTokenInformation(TokenUser) failed - error " + Marshal.GetLastWin32Error());
 
-                    var sid = e.Properties["objectSid"];
-                    if (sid == null)
-                        throw new Exception("Failed to query objectSid property");
-
-                    var rawSid = sid[0] as byte[];
-                    if (rawSid == null)
-                        throw new Exception($"objectSid returned an invalid value ({rawSid})");
-
-                    _GroupSID = new SecurityIdentifier(rawSid, 0);
-                    _LogStream?.WriteLine($"Group SID: {_GroupSID}");
-
+                    if (GetTokenInformation(processToken, TOKEN_INFORMATION_CLASS.TokenPrimaryGroup, pBuffer, bufferSize, out done))
+                    {
+                        IntPtr pSid = Marshal.ReadIntPtr(pBuffer);
+                        if ((ulong)pSid >= (ulong)pBuffer && (ulong)pSid < ((ulong)pBuffer + (ulong)bufferSize))
+                        {
+                            _LogStream?.WriteLine("Creating group SecurityIdentifier from raw SID...");
+                            _GroupSID = new SecurityIdentifier(pSid);
+                            _LogStream?.WriteLine("Current group SID: " + _GroupSID);
+                        }
+                        else
+                            _LogStream?.WriteLine($"GetTokenInformation(TokenPrimaryGroup) returned an invalid SID pointer: 0x{pSid:x}, with buffer at 0x{pBuffer}, size {bufferSize}");
+                    }
+                    else
+                        _LogStream?.WriteLine("GetTokenInformation(TokenUser) failed - error " + Marshal.GetLastWin32Error());
+                }
+                finally
+                {
+                    Marshal.FreeHGlobal(pBuffer);
+                    CloseHandle(processToken);
                 }
             }
             else
+                _LogStream?.WriteLine("OpenProcessToken() failed - error " + Marshal.GetLastWin32Error());
+
+            if (_UserSID == null)
             {
-                _LogStream?.WriteLine($"Domain-joined machine: obtaining group SID from LDAP://{Environment.UserDomainName}...");
+                _LogStream?.WriteLine("Retrieving current user SID via a fallback method...");
 
-                using (DirectoryEntry domain = new DirectoryEntry("LDAP://" + Environment.UserDomainName))
-                {
-                    DirectorySearcher searcher = new DirectorySearcher(domain);
-                    searcher.Filter = string.Format("(&(objectClass=user) (cn= {0}))", Environment.UserName);
-                    searcher.PropertiesToLoad.Add("primaryGroupID");
-                    _LogStream?.WriteLine($"Searching for {searcher.Filter}...");
-                    SearchResult searchresult = searcher.FindOne();
-                    if (searchresult == null)
-                        throw new Exception("Failed to identify the primary group for the current user");
+                var currentIdentity = WindowsIdentity.GetCurrent();
+                if (currentIdentity == null)
+                    throw new Exception("Failed to query current user identity");
 
-                    var entry = searchresult.GetDirectoryEntry();
-                    if (entry == null)
-                        throw new Exception("Search for current user returned no directory entries");
-
-                    var prop = entry.Properties["primaryGroupID"];
-                    if (prop?.Value == null)
-                        throw new Exception("Current user object does not define primaryGroupID");
-
-                    var primaryGroupID = (int)prop.Value;
-                    prop = entry.Properties["objectSid"];
-                    if (prop?.Value == null)
-                        throw new Exception("Current user object does not define objectSid");
-
-                    byte[] objectSid = (byte[])prop.Value;
-
-                    _LogStream?.WriteLine($"primaryGroupId = {primaryGroupID}");
-
-                    StringBuilder escapedGroupSid = new StringBuilder();
-                    BitConverter.GetBytes(primaryGroupID).CopyTo(objectSid, objectSid.Length - 4);
-                    _GroupSID = new SecurityIdentifier(objectSid, 0);
-                    _LogStream?.WriteLine($"Derived group SID = {_GroupSID}");
-                }
+                _LogStream?.WriteLine($"Current user: {currentIdentity.Name}, SID = {currentIdentity.User}");
+                _UserSID = currentIdentity.User;
+                _GroupSID = null;
             }
         }
 
@@ -119,8 +150,11 @@ namespace ROSInstaller
             security.SetAccessRuleProtection(true, false);
             _LogStream?.WriteLine($"Setting user permission...");
             security.AddAccessRule(new FileSystemAccessRule(_UserSID, TranslateUnixMode((mode >> 6) & 7, true), AccessControlType.Allow));
-            _LogStream?.WriteLine($"Setting group permission...");
-            security.AddAccessRule(new FileSystemAccessRule(_GroupSID, TranslateUnixMode((mode >> 3) & 7, false), AccessControlType.Allow));
+            if (_GroupSID != null)
+            {
+                _LogStream?.WriteLine($"Setting group permission...");
+                security.AddAccessRule(new FileSystemAccessRule(_GroupSID, TranslateUnixMode((mode >> 3) & 7, false), AccessControlType.Allow));
+            }
             _LogStream?.WriteLine($"Setting world permission...");
             security.AddAccessRule(new FileSystemAccessRule(_WorldSID, TranslateUnixMode((mode >> 0) & 7, false), AccessControlType.Allow));
             _LogStream?.WriteLine($"Setting owner...");
