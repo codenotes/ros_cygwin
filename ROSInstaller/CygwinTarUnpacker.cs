@@ -24,10 +24,12 @@ namespace ROSInstaller
 
         byte[] TempBuffer = new byte[1024 * 1024];
 
-        public CygwinTarUnpacker(Stream stream, string targetDir)
+        public CygwinTarUnpacker(Stream stream, string targetDir, StreamWriter logStream)
         {
             _Stream = stream;
             _TargetDir = targetDir;
+            _LogStream = logStream;
+            _ACLMapper = new CygwinACLMapper(logStream);
         }
 
         static System.DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, 0);
@@ -39,7 +41,8 @@ namespace ROSInstaller
         //WARNING: fileName can be set to null unless preparing to copy a new file
         public delegate void TarProgressHandler(bool isSymlinkPhase, string fileName, long fileSize, long bytesDone, int filesDone, long bytesDoneBeforeThisFile);
         public TarProgressHandler ProgressHandler;
-        CygwinACLMapper _ACLMapper = new CygwinACLMapper();
+        CygwinACLMapper _ACLMapper;
+        private readonly StreamWriter _LogStream;
 
         byte[] DoReadHeader(out string fileName, out ulong fileSize, out byte linkIndicator)
         {
@@ -80,8 +83,12 @@ namespace ROSInstaller
             if (header == null)
                 return false;
 
+            _LogStream?.WriteLine("Read TAR entry for " + fileName);
+
             if (linkIndicator == 'L' && fileName == "././@LongLink")
             {
+                _LogStream?.WriteLine("Reading link contents...");
+
                 int padding = 512 - (int)(fileSize % 512);
                 byte[] longFileName = new byte[fileSize];
                 if (_Stream.Read(longFileName, 0, (int)fileSize) != (int)fileSize)
@@ -95,6 +102,7 @@ namespace ROSInstaller
                     return false;
 
                 fileName = Encoding.ASCII.GetString(longFileName, 0, longFileName.Length).TrimEnd('\0');
+                _LogStream?.WriteLine($"Long entry name: {fileName}");
             }
 
             ulong rawTimestamp = Convert.ToUInt64(Encoding.ASCII.GetString(header, 136, 12).TrimEnd('\0', ' '), 8);
@@ -118,6 +126,9 @@ namespace ROSInstaller
 
             uint mode = Convert.ToUInt32(Encoding.ASCII.GetString(header, 100, 8).TrimEnd('\0', ' '), 8);
 
+            if (fileName == null)
+                throw new Exception("Unexpected null file name in TAR archive");
+
             if (fileName.StartsWith("..") || fileName.StartsWith("\\") || fileName.StartsWith("/"))
                 throw new Exception("Invalid file name in a TAR record");
 
@@ -138,11 +149,15 @@ namespace ROSInstaller
                 targetPath = Path.Combine(_TargetDir, fileName);
             }
 
+            _LogStream?.WriteLine($"Target file path: {targetPath}");
+
             if (ProgressHandler != null)
                 ProgressHandler(false, targetPath, (long)fileSize, 0, Statistics.TotalFiles, Statistics.TotalBytes);
 
             if (isDirectory)
             {
+                _LogStream?.WriteLine($"Target entry is a directory");
+
                 if (targetPath != null)
                 {
                     Statistics.TotalDirectories++;
@@ -154,14 +169,20 @@ namespace ROSInstaller
 
                     try
                     {
+                        _LogStream?.WriteLine($"Creating {targetPath}");
                         Directory.CreateDirectory(targetPath);
+
+                        _LogStream?.WriteLine($"Setting last write time on {targetPath}...");
+                        Directory.SetLastWriteTimeUtc(targetPath, timeStamp);
+
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        _LogStream?.WriteLine($"Failed to create {targetPath} - {ex.Message}");
+
                         if (!ignoreFileCreationErrors)
                             throw;
                     }
-                    Directory.SetLastWriteTimeUtc(targetPath, timeStamp);
                 }
             }
             else if (isSymlink)
@@ -171,6 +192,7 @@ namespace ROSInstaller
                     Statistics.TotalSymlinks++;
 
                     string linkTarget = Encoding.ASCII.GetString(header, 157, 100).TrimEnd('\0');
+                    _LogStream?.WriteLine($"{targetPath} is a symlink to {linkTarget}. Creating a Cygwin symlink...");
                     File.WriteAllText(targetPath, "!<symlink>" + linkTarget + "\0", Encoding.ASCII);
                     File.SetAttributes(targetPath, FileAttributes.System | FileAttributes.Normal);
                     File.SetLastWriteTimeUtc(targetPath, timeStamp);
@@ -181,6 +203,7 @@ namespace ROSInstaller
                 if (targetPath != null)
                 {
                     string linkTarget = Encoding.ASCII.GetString(header, 157, 100).TrimEnd('\0');
+                    _LogStream?.WriteLine($"{targetPath} is a hardlink to {linkTarget}. Creating an NTFS hardlink...");
 
                     if (stripFirstComponent)
                     {
@@ -194,10 +217,19 @@ namespace ROSInstaller
                         TransformPath(_TargetDir, ref linkTarget);
                     linkTarget = Path.Combine(_TargetDir, linkTarget);
 
-                    if (!File.Exists(linkTarget))
-                        throw new Exception("Missing hardlink source");
+                    if (File.Exists(linkTarget))
+                    {
+                        _LogStream?.WriteLine($"Hardlinking {targetPath} to {linkTarget}...");
 
-                    CreateHardLink(targetPath, linkTarget, IntPtr.Zero);
+                        CreateHardLink(targetPath, linkTarget, IntPtr.Zero);
+                    }
+                    else
+                    {
+                        _LogStream?.WriteLine($"Missing {linkTarget} - cannot create {targetPath}");
+
+                        if (!ignoreFileCreationErrors)
+                            throw new Exception("Missing hardlink source");
+                    }
                 }
             }
             else
@@ -205,17 +237,24 @@ namespace ROSInstaller
                 FileStream fs = null;
                 try
                 {
+                    _LogStream?.WriteLine($"Creating {targetPath}...");
+
                     if (targetPath != null)
                         fs = File.Create(targetPath);
                 }
-                catch
+                catch(Exception ex)
                 {
+                    _LogStream?.WriteLine($"Failed to create {targetPath} - {ex.Message}");
                     if (!ignoreFileCreationErrors)
                         throw;
                 }
 
+                _LogStream?.WriteLine($"Writing contents for {targetPath}...");
+
                 using (fs)
                     CopyStream(_Stream, fs, (long)fileSize);
+
+                _LogStream?.WriteLine($"Done writing contents for {targetPath}.");
 
                 Statistics.TotalFiles++;
                 Statistics.TotalBytes += (long)fileSize;
@@ -225,11 +264,17 @@ namespace ROSInstaller
                 if (padding != 512)
                     _Stream.Read(header, 0, padding);
                 _BytesReadFromTARFile += padding;
+
+                _LogStream?.WriteLine($"Setting last write time for {targetPath}...");
                 File.SetLastWriteTimeUtc(targetPath, timeStamp);
             }
 
-            if (targetPath != null)
+            if (targetPath != null && File.Exists(targetPath))
+            {
+                _LogStream?.WriteLine($"Applying security for {targetPath}...");
                 _ACLMapper.ApplyFileMode(targetPath, mode, isDirectory);
+                _LogStream?.WriteLine($"Done applying security for {targetPath}.");
+            }
 
             return true;
         }

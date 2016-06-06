@@ -22,6 +22,7 @@ namespace ROSInstaller
 
         long _TotalSize, _Done;
         private AnonymousPipeServerStream _OutPipe;
+        private StreamWriter _LogStream;
 
         public bool HasExited
         {
@@ -41,9 +42,16 @@ namespace ROSInstaller
             }
         }
 
-        public ROSInstallTask(string destDir)
+        public ROSInstallTask(string destDir, string logFile)
         {
             DestDir = destDir;
+            if (logFile != null)
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(logFile));
+                _LogStream = File.CreateText(logFile);
+                _LogStream.AutoFlush = true;
+            }
+
             _TarThread = new Thread(TarExtractThreadBody);
             _DecompThread = new Thread(DecompressionThreadBody);
 
@@ -58,23 +66,35 @@ namespace ROSInstaller
         {
             try
             {
-                CygwinTarUnpacker unpacker = new CygwinTarUnpacker(_TarStream, DestDir);
+                _LogStream?.WriteLine("Initializing unpacker...");
+                CygwinTarUnpacker unpacker = new CygwinTarUnpacker(_TarStream, DestDir, _LogStream);
+                _LogStream?.WriteLine($"Creating {DestDir}...");
                 Directory.CreateDirectory(DestDir);
+                _LogStream?.WriteLine($"Unpacking...");
+
                 unpacker.Unpack(false, true);
+                _LogStream?.WriteLine($"Unpacking done. Creating cygwin.bat...");
 
                 File.WriteAllText(Path.Combine(DestDir, "cygwin.bat"), "@set MYDIR=%~dp0\r\n@start %MYDIR%\\bin\\mintty.exe -i /Cygwin-Terminal.ico -\r\n");
 
+                _LogStream?.WriteLine($"Unpacking done. Initializing Cygwin installation...");
                 var bash = Path.Combine(DestDir, "bin", "bash.exe");
                 var startInfo = new ProcessStartInfo(bash, "--login -c exit") { UseShellExecute = false, CreateNoWindow = true };
                 var proc = Process.Start(startInfo);
                 if (!proc.WaitForExit(20000))
+                {
+                    _LogStream?.WriteLine($"Cygwin initializer hanging. Terminating...");
                     proc.Kill();
+                }
 
+                _LogStream?.WriteLine($"Updating bashrc...");
                 var profile = Path.Combine(DestDir, "home", Environment.UserName, ".bashrc");
                 if (!File.Exists(profile))
                     throw new Exception(profile + " not found. Please run bash and update it manually");
 
                 File.AppendAllText(profile, "\ncd /opt/ros/install_isolated\nCATKIN_SHELL=sh\n. ./setup.sh\nexport PATH=$PATH:/usr/local/lib:/opt/ros/install_isolated/lib\n");
+
+                _LogStream?.WriteLine($"Installation completed");
 
                 //The unpacker might have returned due to reading an empty record that may be followed by some padding records.
                 //If we close the pipe without reading the padding records, the unpacking thread will see this as an error.
@@ -91,6 +111,8 @@ namespace ROSInstaller
             }
             catch (Exception ex)
             {
+                _LogStream?.WriteLine("Exception during unpacking: " + ex.ToString());
+
                 _TarException = ex;
             }
             finally
@@ -121,7 +143,7 @@ namespace ROSInstaller
                 else
                 {
                     inStream = new FileStream(Assembly.GetExecutingAssembly().Location, FileMode.Open, FileAccess.Read);
-                    inStream.Seek(89088, SeekOrigin.Begin);
+                    inStream.Seek(94720, SeekOrigin.Begin);
                 }
 
                 byte[] properties = new byte[5];
@@ -174,6 +196,8 @@ namespace ROSInstaller
         {
             _OutPipe.Dispose();
             _TarStream.Dispose();
+            _LogStream?.Close();
+            _LogStream = null;
         }
 
         internal void Abort()

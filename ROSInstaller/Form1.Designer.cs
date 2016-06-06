@@ -40,6 +40,7 @@
             this.cbOpenCygwin = new System.Windows.Forms.CheckBox();
             this.label2 = new System.Windows.Forms.Label();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+            this.cbLog = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -145,6 +146,17 @@
             this.linkLabel1.Text = "Show release notes";
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
+            // cbLog
+            // 
+            this.cbLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.cbLog.AutoSize = true;
+            this.cbLog.Location = new System.Drawing.Point(255, 177);
+            this.cbLog.Name = "cbLog";
+            this.cbLog.Size = new System.Drawing.Size(120, 17);
+            this.cbLog.TabIndex = 6;
+            this.cbLog.Text = "Write installation log";
+            this.cbLog.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AcceptButton = this.btnInstall;
@@ -152,6 +164,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(383, 264);
             this.Controls.Add(this.linkLabel1);
+            this.Controls.Add(this.cbLog);
             this.Controls.Add(this.cbOpenCygwin);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.pictureBox1);
@@ -185,6 +198,7 @@
         private System.Windows.Forms.CheckBox cbOpenCygwin;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.LinkLabel linkLabel1;
+        private System.Windows.Forms.CheckBox cbLog;
     }
 }
 

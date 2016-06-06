@@ -78,7 +78,7 @@ namespace ROSInstaller
             }
             ProgressGUIVisible = true;
 
-            var oldTask = Interlocked.Exchange(ref _InstallTask, new ROSInstallTask(destDir));
+            var oldTask = Interlocked.Exchange(ref _InstallTask, new ROSInstallTask(destDir, cbLog.Checked ? Path.Combine(destDir, "ROSInstall.log") : null));
             if (oldTask != null)
             {
                 oldTask.Abort();
