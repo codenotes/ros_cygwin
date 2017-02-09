@@ -16,7 +16,11 @@ test -d ogre_src_v$OGRE_VERSION || (tar xf ogre_src_v$OGRE_VERSION.tar.bz2 && pa
 cd ogre_src_v$OGRE_VERSION || exit 1
 mkdir -p build
 cd build || exit 1
-test -e Makefile || cmake .. -DOGRE_BUILD_SAMPLES=FALSE || exit 1
+if [ -d "/usr/include/freetype2/freetype/" ]; then
+	test -e Makefile || cmake .. -DOGRE_BUILD_SAMPLES=FALSE -DFREETYPE_INCLUDE_DIR=/usr/include/freetype2/freetype/ || exit 1
+else
+	test -e Makefile || cmake .. -DOGRE_BUILD_SAMPLES=FALSE || exit 1
+fi
 echo Building Ogre...
 make $PARALLEL_BUILD_FLAGS || exit 1
 make install || exit 1
